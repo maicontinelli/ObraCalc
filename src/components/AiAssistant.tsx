@@ -118,7 +118,7 @@ export default function AiAssistant() {
                             <AlertTriangle size={16} />
                             {error.includes("Chave de API") ? (
                                 <span>
-                                    Configure sua chave de API do Gemini no arquivo <code>.env.local</code> como <code>GEMINI_API_KEY=sua_chave</code>.
+                                    Configure sua chave de API do Groq no arquivo <code>.env.local</code> como <code>GROQ_API_KEY=sua_chave</code>.
                                 </span>
                             ) : (
                                 <span>{error}</span>
