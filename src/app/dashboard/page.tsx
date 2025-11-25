@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase';
 
 // Mock data for now until we have real data
 const MOCK_ESTIMATES = [
-    { id: '1', title: 'Reforma Apartamento 101', client: 'João Silva', date: '2023-10-25', total: 45000.00, status: 'Em andamento' },
+    { id: '1', title: 'Construção Nova', client: 'Cliente Exemplo', date: '2023-10-25', total: 45000.00, status: 'Em andamento' },
     { id: '2', title: 'Construção Muro', client: 'Maria Oliveira', date: '2023-10-20', total: 12500.00, status: 'Finalizado' },
 ];
 
@@ -30,7 +30,7 @@ export default function Dashboard() {
         }
     }, [user, loading, router]);
 
-    const handleNewEstimate = async (type: 'obra_nova' | 'reforma' = 'obra_nova') => {
+    const handleNewEstimate = async (type: 'obra_nova' = 'obra_nova') => {
         // Logic to create new estimate and redirect to editor
         // For MVP, just redirect to a new ID with type param
         const newId = crypto.randomUUID();
@@ -52,13 +52,7 @@ export default function Dashboard() {
                     </div>
 
                     <div className="flex gap-2">
-                        <button
-                            onClick={() => handleNewEstimate('reforma')}
-                            className="btn btn-secondary shadow-sm hover:shadow-md transition-all"
-                        >
-                            <Plus size={18} />
-                            Nova Reforma
-                        </button>
+
                         <button
                             onClick={() => handleNewEstimate('obra_nova')}
                             className="btn btn-primary shadow-md hover:shadow-lg transition-all"
@@ -133,9 +127,7 @@ export default function Dashboard() {
                             <h3 className="text-lg font-medium text-gray-900 mb-1">Nenhum orçamento encontrado</h3>
                             <p className="mb-6">Comece criando seu primeiro orçamento de obra.</p>
                             <div className="flex gap-3">
-                                <button onClick={() => handleNewEstimate('reforma')} className="btn btn-secondary">
-                                    Nova Reforma
-                                </button>
+
                                 <button onClick={() => handleNewEstimate('obra_nova')} className="btn btn-primary">
                                     Obra Nova
                                 </button>

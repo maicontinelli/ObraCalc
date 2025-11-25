@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { DEFAULT_BOQ_CATEGORIES } from '@/lib/constants';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Share2, ArrowLeft, Upload, ExternalLink, Building2 } from 'lucide-react';
+import { Download, Share2, ArrowLeft, ExternalLink, Building2 } from 'lucide-react';
 import Link from 'next/link';
 
 // Fallback mock data loader
@@ -101,39 +101,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     const bdiValue = subtotal * (data.bdi / 100);
     const total = subtotal + bdiValue;
 
-    const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const newLogo = reader.result as string;
-                const newData = { ...data, logo: newLogo };
-                setData(newData);
 
-                // Update localStorage
-                try {
-                    localStorage.setItem(`estimate_${id}`, JSON.stringify(newData));
-                } catch (err) {
-                    console.error('Error saving logo to localStorage:', err);
-                }
-
-                // Save to User Profile if logged in
-                try {
-                    const { data: { user } } = await supabase.auth.getUser();
-                    if (user) {
-                        await supabase
-                            .from('profiles')
-                            .update({ logo_url: newLogo })
-                            .eq('id', user.id);
-                        console.log('Logo saved to user profile');
-                    }
-                } catch (err) {
-                    console.error('Error saving logo to profile:', err);
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
 
     const handleDownloadHtml = () => {
         // Create a self-contained HTML structure with inline styles
@@ -215,9 +183,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                             <p>Data: ${new Date(data.date).toLocaleDateString('pt-BR')}</p>
                         </div>
                     </div>
-                    <div>
-                        ${data.logo ? `<img src="${data.logo}" class="logo" alt="Logo">` : ''}
-                    </div>
+
                 </div>
 
                 ${itemsHtml}
@@ -282,15 +248,6 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                     </div>
 
                     <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100 dark:border-gray-700">
-                        <label className="btn btn-secondary cursor-pointer flex items-center gap-2 text-xs sm:text-sm">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={handleLogoChange}
-                            />
-                            <Upload size={16} /> {data?.logo ? 'Alterar Logo' : 'Add Logo'}
-                        </label>
                         <button onClick={handleDownloadHtml} className="btn bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 text-xs sm:text-sm">
                             <ExternalLink size={16} /> HTML
                         </button>
@@ -311,16 +268,6 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                         <p className="text-gray-500 text-xs">Data: {new Date(data.date).toLocaleDateString('pt-BR')}</p>
                     </div>
                     <div className="text-right">
-                        {/* Logo */}
-                        <div className="mb-2 flex justify-end">
-                            {data.logo ? (
-                                <img src={data.logo} alt="Logo Empresa" className="max-h-16 max-w-[150px] object-contain" />
-                            ) : (
-                                <div className="w-32 h-16 bg-gray-100 flex items-center justify-center text-gray-400 text-[10px]">
-                                    LOGO EMPRESA
-                                </div>
-                            )}
-                        </div>
                         <div className="flex flex-col items-end">
                             <QRCodeSVG value={url} size={60} />
                             <span className="text-[10px] text-gray-400 mt-1">Ver online</span>

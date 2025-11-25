@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { BOQ_TEMPLATES } from '@/lib/constants';
-import { Save, Download, Share2, ArrowLeft, RefreshCw, Trash2, FileDown, Moon, Sun } from 'lucide-react';
+import { Save, ArrowLeft, RefreshCw, Trash2, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -25,7 +25,7 @@ type BoqItem = {
 export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const type = (searchParams?.get('type') as 'obra_nova' | 'reforma') || 'obra_nova';
+    const type = (searchParams?.get('type') as 'obra_nova') || 'obra_nova';
     const { theme, toggleTheme } = useTheme();
 
     const [items, setItems] = useState<BoqItem[]>([]);
@@ -37,10 +37,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const [logo, setLogo] = useState<string | null>(null);
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
-    // Auth & Cloud State Removed
-    // const [user, setUser] = useState<any>(null);
-    // const [showAuthModal, setShowAuthModal] = useState(false);
-    // const [isCloudSaved, setIsCloudSaved] = useState(false);
+
 
     // Initialize items from default BOQ based on type
     useEffect(() => {
@@ -99,7 +96,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         setCollapsedCategories(initialCollapsedState);
     }, [type, estimateId]);
 
-    // Auth Check Removed
+
 
     // Calculations
     const totals = useMemo(() => {
@@ -132,7 +129,22 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             groups[item.category].push(item);
         });
 
-        return groups;
+        // Sort to ensure "Itens Adicionais" appears first
+        const sortedGroups: Record<string, BoqItem[]> = {};
+
+        // Add "Itens Adicionais" first if it exists
+        if (groups["Itens Adicionais"]) {
+            sortedGroups["Itens Adicionais"] = groups["Itens Adicionais"];
+        }
+
+        // Add all other categories
+        Object.keys(groups).forEach(key => {
+            if (key !== "Itens Adicionais") {
+                sortedGroups[key] = groups[key];
+            }
+        });
+
+        return sortedGroups;
     }, [items]);
 
     // Handlers
@@ -148,6 +160,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
     const toggleInclude = (id: string) => {
         setItems(prev => prev.map(item => item.id === id ? { ...item, included: !item.included } : item));
+    };
+
+    const handleUnitChange = (id: string, newUnit: string) => {
+        setItems(prev => prev.map(item => item.id === id ? { ...item, unit: newUnit } : item));
     };
 
     const handleAddFromSearch = (searchItem: { name: string; unit: string; price: number; quantity: number }) => {
@@ -240,24 +256,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         router.push(`/report/${estimateId}`);
     };
 
-    const handleDownloadProject = () => {
-        const estimateData = {
-            id: estimateId,
-            title: projectName,
-            client: clientName,
-            date: new Date().toISOString(),
-            items: items,
-            bdi: bdi,
-            logo: logo
-        };
-        const blob = new Blob([JSON.stringify(estimateData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `projeto-${projectName.replace(/\s+/g, '-').toLowerCase()}.json`;
-        link.click();
-        URL.revokeObjectURL(url);
-    };
+
 
     return (
         <div className="pb-20 dark:bg-gray-900">
@@ -300,7 +299,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-2 justify-center w-full py-2">
                         <SmartSearch onAddItem={handleAddFromSearch} />
                         <button
                             onClick={toggleTheme}
@@ -309,12 +308,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
-                        <button
-                            onClick={handleGenerateReport}
-                            className="btn btn-primary text-xs sm:text-sm flex items-center gap-2"
-                        >
-                            <Save size={16} /> Salvar e Gerar Relatório
-                        </button>
                     </div>
                 </div>
             </div>
@@ -322,6 +315,15 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Editor */}
                 <div className="lg:col-span-2 space-y-8">
+                    {/* Button to add custom category - moved to top */}
+                    {!groupedItems["Itens Adicionais"] && (
+                        <button
+                            onClick={() => handleAddCustomItem("Itens Adicionais")}
+                            className="w-full py-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors flex items-center justify-center gap-2"
+                        >
+                            + Adicionar Categoria Personalizada
+                        </button>
+                    )}
                     {Object.entries(groupedItems).map(([category, catItems]) => {
                         const isCollapsed = collapsedCategories[category];
                         const anyIncluded = catItems.some(i => i.included);
@@ -423,7 +425,19 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                             )}
                                                             <div className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">Ref: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price)}</div>
                                                         </td>
-                                                        <td className="px-2 sm:px-4 py-2 text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{item.unit}</td>
+                                                        <td className="px-2 sm:px-4 py-2 text-center text-xs sm:text-sm" onClick={(e) => e.stopPropagation()}>
+                                                            {item.isCustom ? (
+                                                                <input
+                                                                    type="text"
+                                                                    value={item.unit}
+                                                                    onChange={(e) => handleUnitChange(item.id, e.target.value)}
+                                                                    className="text-center text-gray-500 dark:text-gray-400 w-full border-none p-0 focus:ring-0 bg-transparent placeholder-gray-400 dark:placeholder-gray-500 text-xs sm:text-sm"
+                                                                    placeholder="un"
+                                                                />
+                                                            ) : (
+                                                                <span className="text-gray-500 dark:text-gray-400">{item.unit}</span>
+                                                            )}
+                                                        </td>
                                                         <td className="px-2 sm:px-4 py-2" onClick={(e) => e.stopPropagation()}>
                                                             <input
                                                                 type="number"
@@ -479,15 +493,13 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                         );
                     })}
 
-                    {/* Button to add custom category if it doesn't exist (though it should by default now) */}
-                    {!groupedItems["Itens Adicionais"] && (
-                        <button
-                            onClick={() => handleAddCustomItem("Itens Adicionais")}
-                            className="w-full py-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors flex items-center justify-center gap-2"
-                        >
-                            + Adicionar Categoria Personalizada
-                        </button>
-                    )}
+
+                    <button
+                        onClick={handleGenerateReport}
+                        className="btn btn-primary text-xs sm:text-sm flex items-center gap-2 mt-2"
+                    >
+                        <Save size={16} /> Salvar e Gerar Relatório
+                    </button>
                 </div>
 
                 {/* Sidebar Summary */}
