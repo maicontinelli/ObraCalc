@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, FilePlus } from 'lucide-react';
 import AiAssistant from '@/components/AiAssistant';
 import { useTheme } from '@/contexts/ThemeContext';
 
@@ -65,16 +65,15 @@ export default function Home() {
         </div>
 
         {/* CTA Button - Clean */}
-        <div className="mb-16 flex justify-center">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mx-auto">
           <button
             onClick={() => handleStart('obra_nova')}
-            className="w-full max-w-2xl group inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all text-sm font-medium"
+            className="w-full py-4 px-8 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-medium transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
           >
-            Começar orçamento manual
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <FilePlus size={20} className="group-hover:scale-110 transition-transform" />
+            Começar orçamento gratis
           </button>
         </div>
-
         {/* Features - Minimal list */}
         <div className="border-t border-gray-100 dark:border-gray-800 pt-12">
           <ul className="flex flex-wrap justify-center gap-6 sm:gap-12 text-sm text-gray-600 dark:text-gray-400">
