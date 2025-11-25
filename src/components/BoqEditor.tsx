@@ -7,7 +7,6 @@ import { Save, ArrowLeft, RefreshCw, Trash2, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
-import SmartSearch from '@/components/SmartSearch';
 
 
 type BoqItem = {
@@ -166,20 +165,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         setItems(prev => prev.map(item => item.id === id ? { ...item, unit: newUnit } : item));
     };
 
-    const handleAddFromSearch = (searchItem: { name: string; unit: string; price: number; quantity: number }) => {
-        const newItem: BoqItem = {
-            id: `custom_${Date.now()}_${Math.random()}`,
-            category: 'Itens Adicionais',
-            name: searchItem.name,
-            unit: searchItem.unit,
-            quantity: searchItem.quantity,
-            price: searchItem.price,
-            included: true,
-            isCustom: true,
-        };
-        setItems(prev => [...prev, newItem]);
-    };
-
     const handleSave = async () => {
         setIsSaving(true);
         try {
@@ -262,64 +247,69 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         <div className="pb-20 dark:bg-gray-900">
             {/* Toolbar */}
             <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm mb-6">
-                <div className="container mx-auto py-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="container mx-auto py-2 flex flex-col sm:flex-row justify-between items-center gap-4 px-4">
                     <div className="flex items-center gap-4 flex-1 w-full">
                         <Link href="/" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 dark:text-gray-400 shrink-0">
                             <ArrowLeft size={20} />
                         </Link>
-                        <div className="flex-1 max-w-xl">
+                        <div className="flex-1">
                             <input
                                 type="text"
                                 value={projectName}
                                 onChange={(e) => setProjectName(e.target.value)}
-                                className="font-bold text-base sm:text-lg text-gray-900 dark:text-gray-100 dark:bg-gray-800 border-none p-0 focus:ring-0 w-full placeholder-gray-400 dark:placeholder-gray-500"
+                                className="font-bold text-base text-gray-900 dark:text-gray-100 dark:bg-gray-800 border-none p-0 focus:ring-0 w-full placeholder-gray-400 dark:placeholder-gray-500"
                                 placeholder="Nome do Projeto"
                             />
-                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                            <div className="flex items-center gap-2">
                                 <input
                                     type="text"
                                     value={clientName}
                                     onChange={(e) => setClientName(e.target.value)}
-                                    className="text-xs text-gray-500 dark:text-gray-400 dark:bg-gray-800 border-none p-0 focus:ring-0 w-full sm:w-auto placeholder-gray-400 dark:placeholder-gray-500"
+                                    className="text-xs text-gray-500 dark:text-gray-400 dark:bg-gray-800 border-none p-0 focus:ring-0 w-auto placeholder-gray-400 dark:placeholder-gray-500"
                                     placeholder="Nome do Cliente"
                                 />
-                                <div className="hidden sm:block text-xs text-gray-300">|</div>
+                                <span className="text-gray-300 text-xs">|</span>
                                 <div className="text-xs text-gray-500 flex items-center gap-2 whitespace-nowrap">
                                     {isSaving ? (
                                         <span className="flex items-center gap-1 text-blue-600"><RefreshCw size={10} className="animate-spin" /> Salvando...</span>
                                     ) : lastSaved ? (
                                         <span className="flex items-center gap-1">
-                                            Salvo localmente às {lastSaved.toLocaleTimeString()}
+                                            Salvo às {lastSaved.toLocaleTimeString()}
                                         </span>
                                     ) : (
-                                        <span>Alterações não salvas</span>
+                                        <span>Não salvo</span>
                                     )}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 justify-center w-full py-2">
-                        <SmartSearch onAddItem={handleAddFromSearch} />
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handleGenerateReport}
+                            className="btn btn-primary text-xs px-3 py-2 flex items-center gap-2 whitespace-nowrap"
+                        >
+                            <Save size={14} /> Salvar e Gerar
+                        </button>
                         <button
                             onClick={toggleTheme}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500 dark:text-gray-400 transition-colors"
                             title={theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}
                         >
-                            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
                 {/* Main Editor */}
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-2 space-y-6">
                     {/* Button to add custom category - moved to top */}
                     {!groupedItems["Itens Adicionais"] && (
                         <button
                             onClick={() => handleAddCustomItem("Itens Adicionais")}
-                            className="w-full py-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors flex items-center justify-center gap-2 text-sm"
                         >
                             + Adicionar Categoria Personalizada
                         </button>
@@ -330,12 +320,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                         const allIncluded = catItems.every(i => i.included);
 
                         return (
-                            <div key={category} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mb-6 shadow-sm">
+                            <div key={category} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mb-4 shadow-sm">
                                 <div
-                                    className="bg-gray-50 dark:bg-gray-700 px-4 py-3 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                                    className="bg-gray-50 dark:bg-gray-700 px-3 py-2 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                                     onClick={() => toggleCategoryCollapse(category)}
                                 >
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-2">
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -345,8 +335,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
-                                                width="16"
-                                                height="16"
+                                                width="14"
+                                                height="14"
                                                 viewBox="0 0 24 24"
                                                 fill="none"
                                                 stroke="currentColor"
@@ -358,11 +348,11 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                 <path d="m6 9 6 6 6-6" />
                                             </svg>
                                         </button>
-                                        <h2 className="font-semibold text-sm text-gray-800 uppercase tracking-wide select-none">{category}</h2>
+                                        <h2 className="font-semibold text-sm text-gray-800 capitalize tracking-wide select-none">{category}</h2>
                                     </div>
 
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-sm font-medium text-gray-900">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totals.categoryTotals[category] || 0)}
                                         </span>
                                         <div
@@ -373,7 +363,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                 type="checkbox"
                                                 checked={anyIncluded}
                                                 onChange={(e) => toggleCategoryItems(category, !allIncluded)}
-                                                className="rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
+                                                className="rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer w-4 h-4"
                                                 title={allIncluded ? "Desmarcar todos" : "Marcar todos"}
                                             />
                                         </div>
@@ -382,16 +372,16 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                                 {!isCollapsed && (
                                     <div className="animate-in fade-in slide-in-from-top-2 duration-200 overflow-x-auto">
-                                        <table className="w-full text-sm text-left min-w-[600px] sm:min-w-0">
+                                        <table className="w-full text-xs sm:text-sm text-left min-w-[600px] sm:min-w-0">
                                             <thead className="bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-medium border-b border-gray-100 dark:border-gray-600">
                                                 <tr>
-                                                    <th className="px-2 sm:px-4 py-2 w-8"></th>
-                                                    <th className="px-2 sm:px-4 py-2">Serviço</th>
-                                                    <th className="px-2 sm:px-4 py-2 w-16 sm:w-24 text-center">Unid.</th>
-                                                    <th className="px-2 sm:px-4 py-2 w-20 sm:w-24 text-center">Qtd.</th>
-                                                    <th className="px-2 sm:px-4 py-2 w-24 sm:w-32 text-right">Unit.</th>
-                                                    <th className="px-2 sm:px-4 py-2 w-24 sm:w-32 text-right">Total</th>
-                                                    <th className="px-2 sm:px-4 py-2 w-8"></th>
+                                                    <th className="px-2 py-1.5 w-8"></th>
+                                                    <th className="px-2 py-1.5">Serviço</th>
+                                                    <th className="px-2 py-1.5 w-16 text-center">Unid.</th>
+                                                    <th className="px-2 py-1.5 w-16 text-center">Qtd.</th>
+                                                    <th className="px-2 py-1.5 w-24 text-right">Unit.</th>
+                                                    <th className="px-2 py-1.5 w-24 text-right">Total</th>
+                                                    <th className="px-2 py-1.5 w-8"></th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
@@ -401,77 +391,76 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                         className={`group hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${!item.included ? 'opacity-50' : ''}`}
                                                         onClick={() => !item.included && toggleInclude(item.id)}
                                                     >
-                                                        <td className="px-2 sm:px-4 py-2" onClick={(e) => e.stopPropagation()}>
+                                                        <td className="px-2 py-1" onClick={(e) => e.stopPropagation()}>
                                                             <input
                                                                 type="checkbox"
                                                                 checked={item.included}
                                                                 onChange={() => toggleInclude(item.id)}
-                                                                className="rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                                                                className="rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] w-3.5 h-3.5"
                                                             />
                                                         </td>
-                                                        <td className="px-2 sm:px-4 py-2">
+                                                        <td className="px-2 py-1">
                                                             {item.isCustom ? (
                                                                 <input
                                                                     type="text"
                                                                     value={item.name}
                                                                     onChange={(e) => handleItemNameChange(item.id, e.target.value)}
                                                                     onClick={(e) => e.stopPropagation()}
-                                                                    className="font-medium text-gray-900 dark:text-gray-100 w-full border-none p-0 focus:ring-0 bg-transparent placeholder-gray-400 dark:placeholder-gray-500 text-xs sm:text-sm"
+                                                                    className="font-medium text-gray-900 dark:text-gray-100 w-full border-none p-0 focus:ring-0 bg-transparent placeholder-gray-400 dark:placeholder-gray-500 text-xs"
                                                                     placeholder="Nome do serviço"
                                                                     autoFocus
                                                                 />
                                                             ) : (
-                                                                <div className="font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm">{item.name}</div>
+                                                                <div className="font-medium text-gray-900 dark:text-gray-100 text-xs">{item.name}</div>
                                                             )}
-                                                            <div className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">Ref: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price)}</div>
                                                         </td>
-                                                        <td className="px-2 sm:px-4 py-2 text-center text-xs sm:text-sm" onClick={(e) => e.stopPropagation()}>
+                                                        <td className="px-2 py-1 text-center text-xs" onClick={(e) => e.stopPropagation()}>
                                                             {item.isCustom ? (
                                                                 <input
                                                                     type="text"
                                                                     value={item.unit}
                                                                     onChange={(e) => handleUnitChange(item.id, e.target.value)}
-                                                                    className="text-center text-gray-500 dark:text-gray-400 w-full border-none p-0 focus:ring-0 bg-transparent placeholder-gray-400 dark:placeholder-gray-500 text-xs sm:text-sm"
+                                                                    className="text-center text-gray-500 dark:text-gray-400 w-full border-none p-0 focus:ring-0 bg-transparent placeholder-gray-400 dark:placeholder-gray-500 text-xs"
                                                                     placeholder="un"
                                                                 />
                                                             ) : (
                                                                 <span className="text-gray-500 dark:text-gray-400">{item.unit}</span>
                                                             )}
                                                         </td>
-                                                        <td className="px-2 sm:px-4 py-2" onClick={(e) => e.stopPropagation()}>
+                                                        <td className="px-2 py-1" onClick={(e) => e.stopPropagation()}>
                                                             <input
                                                                 type="number"
                                                                 value={item.quantity}
                                                                 onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                                                 onFocus={(e) => e.target.select()}
-                                                                className="w-full text-center border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded py-1 px-1 sm:px-2 text-xs sm:text-sm focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]"
+                                                                className="w-full text-center border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded py-0.5 px-1 text-xs focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]"
                                                                 disabled={!item.included}
                                                             />
                                                         </td>
-                                                        <td className="px-2 sm:px-4 py-2 text-right" onClick={(e) => e.stopPropagation()}>
+                                                        <td className="px-2 py-1 text-right" onClick={(e) => e.stopPropagation()}>
                                                             <input
                                                                 type="number"
                                                                 value={item.manualPrice ?? ''}
                                                                 placeholder={item.price.toString()}
                                                                 onChange={(e) => handleManualPriceChange(item.id, e.target.value)}
                                                                 onFocus={(e) => e.target.select()}
-                                                                className={`w-full text-right border-gray-200 dark:border-gray-600 rounded py-1 px-1 sm:px-2 text-xs sm:text-sm focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] ${item.manualPrice ? 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-700 dark:text-yellow-300' : 'dark:bg-gray-700 dark:text-gray-100'}`}
+                                                                className={`w-full text-right border-gray-200 dark:border-gray-600 rounded py-0.5 px-1 text-xs focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] ${item.manualPrice ? 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-700 dark:text-yellow-300' : 'dark:bg-gray-700 dark:text-gray-100'}`}
                                                                 disabled={!item.included}
                                                             />
                                                         </td>
-                                                        <td className="px-2 sm:px-4 py-2 text-right font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm">
+                                                        <td className="px-2 py-1 text-right font-medium text-gray-900 dark:text-gray-100 text-xs">
                                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
                                                                 (item.manualPrice ?? item.price) * item.quantity
                                                             )}
                                                         </td>
-                                                        <td className="px-2 sm:px-4 py-2 text-center" onClick={(e) => e.stopPropagation()}>
+                                                        <td className="px-2 py-1 text-center" onClick={(e) => e.stopPropagation()}>
                                                             {item.isCustom && (
                                                                 <button
                                                                     onClick={() => handleDeleteItem(item.id)}
-                                                                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                                                    className="text-gray-400 hover:text-red-500 transition-colors p-0.5"
                                                                     title="Remover item"
                                                                 >
-                                                                    <Trash2 size={14} className="sm:w-4 sm:h-4" />
+                                                                    <Trash2 size={12} />
                                                                 </button>
                                                             )}
                                                         </td>
@@ -479,10 +468,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className="p-2 border-t border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                                        <div className="p-1.5 border-t border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
                                             <button
                                                 onClick={() => handleAddCustomItem(category)}
-                                                className="w-full py-2 text-sm text-[var(--color-primary)] font-medium hover:bg-white dark:hover:bg-gray-600 hover:shadow-sm rounded border border-dashed border-[var(--color-primary)]/30 transition-all flex items-center justify-center gap-2"
+                                                className="w-full py-1.5 text-xs text-[var(--color-primary)] font-medium hover:bg-white dark:hover:bg-gray-600 hover:shadow-sm rounded border border-dashed border-[var(--color-primary)]/30 transition-all flex items-center justify-center gap-2"
                                             >
                                                 + Adicionar Item
                                             </button>
@@ -492,14 +481,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             </div>
                         );
                     })}
-
-
-                    <button
-                        onClick={handleGenerateReport}
-                        className="btn btn-primary text-xs sm:text-sm flex items-center gap-2 mt-2"
-                    >
-                        <Save size={16} /> Salvar e Gerar Relatório
-                    </button>
                 </div>
 
                 {/* Sidebar Summary */}
