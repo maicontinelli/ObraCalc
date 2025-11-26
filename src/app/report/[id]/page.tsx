@@ -57,7 +57,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                         date: orcamento.data_atualizacao || orcamento.data_criacao,
                         items: mappedItems,
                         bdi: orcamento.bdi_percent,
-                        logo: orcamento.logo_url // Assuming we might save logo url later, or use local state for now
+
                     });
                     return;
                 }
@@ -111,7 +111,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
             h2 { margin-top: 0; font-size: 18px; color: #333; }
             .header { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
             .meta { font-size: 14px; color: #666; }
-            .logo { max-height: 60px; max-width: 150px; }
+
             .category { margin-top: 30px; page-break-inside: avoid; }
             .cat-header { background: #f8f9fa; padding: 8px 12px; font-weight: bold; font-size: 14px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
             table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }

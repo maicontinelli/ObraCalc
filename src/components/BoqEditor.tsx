@@ -33,7 +33,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const [projectName, setProjectName] = useState('Novo Orçamento');
     const [clientName, setClientName] = useState('');
-    const [logo, setLogo] = useState<string | null>(null);
+
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
 
@@ -50,7 +50,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     if (parsed.bdi) setBdi(parsed.bdi);
                     if (parsed.title) setProjectName(parsed.title);
                     if (parsed.client) setClientName(parsed.client);
-                    if (parsed.logo) setLogo(parsed.logo);
+
 
                     // Re-initialize collapsed state based on loaded items
                     const initialCollapsedState: Record<string, boolean> = {};
@@ -176,7 +176,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                 date: new Date().toISOString(),
                 items: items,
                 bdi: bdi,
-                logo: logo
             };
             localStorage.setItem(`estimate_${estimateId}`, JSON.stringify(estimateData));
             setLastSaved(new Date());
