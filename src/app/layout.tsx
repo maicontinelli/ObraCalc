@@ -6,8 +6,8 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Orçamentos Civil",
-  description: "Crie orçamentos de construção civil de forma rápida e profissional.",
+  title: "ObraCalc - Orçamentos de Construção",
+  description: "Crie orçamentos de construção civil de forma rápida, profissional e inteligente com ObraCalc.",
 };
 
 export default function RootLayout({
