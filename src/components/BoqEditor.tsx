@@ -3,10 +3,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { BOQ_TEMPLATES } from '@/lib/constants';
-import { Save, ArrowLeft, RefreshCw, Trash2, Moon, Sun } from 'lucide-react';
-import Link from 'next/link';
+import { Save, RefreshCw, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTheme } from '@/contexts/ThemeContext';
+import CommandSearch from './CommandSearch';
 
 
 type BoqItem = {
@@ -25,7 +24,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const type = (searchParams?.get('type') as 'obra_nova') || 'obra_nova';
-    const { theme, toggleTheme } = useTheme();
 
     const [items, setItems] = useState<BoqItem[]>([]);
     const [bdi, setBdi] = useState(20); // Default 20%
@@ -230,6 +228,42 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         setItems(prev => prev.map(item => item.id === id ? { ...item, name: newName } : item));
     };
 
+    const handleSearchSelect = (item: BoqItem) => {
+        setItems(prev => prev.map(i => {
+            if (i.id === item.id) {
+                return { ...i, included: true };
+            }
+            return i;
+        }));
+
+        // Expand the category of the selected item
+        setCollapsedCategories(prev => ({
+            ...prev,
+            [item.category]: false
+        }));
+    };
+
+    const handleAiAdd = (newItemData: Omit<BoqItem, 'id' | 'quantity' | 'included' | 'isCustom'>) => {
+        const newItem: BoqItem = {
+            id: crypto.randomUUID(),
+            name: newItemData.name,
+            unit: newItemData.unit,
+            price: newItemData.price,
+            quantity: 1,
+            manualPrice: newItemData.price,
+            included: true,
+            category: newItemData.category || "Itens Adicionais",
+            isCustom: true
+        };
+
+        setItems(prev => [newItem, ...prev]);
+
+        setCollapsedCategories(prev => ({
+            ...prev,
+            [newItem.category]: false
+        }));
+    };
+
 
 
     const handleGenerateReport = async () => {
@@ -245,12 +279,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     return (
         <div className="pb-20 dark:bg-gray-900">
             {/* Toolbar */}
-            <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm mb-6">
+            {/* Toolbar */}
+            <div className="sticky top-16 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm mb-6 transition-all">
                 <div className="container mx-auto py-2 flex flex-col sm:flex-row justify-between items-center gap-4 px-4">
                     <div className="flex items-center gap-4 flex-1 w-full">
-                        <Link href="/" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 dark:text-gray-400 shrink-0">
-                            <ArrowLeft size={20} />
-                        </Link>
                         <div className="flex-1">
                             <input
                                 type="text"
@@ -290,13 +322,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                         >
                             <Save size={14} /> Salvar e Gerar
                         </button>
-                        <button
-                            onClick={toggleTheme}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500 dark:text-gray-400 transition-colors"
-                            title={theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}
-                        >
-                            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-                        </button>
                     </div>
                 </div>
             </div>
@@ -304,6 +329,14 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
                 {/* Main Editor */}
                 <div className="lg:col-span-2 space-y-6">
+
+                    {/* Command Search Bar */}
+                    <CommandSearch
+                        items={items}
+                        onSelect={handleSearchSelect}
+                        onAddCustom={handleAiAdd}
+                    />
+
                     {/* Button to add custom category - moved to top */}
                     {!groupedItems["Itens Adicionais"] && (
                         <button
