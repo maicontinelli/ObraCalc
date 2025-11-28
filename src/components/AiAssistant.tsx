@@ -91,19 +91,14 @@ export default function AiAssistant() {
                 </div>
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-6 text-indigo-600 dark:text-indigo-400 font-semibold">
-                        <Sparkles size={20} />
-                        <h3>Assistente IA de Construção</h3>
-                    </div>
-
                     <form onSubmit={handleSearch} className="relative">
                         <input
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Pergunte sobre materiais, normas ou custos..."
-                            className="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-200/50 dark:border-gray-700/50 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200/50 dark:focus:ring-indigo-900/50 outline-none transition-all shadow-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                        />
+                            className="w-full pl-4 pr-12 py-4 rounded-xl border border-gray-200/50 dark:border-gray-700/50 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200/50 dark:focus:ring-indigo-900/50 outline-none transition-all shadow-sm text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
+
                         <button
                             type="submit"
                             disabled={isLoading || !query.trim()}
@@ -112,6 +107,10 @@ export default function AiAssistant() {
                             {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                         </button>
                     </form>
+                    <div className="flex items-center justify-center gap-2 mb-6 mt-4 text-indigo-600 dark:text-indigo-400 font-semibold">
+                        <Sparkles size={20} />
+                        <h3>Assistente IA de Construção</h3>
+                    </div>
 
                     {error && (
                         <div className="mt-4 p-3 bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm text-red-600 dark:text-red-400 rounded-lg text-sm flex items-center gap-2 border border-red-100 dark:border-red-800/50">

@@ -39,10 +39,10 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mx-auto">
           <button
             onClick={() => handleStart('obra_nova')}
-            className="w-full py-4 px-8 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-medium transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+            className="w-full py-2 px-6 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-medium text-sm transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
           >
             <FilePlus size={20} className="group-hover:scale-110 transition-transform" />
-            Começar orçamento gratis
+            Iniciar orçamento grátis
           </button>
         </div>
         {/* Features - Minimal list */}
@@ -69,7 +69,7 @@ export default function Home() {
       <footer className="border-t border-gray-100 dark:border-gray-800 mt-20">
         <div className="max-w-5xl mx-auto px-6 py-8">
           <p className="text-xs text-gray-400 dark:text-gray-600">
-            © 2024 ObraCalc. Ferramenta gratuita para orçamentos de construção.
+            © 2024 ObraCalc. Ferramenta gratuita para orçamentos da construção civil.
           </p>
         </div>
       </footer>
