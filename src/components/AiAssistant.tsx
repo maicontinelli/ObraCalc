@@ -97,17 +97,17 @@ export default function AiAssistant() {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Pergunte sobre materiais, normas ou custos..."
-                            className="w-full pl-4 pr-12 py-4 rounded-xl border border-gray-200/50 dark:border-gray-700/50 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200/50 dark:focus:ring-indigo-900/50 outline-none transition-all shadow-sm text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
+                            className="w-full pl-4 pr-12 py-4 rounded-xl border border-blue-200 dark:border-blue-800 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-primary dark:focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all shadow-sm text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
 
                         <button
                             type="submit"
                             disabled={isLoading || !query.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary dark:bg-primary text-white rounded-lg hover:bg-primary/90 dark:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                         >
                             {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                         </button>
                     </form>
-                    <div className="flex items-center justify-center gap-2 mb-6 mt-4 text-indigo-600 dark:text-indigo-400 font-semibold">
+                    <div className="flex items-center justify-center gap-2 mb-6 mt-4 text-primary dark:text-blue-400 font-semibold">
                         <Sparkles size={20} />
                         <h3>Assistente IA de Construção</h3>
                     </div>

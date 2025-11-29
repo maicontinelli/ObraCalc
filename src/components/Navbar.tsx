@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Moon, Sun, Menu, X, Home, FileText, Info, Phone } from 'lucide-react';
+import { Moon, Sun, Menu, X, Info, Phone, CreditCard, Heart } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
@@ -12,8 +12,8 @@ export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const navLinks = [
-        { name: 'Início', href: '/', icon: Home },
-        { name: 'Meus Orçamentos', href: '/', icon: FileText }, // Placeholder
+        { name: 'Planos', href: '/planos', icon: CreditCard },
+        { name: 'Apoie o App', href: '/apoie', icon: Heart },
         { name: 'Sobre', href: '#', icon: Info },
         { name: 'Contato', href: '#', icon: Phone },
     ];
@@ -33,7 +33,7 @@ export default function Navbar() {
                     <div className="flex-shrink-0">
                         <Link href="/" className="flex items-center gap-2">
                             <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center">
-                                <span className="text-white dark:text-gray-900 font-bold text-lg">O</span>
+                                <span className="text-primary dark:text-primary font-bold text-lg">O</span>
                             </div>
                             <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
                                 ObraCalc
@@ -50,7 +50,7 @@ export default function Navbar() {
                                     href={link.href}
                                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(link.href) && link.href !== '#'
                                         ? 'text-[var(--color-primary)] bg-gray-50 dark:bg-gray-800'
-                                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
+                                        : 'text-primary dark:text-primary hover:text-primary dark:hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800'
                                         }`}
                                 >
                                     {link.name}
@@ -63,7 +63,7 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center gap-4">
                         <button
                             onClick={toggleTheme}
-                            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]"
+                            className="p-2 rounded-full text-primary dark:text-primary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]"
                             aria-label="Alternar tema"
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -80,7 +80,7 @@ export default function Navbar() {
                     <div className="md:hidden flex items-center gap-2">
                         <button
                             onClick={toggleTheme}
-                            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            className="p-2 rounded-full text-primary dark:text-primary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
@@ -106,7 +106,7 @@ export default function Navbar() {
                                 onClick={() => setIsMenuOpen(false)}
                                 className={`flex items-center gap-2 block px-3 py-2 rounded-md text-base font-medium ${isActive(link.href) && link.href !== '#'
                                     ? 'text-[var(--color-primary)] bg-gray-50 dark:bg-gray-800'
-                                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
+                                    : 'text-primary dark:text-primary hover:text-primary dark:hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800'
                                     }`}
                             >
                                 <link.icon size={18} />

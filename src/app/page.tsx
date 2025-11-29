@@ -1,8 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FilePlus } from 'lucide-react';
-import AiAssistant from '@/components/AiAssistant';
+
+import { Hero } from '@/components/Hero';
+import { TrustBar } from '@/components/TrustBar';
+import { Features } from '@/components/Features';
+import { DemoSection } from '@/components/DemoSection';
+import { Footer } from '@/components/Footer';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const router = useRouter();
@@ -13,66 +18,49 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#191919] transition-colors relative isolate">
-      {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-6 pt-20 pb-16 relative">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-[#191919]">
+      <main className="flex-grow">
+        <Hero />
+        <TrustBar />
+        <Features />
+        <DemoSection />
 
-        {/* Hero Section - Minimal */}
-        <div className="mb-16 relative isolate text-center">
-          {/* Background Image */}
+        {/* CTA Section */}
+        {/* CTA Section */}
+        <section className="py-24 bg-accent text-white text-center relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-10">
+            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl opacity-20"></div>
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-400 rounded-full blur-3xl opacity-20"></div>
+          </div>
 
-
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4 tracking-tight leading-tight relative z-10">
-            ObraCalc
-          </h1>
-          <p className="text-base text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed relative z-10">
-            A forma mais rápida de criar orçamentos profissionais.
-          </p>
-        </div>
-
-        {/* AI Assistant */}
-        <div className="mb-12">
-          <AiAssistant />
-        </div>
-
-        {/* CTA Button - Clean */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mx-auto">
-          <button
-            onClick={() => handleStart('obra_nova')}
-            className="w-full py-2 px-6 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-medium text-sm transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
-          >
-            <FilePlus size={20} className="group-hover:scale-110 transition-transform" />
-            Iniciar orçamento grátis
-          </button>
-        </div>
-        {/* Features - Minimal list */}
-        <div className="border-t border-gray-100 dark:border-gray-800 pt-12">
-          <ul className="flex flex-wrap justify-center gap-6 sm:gap-12 text-sm text-gray-600 dark:text-gray-400">
-            <li className="flex items-center gap-3">
-              <div className="w-1 h-1 rounded-full bg-gray-400" />
-              Base SINAPI atualizada
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="w-1 h-1 rounded-full bg-gray-400" />
-              Exportação em PDF e HTML
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="w-1 h-1 rounded-full bg-gray-400" />
-              Totalmente gratuito
-            </li>
-          </ul>
-        </div>
-
+          <div className="container mx-auto px-4 relative z-10">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Pronto para otimizar seus orçamentos?</h2>
+            <p className="text-xl opacity-90 max-w-2xl mx-auto mb-10">
+              Junte-se a mais de 5.000 engenheiros e arquitetos que economizam 80% do tempo de orçamento.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button
+                size="lg"
+                onClick={() => handleStart('obra_nova')}
+                className="bg-white text-accent hover:bg-white/90 border-0 h-14 px-8 text-lg font-semibold shadow-lg transition-transform hover:scale-105"
+                data-testid="button-cta"
+              >
+                Criar Orçamento Grátis
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white/10 h-14 px-8 text-lg font-semibold bg-transparent"
+              >
+                Falar com Consultor
+              </Button>
+            </div>
+          </div>
+        </section>
       </main>
-
-      {/* Footer - Minimal */}
-      <footer className="border-t border-gray-100 dark:border-gray-800 mt-20">
-        <div className="max-w-5xl mx-auto px-6 py-8">
-          <p className="text-xs text-gray-400 dark:text-gray-600">
-            © 2024 ObraCalc. Ferramenta gratuita para orçamentos da construção civil.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
