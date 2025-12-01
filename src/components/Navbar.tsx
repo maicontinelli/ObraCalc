@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Moon, Sun, Menu, X, Info, Phone, CreditCard, Heart } from 'lucide-react';
@@ -14,16 +15,13 @@ export default function Navbar() {
     const navLinks = [
         { name: 'Planos', href: '/planos', icon: CreditCard },
         { name: 'Apoie o App', href: '/apoie', icon: Heart },
-        { name: 'Sobre', href: '#', icon: Info },
+        { name: 'Sobre', href: '/sobre', icon: Info },
         { name: 'Contato', href: '#', icon: Phone },
     ];
 
     const isActive = (path: string) => pathname === path;
 
-    const handleNewEstimate = () => {
-        const newId = crypto.randomUUID();
-        window.open(`/editor/${newId}?type=obra_nova`, '_blank');
-    };
+
 
     return (
         <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-[#191919]/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 transition-colors">
@@ -31,10 +29,14 @@ export default function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <div className="flex-shrink-0">
-                        <Link href="/" className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center">
-                                <span className="text-primary dark:text-primary font-bold text-lg">O</span>
-                            </div>
+                        <Link href="/" className="flex items-center gap-3">
+                            <Image
+                                src="/obracalc-logo.png"
+                                alt="ObraCalc Logo"
+                                width={32}
+                                height={32}
+                                className="w-8 h-8 object-contain"
+                            />
                             <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
                                 ObraCalc
                             </span>
@@ -68,12 +70,7 @@ export default function Navbar() {
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
-                        <button
-                            onClick={handleNewEstimate}
-                            className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity shadow-sm"
-                        >
-                            Novo Orçamento
-                        </button>
+
                     </div>
 
                     {/* Mobile menu button */}
@@ -113,17 +110,7 @@ export default function Navbar() {
                                 {link.name}
                             </Link>
                         ))}
-                        <div className="pt-4 pb-2">
-                            <button
-                                onClick={() => {
-                                    setIsMenuOpen(false);
-                                    handleNewEstimate();
-                                }}
-                                className="block w-full text-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-3 rounded-lg text-base font-medium hover:opacity-90 transition-opacity shadow-sm"
-                            >
-                                Novo Orçamento
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             )}

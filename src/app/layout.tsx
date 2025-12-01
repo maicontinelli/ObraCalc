@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "ObraCalc - Orçamentos de Construção",
   description: "Crie orçamentos de construção civil de forma rápida, profissional e inteligente com ObraCalc.",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

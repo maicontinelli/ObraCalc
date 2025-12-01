@@ -64,18 +64,28 @@ export default function AiAssistant() {
         if (!response?.suggestedBudget) return;
 
         const newId = crypto.randomUUID();
+        const aiRequestId = crypto.randomUUID();
+
         const budgetData = {
             id: newId,
             title: response.suggestedBudget.title,
             client: '',
+            phone: '',
             date: new Date().toISOString(),
             items: response.suggestedBudget.items.map(item => ({
                 id: crypto.randomUUID(),
                 ...item,
                 included: true,
-                isCustom: true // Mark as custom so they can be edited/deleted easily
+                isCustom: true,
+                aiRequestId: aiRequestId // Link items to this AI request
             })),
             bdi: 20,
+            aiRequests: [{
+                id: aiRequestId,
+                query: query, // Save the original user query
+                guidance: response.text, // Save the AI response as guidance
+                timestamp: new Date().toISOString()
+            }]
         };
 
         localStorage.setItem(`estimate_${newId}`, JSON.stringify(budgetData));
@@ -107,9 +117,22 @@ export default function AiAssistant() {
                             {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                         </button>
                     </form>
-                    <div className="flex items-center justify-center gap-2 mb-6 mt-4 text-primary dark:text-blue-400 font-semibold">
+                    <div className="flex items-center justify-center gap-2 mb-2 mt-4 text-primary dark:text-blue-400 font-semibold">
                         <Sparkles size={20} />
                         <h3>Assistente IA de Construção</h3>
+                    </div>
+
+                    <div className="flex justify-center mb-6 mt-[1.5cm]">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const newId = crypto.randomUUID();
+                                router.push(`/editor/${newId}?type=obra_nova`);
+                            }}
+                            className="px-4 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700 border-2 border-blue-300 dark:border-blue-700 rounded-full transition-all hover:scale-105"
+                        >
+                            Iniciar orçamento grátis
+                        </button>
                     </div>
 
                     {error && (

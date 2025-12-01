@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { BOQ_TEMPLATES } from '@/lib/constants';
-import { Save, RefreshCw, Trash2 } from 'lucide-react';
+import { Save, Trash2, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import CommandSearch from './CommandSearch';
 
@@ -18,6 +18,7 @@ type BoqItem = {
     included: boolean;
     category: string;
     isCustom?: boolean;
+    aiRequestId?: string;
 };
 
 export default function BoqEditor({ estimateId }: { estimateId: string }) {
@@ -27,14 +28,16 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
     const [items, setItems] = useState<BoqItem[]>([]);
     const [bdi, setBdi] = useState(20); // Default 20%
-    const [isSaving, setIsSaving] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
-    const [projectName, setProjectName] = useState('Novo Orçamento');
+
+    const [projectName, setProjectName] = useState('Serviço');
     const [clientName, setClientName] = useState('');
+    const [clientPhone, setClientPhone] = useState('');
 
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
+    const [aiRequests, setAiRequests] = useState<{ id: string, query: string, guidance: string, timestamp: string }[]>([]);
 
+    const [showValidationMessage, setShowValidationMessage] = useState(false);
 
     // Initialize items from default BOQ based on type
     useEffect(() => {
@@ -48,6 +51,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     if (parsed.bdi) setBdi(parsed.bdi);
                     if (parsed.title) setProjectName(parsed.title);
                     if (parsed.client) setClientName(parsed.client);
+                    if (parsed.phone) setClientPhone(parsed.phone);
+                    if (parsed.aiRequests) setAiRequests(parsed.aiRequests);
 
 
                     // Re-initialize collapsed state based on loaded items
@@ -163,25 +168,54 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         setItems(prev => prev.map(item => item.id === id ? { ...item, unit: newUnit } : item));
     };
 
+    const formatPhoneNumber = (value: string) => {
+        // Remove tudo que não é número
+        const numbers = value.replace(/\D/g, '');
+
+        // Limita a 11 dígitos (DDD + 9 dígitos)
+        const limited = numbers.slice(0, 11);
+
+        // Aplica a máscara
+        if (limited.length <= 2) {
+            return limited;
+        } else if (limited.length <= 6) {
+            return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
+        } else if (limited.length <= 10) {
+            return `(${limited.slice(0, 2)}) ${limited.slice(2, 6)}-${limited.slice(6)}`;
+        } else {
+            return `(${limited.slice(0, 2)}) ${limited.slice(2, 7)}-${limited.slice(7)}`;
+        }
+    };
+
+    const handlePhoneChange = (value: string) => {
+        const formatted = formatPhoneNumber(value);
+        setClientPhone(formatted);
+    };
+
+    const isValidPhone = (phone: string) => {
+        // Remove caracteres não numéricos
+        const numbers = phone.replace(/\D/g, '');
+        // Verifica se tem 10 ou 11 dígitos (com ou sem 9 no celular)
+        return numbers.length >= 10 && numbers.length <= 11;
+    };
+
     const handleSave = async () => {
-        setIsSaving(true);
         try {
             // Save to localStorage
             const estimateData = {
                 id: estimateId,
                 title: projectName,
                 client: clientName,
+                phone: clientPhone,
                 date: new Date().toISOString(),
                 items: items,
                 bdi: bdi,
+                aiRequests: aiRequests
             };
             localStorage.setItem(`estimate_${estimateId}`, JSON.stringify(estimateData));
-            setLastSaved(new Date());
         } catch (error) {
             console.error('Error saving estimate:', error);
             alert('Erro ao salvar localmente.');
-        } finally {
-            setIsSaving(false);
         }
     };
 
@@ -243,30 +277,64 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         }));
     };
 
-    const handleAiAdd = (newItemData: Omit<BoqItem, 'id' | 'quantity' | 'included' | 'isCustom'>) => {
-        const newItem: BoqItem = {
+    const handleAiAdd = (
+        newItemData: Omit<BoqItem, 'id' | 'included' | 'isCustom'> | Omit<BoqItem, 'id' | 'included' | 'isCustom'>[],
+        aiContext?: { query: string, guidance: string }
+    ) => {
+        const itemsToAdd = Array.isArray(newItemData) ? newItemData : [newItemData];
+
+        let aiRequestId: string | undefined;
+
+        if (aiContext) {
+            aiRequestId = crypto.randomUUID();
+            setAiRequests(prev => [...prev, {
+                id: aiRequestId!,
+                query: aiContext.query,
+                guidance: aiContext.guidance,
+                timestamp: new Date().toISOString()
+            }]);
+        }
+
+        const newItems: BoqItem[] = itemsToAdd.map(data => ({
             id: crypto.randomUUID(),
-            name: newItemData.name,
-            unit: newItemData.unit,
-            price: newItemData.price,
-            quantity: 1,
-            manualPrice: newItemData.price,
+            name: data.name,
+            unit: data.unit,
+            price: data.price,
+            quantity: data.quantity || 1,
+            manualPrice: data.price,
             included: true,
-            category: newItemData.category || "Itens Adicionais",
-            isCustom: true
-        };
-
-        setItems(prev => [newItem, ...prev]);
-
-        setCollapsedCategories(prev => ({
-            ...prev,
-            [newItem.category]: false
+            category: data.category || "Itens Adicionais",
+            isCustom: true,
+            aiRequestId: aiRequestId // Link to the AI request
         }));
+
+        setItems(prev => [...newItems, ...prev]);
+
+        // Expand categories for new items
+        setCollapsedCategories(prev => {
+            const newCollapsed = { ...prev };
+            newItems.forEach(item => {
+                newCollapsed[item.category] = false;
+            });
+            return newCollapsed;
+        });
     };
 
 
 
     const handleGenerateReport = async () => {
+        if (!clientName.trim()) {
+            setShowValidationMessage(true);
+            setTimeout(() => setShowValidationMessage(false), 5000);
+            return;
+        }
+
+        if (!clientPhone.trim() || !isValidPhone(clientPhone)) {
+            setShowValidationMessage(true);
+            setTimeout(() => setShowValidationMessage(false), 5000);
+            return;
+        }
+
         // 1. Save to LocalStorage
         await handleSave();
 
@@ -281,71 +349,115 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             {/* Toolbar */}
             {/* Toolbar */}
             <div className="sticky top-16 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm mb-6 transition-all">
-                <div className="container mx-auto py-2 flex flex-col sm:flex-row justify-between items-center gap-4 px-4">
-                    <div className="flex items-center gap-4 flex-1 w-full">
-                        <div className="flex-1">
+                <div className="container mx-auto py-2 flex flex-wrap sm:flex-nowrap justify-between items-center gap-4 px-4">
+                    <div className="flex items-center gap-3 flex-1 w-full min-w-0 overflow-hidden">
+                        <input
+                            type="text"
+                            value={projectName}
+                            onChange={(e) => setProjectName(e.target.value)}
+                            className="text-sm text-gray-500 dark:text-gray-400 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 p-1 rounded focus:ring-0 w-auto min-w-[120px] max-w-[200px] placeholder-gray-400 dark:placeholder-gray-500 truncate"
+                            placeholder="Nome do Projeto"
+                        />
+                        <span className="text-gray-300 dark:text-gray-600 text-sm flex-shrink-0">/</span>
+                        <div className="flex items-center gap-1 flex-1 min-w-0">
                             <input
                                 type="text"
-                                value={projectName}
-                                onChange={(e) => setProjectName(e.target.value)}
-                                className="font-bold text-base text-gray-900 dark:text-gray-100 dark:bg-gray-800 border-none p-0 focus:ring-0 w-full placeholder-gray-400 dark:placeholder-gray-500"
-                                placeholder="Nome do Projeto"
+                                value={clientName}
+                                onChange={(e) => setClientName(e.target.value)}
+                                className={`text-sm dark:bg-gray-800 p-1 rounded focus:ring-0 flex-1 min-w-[100px] placeholder-gray-400 dark:placeholder-gray-500 truncate transition-all ${showValidationMessage && !clientName.trim()
+                                    ? 'border-2 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-gray-900 dark:text-gray-100'
+                                    : 'text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600'
+                                    }`}
+                                placeholder="Empresa *"
+                                required
                             />
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="text"
-                                    value={clientName}
-                                    onChange={(e) => setClientName(e.target.value)}
-                                    className="text-xs text-gray-500 dark:text-gray-400 dark:bg-gray-800 border-none p-0 focus:ring-0 w-auto placeholder-gray-400 dark:placeholder-gray-500"
-                                    placeholder="Nome do Cliente"
-                                />
-                                <span className="text-gray-300 text-xs">|</span>
-                                <div className="text-xs text-gray-500 flex items-center gap-2 whitespace-nowrap">
-                                    {isSaving ? (
-                                        <span className="flex items-center gap-1 text-blue-600"><RefreshCw size={10} className="animate-spin" /> Salvando...</span>
-                                    ) : lastSaved ? (
-                                        <span className="flex items-center gap-1">
-                                            Salvo às {lastSaved.toLocaleTimeString()}
-                                        </span>
-                                    ) : (
-                                        <span>Não salvo</span>
-                                    )}
-                                </div>
-                            </div>
+                        </div>
+                        <span className="text-gray-300 dark:text-gray-600 text-sm flex-shrink-0">/</span>
+                        <div className="flex items-center gap-1 flex-1 min-w-0">
+                            <input
+                                type="tel"
+                                value={clientPhone}
+                                onChange={(e) => handlePhoneChange(e.target.value)}
+                                className={`text-sm dark:bg-gray-800 p-1 rounded focus:ring-0 flex-1 min-w-[100px] placeholder-gray-400 dark:placeholder-gray-500 truncate transition-all ${showValidationMessage && !clientPhone.trim()
+                                    ? 'border-2 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-gray-900 dark:text-gray-100'
+                                    : 'text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600'
+                                    }`}
+                                placeholder="Telefone *"
+                                required
+                            />
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <button
                             onClick={handleGenerateReport}
-                            className="btn btn-primary text-xs px-3 py-2 flex items-center gap-2 whitespace-nowrap"
+                            className="btn btn-primary text-xs p-2 flex items-center justify-center"
+                            title="Salvar e Gerar Relatório"
                         >
-                            <Save size={14} /> Salvar e Gerar
+                            <Save size={16} />
                         </button>
                     </div>
                 </div>
             </div>
 
+            {/* Validation Message Dropdown */}
+            {showValidationMessage && (
+                <div className="container mx-auto px-4 -mt-4 mb-4">
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-r-lg shadow-md animate-in slide-in-from-top-2 fade-in">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0">
+                                <svg className="h-5 w-5 text-yellow-400 dark:text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-sm font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
+                                    Informações obrigatórias
+                                </h3>
+                                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                                    Por favor, preencha o <strong>nome do cliente</strong> e o <strong>telefone</strong> para gerar o relatório.
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowValidationMessage(false)}
+                                className="flex-shrink-0 text-yellow-400 hover:text-yellow-600 dark:text-yellow-500 dark:hover:text-yellow-300"
+                            >
+                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
                 {/* Main Editor */}
                 <div className="lg:col-span-2 space-y-6">
 
-                    {/* Command Search Bar */}
-                    <CommandSearch
-                        items={items}
-                        onSelect={handleSearchSelect}
-                        onAddCustom={handleAiAdd}
-                    />
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border-2 border-blue-500/50 dark:border-blue-400/50 mb-8 ring-4 ring-blue-500/10 dark:ring-blue-400/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                            <Sparkles className="w-24 h-24 text-blue-500" />
+                        </div>
 
-                    {/* Button to add custom category - moved to top */}
-                    {!groupedItems["Itens Adicionais"] && (
-                        <button
-                            onClick={() => handleAddCustomItem("Itens Adicionais")}
-                            className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors flex items-center justify-center gap-2 text-sm"
-                        >
-                            + Adicionar Categoria Personalizada
-                        </button>
-                    )}
+                        <div className="flex items-center gap-2 mb-3 relative z-10">
+                            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                                <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <span className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                                Assistente IA de Construção
+                            </span>
+                        </div>
+
+                        <div className="relative z-10">
+                            <CommandSearch
+                                items={items}
+                                onSelect={handleSearchSelect}
+                                onAddCustom={handleAiAdd}
+                            />
+                        </div>
+                    </div>
+
                     {Object.entries(groupedItems).map(([category, catItems]) => {
                         const isCollapsed = collapsedCategories[category];
                         const anyIncluded = catItems.some(i => i.included);
@@ -380,7 +492,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                 <path d="m6 9 6 6 6-6" />
                                             </svg>
                                         </button>
-                                        <h2 className="font-semibold text-sm text-gray-800 capitalize tracking-wide select-none">{category}</h2>
+                                        <h2 className="font-semibold text-sm text-gray-800 dark:text-white capitalize tracking-wide select-none">{category}</h2>
                                     </div>
 
                                     <div className="flex items-center gap-3">
@@ -513,6 +625,15 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             </div>
                         );
                     })}
+                    {/* Button to add custom category - moved to bottom */}
+                    {!groupedItems["Itens Adicionais"] && (
+                        <button
+                            onClick={() => handleAddCustomItem("Itens Adicionais")}
+                            className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors flex items-center justify-center gap-2 text-sm"
+                        >
+                            + Adicionar Categoria Personalizada
+                        </button>
+                    )}
                 </div>
 
                 {/* Sidebar Summary */}
