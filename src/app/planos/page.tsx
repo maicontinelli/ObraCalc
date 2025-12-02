@@ -3,6 +3,9 @@
 import { Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Footer } from '@/components/Footer';
+import Link from 'next/link';
+
+
 
 export default function PlansPage() {
     const plans = [
@@ -15,6 +18,7 @@ export default function PlansPage() {
                 'Acesso básico a recursos',
                 'Criação de orçamentos',
                 'Exportação em PDF simples',
+                'Exportação em HTML',
             ],
             limitations: [
                 'Não salva orçamentos permanentemente',
@@ -22,11 +26,12 @@ export default function PlansPage() {
                 'Apenas 1 usuário',
             ],
             cta: 'Começar Grátis',
+            href: '/editor/new',
             popular: false,
         },
         {
-            name: 'Mais',
-            price: 'R$ 20,00',
+            name: 'Profissional',
+            price: 'R$ 19,90',
             period: '/mês',
             description: 'Para profissionais que precisam de organização e histórico.',
             features: [
@@ -34,26 +39,31 @@ export default function PlansPage() {
                 'Salva todos os orçamentos',
                 'Gerenciamento por cliente e serviço',
                 'Funções extras de cálculo',
-                'Acesso para até 5 usuários',
+                'Acesso para até 2 usuários',
+                'Base de dados ampliada',
+                'Rentabilize com indicação de serviços',
             ],
             limitations: [],
-            cta: 'Assinar Plano Mais',
+            cta: 'Assinar Plano Profissional',
+            href: 'https://pay.cakto.com.br/3fewkqc_673678',
             popular: true,
         },
         {
             name: 'Negócio',
-            price: 'R$ 70,00',
+            price: 'R$ 139,90',
             period: '/mês',
             description: 'Para empresas que precisam de colaboração e controle total.',
             features: [
-                'Tudo do plano Mais',
+                'Tudo do plano Profissional',
                 'Gerenciamento compartilhável',
                 'Painel administrativo avançado',
                 'Suporte prioritário',
-                'Acesso para até 20 usuários',
+                'Acesso para até 9 usuários',
+                'Personalização de relatórios',
             ],
             limitations: [],
             cta: 'Falar com Vendas',
+            href: 'https://pay.cakto.com.br/qd8rytv',
             popular: false,
         },
     ];
@@ -124,15 +134,17 @@ export default function PlansPage() {
                                     </ul>
                                 </div>
 
-                                <Button
-                                    className={`w-full h-12 text-lg font-medium ${plan.popular
-                                        ? 'bg-primary hover:bg-primary/90 text-white'
-                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
-                                        }`}
-                                    variant={plan.popular ? 'default' : 'outline'}
-                                >
-                                    {plan.cta}
-                                </Button>
+                                <Link href={plan.href} className="w-full" target={plan.price === 'R$ 0' ? '_self' : '_blank'}>
+                                    <Button
+                                        className={`w-full h-12 text-lg font-medium ${plan.popular
+                                            ? 'bg-primary hover:bg-primary/90 text-white'
+                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
+                                            }`}
+                                        variant={plan.popular ? 'default' : 'outline'}
+                                    >
+                                        {plan.cta}
+                                    </Button>
+                                </Link>
                             </div>
                         ))}
                     </div>

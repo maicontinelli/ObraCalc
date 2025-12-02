@@ -351,14 +351,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             <div className="sticky top-16 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm mb-6 transition-all">
                 <div className="container mx-auto py-2 flex flex-wrap sm:flex-nowrap justify-between items-center gap-4 px-4">
                     <div className="flex items-center gap-3 flex-1 w-full min-w-0 overflow-hidden">
-                        <input
-                            type="text"
-                            value={projectName}
-                            onChange={(e) => setProjectName(e.target.value)}
-                            className="text-sm text-gray-500 dark:text-gray-400 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 p-1 rounded focus:ring-0 w-auto min-w-[120px] max-w-[200px] placeholder-gray-400 dark:placeholder-gray-500 truncate"
-                            placeholder="Nome do Projeto"
-                        />
-                        <span className="text-gray-300 dark:text-gray-600 text-sm flex-shrink-0">/</span>
+
                         <div className="flex items-center gap-1 flex-1 min-w-0">
                             <input
                                 type="text"
@@ -368,7 +361,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     ? 'border-2 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-gray-900 dark:text-gray-100'
                                     : 'text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600'
                                     }`}
-                                placeholder="Empresa *"
+                                placeholder="Prestador *"
                                 required
                             />
                         </div>

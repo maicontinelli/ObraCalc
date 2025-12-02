@@ -26,6 +26,8 @@ module.exports = {
             },
             animation: {
                 blob: "blob 7s infinite",
+                shimmer: "shimmer 3s ease-in-out infinite",
+                'glow-border': "glow-border 2s ease-in-out infinite",
             },
             keyframes: {
                 blob: {
@@ -40,6 +42,22 @@ module.exports = {
                     },
                     "100%": {
                         transform: "translate(0px, 0px) scale(1)",
+                    },
+                },
+                shimmer: {
+                    "0%": {
+                        backgroundPosition: "-200% 0",
+                    },
+                    "100%": {
+                        backgroundPosition: "200% 0",
+                    },
+                },
+                'glow-border': {
+                    "0%, 100%": {
+                        textShadow: "0 0 2px rgba(59, 130, 246, 0.3), 0 0 4px rgba(59, 130, 246, 0.2)",
+                    },
+                    "50%": {
+                        textShadow: "0 0 4px rgba(59, 130, 246, 0.5), 0 0 8px rgba(59, 130, 246, 0.3), 0 0 12px rgba(59, 130, 246, 0.15)",
                     },
                 },
             },

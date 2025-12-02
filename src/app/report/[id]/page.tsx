@@ -32,6 +32,9 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     const [companyPhone, setCompanyPhone] = useState('');
     const [companyEmail, setCompanyEmail] = useState('');
 
+    // Editable Project Title
+    const [editableTitle, setEditableTitle] = useState('');
+
     // Load company info from localStorage
     useEffect(() => {
         const savedCompanyInfo = localStorage.getItem('company_info');
@@ -117,6 +120,13 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
             }
         });
     }, [params]);
+
+    // Update editable title when data is loaded
+    useEffect(() => {
+        if (data?.title) {
+            setEditableTitle(data.title);
+        }
+    }, [data]);
 
     if (!data) return <div className="p-8 text-center">Carregando relatório...</div>;
 
@@ -314,7 +324,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                         <div class="header-item">
                             <div class="header-label">
                                 <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M16 18h.01"/></svg>
-                                Empresa
+                                Prestador
                             </div>
                             <div class="header-value">${data.client}</div>
                         </div>
@@ -332,7 +342,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25V7.86c0-.55-.45-1-1-1H16.5c-.85 0-1.65-.33-2.25-.93L13 4.71"/><path d="M16 22h6.5c.28 0 .5-.22.5-.5v-6"/></svg>
                                 Serviço
                             </div>
-                            <div class="header-value">${data.title}</div>
+                            <div class="header-value">${editableTitle}</div>
                         </div>
 
                         <div class="header-item">
@@ -340,7 +350,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 Cliente
                             </div>
-                            <div class="header-value">${companyName || '_________________'}</div>
+                            <div class="header-value">${companyName || ''}</div>
                         </div>
                     </div>
                 </div>
@@ -446,11 +456,11 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                 {/* Header */}
                 <div className="mb-6">
                     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-100 dark:border-gray-700 grid grid-cols-1 sm:grid-cols-2 gap-4 shadow-sm">
-                        {/* Empresa */}
+                        {/* Prestador */}
                         <div className="space-y-1">
                             <div className="flex items-center gap-1.5 text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 <Building2 size={12} className="text-gray-400" />
-                                Empresa
+                                Prestador
                             </div>
                             <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">
                                 {data.client}
@@ -474,8 +484,14 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <Hammer size={12} className="text-gray-400" />
                                 Serviço
                             </div>
-                            <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">
-                                {data.title}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={editableTitle}
+                                    onChange={(e) => setEditableTitle(e.target.value)}
+                                    className="w-full bg-transparent border-b border-dashed border-gray-300 dark:border-gray-600 py-0.5 focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-400 dark:placeholder-gray-500 font-medium text-gray-900 dark:text-gray-100 text-sm"
+                                    placeholder="Serviço"
+                                />
                             </div>
                         </div>
 

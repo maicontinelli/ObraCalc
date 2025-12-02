@@ -15,8 +15,8 @@ export function Hero() {
                             className="drop-shadow-xl"
                         />
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600 dark:from-blue-400 dark:to-primary">
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+                        <span className="text-[#1a1a1a] dark:text-gray-100 animate-glow-border">
                             Obra-Calc
                         </span>
                     </h1>
