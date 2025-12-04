@@ -95,10 +95,7 @@ export default function AiAssistant() {
     return (
         <div className="w-full max-w-2xl mx-auto mt-12 mb-8">
             <div className="bg-transparent border border-white/20 dark:border-gray-700/30 rounded-2xl p-6 relative overflow-hidden transition-colors">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 p-4 opacity-5 dark:opacity-10 pointer-events-none">
-                    <Bot size={100} className="dark:text-gray-500" />
-                </div>
+                {/* Decorative background element removed */}
 
                 <div className="relative z-10">
                     <form onSubmit={handleSearch} className="relative">

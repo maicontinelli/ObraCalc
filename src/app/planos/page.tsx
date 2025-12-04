@@ -26,7 +26,7 @@ export default function PlansPage() {
                 'Apenas 1 usuário',
             ],
             cta: 'Começar Grátis',
-            href: '/editor/new',
+            href: '/auth/cadastro',
             popular: false,
         },
         {

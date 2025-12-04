@@ -4,11 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Moon, Sun, Menu, X, Info, Phone, CreditCard, Heart } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Moon, Sun, Menu, X, Info, Phone, CreditCard, Heart, LogIn, User } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
     const { theme, toggleTheme } = useTheme();
+    const { isAuthenticated, user, logout } = useAuth();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -71,6 +73,32 @@ export default function Navbar() {
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
 
+                        {/* Auth Buttons */}
+                        {isAuthenticated ? (
+                            <div className="flex items-center gap-3">
+                                <Link
+                                    href="/dashboard"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                >
+                                    <User size={18} />
+                                    <span>{user?.name || 'Perfil'}</span>
+                                </Link>
+                                <button
+                                    onClick={logout}
+                                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                >
+                                    Sair
+                                </button>
+                            </div>
+                        ) : (
+                            <Link
+                                href="/auth/login"
+                                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white font-medium text-sm transition-all shadow-md shadow-primary/20"
+                            >
+                                <LogIn size={18} />
+                                <span>Entrar</span>
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile menu button */}
@@ -111,6 +139,39 @@ export default function Navbar() {
                             </Link>
                         ))}
 
+                        {/* Mobile Auth Buttons */}
+                        <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                            {isAuthenticated ? (
+                                <div className="space-y-2">
+                                    <Link
+                                        href="/dashboard"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                                    >
+                                        <User size={18} />
+                                        <span>{user?.name || 'Perfil'}</span>
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            logout();
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                                    >
+                                        Sair
+                                    </button>
+                                </div>
+                            ) : (
+                                <Link
+                                    href="/auth/login"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-primary hover:bg-primary-hover text-white font-medium text-base transition-all shadow-md shadow-primary/20"
+                                >
+                                    <LogIn size={18} />
+                                    <span>Entrar</span>
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

@@ -28,6 +28,7 @@ module.exports = {
                 blob: "blob 7s infinite",
                 shimmer: "shimmer 3s ease-in-out infinite",
                 'glow-border': "glow-border 2s ease-in-out infinite",
+                float: "float 20s ease-in-out infinite",
             },
             keyframes: {
                 blob: {
@@ -58,6 +59,24 @@ module.exports = {
                     },
                     "50%": {
                         textShadow: "0 0 4px rgba(59, 130, 246, 0.5), 0 0 8px rgba(59, 130, 246, 0.3), 0 0 12px rgba(59, 130, 246, 0.15)",
+                    },
+                },
+                float: {
+                    "0%, 100%": {
+                        transform: "translateY(0px) translateX(0px)",
+                        opacity: "0.15",
+                    },
+                    "25%": {
+                        transform: "translateY(-20px) translateX(10px)",
+                        opacity: "0.25",
+                    },
+                    "50%": {
+                        transform: "translateY(-40px) translateX(-5px)",
+                        opacity: "0.1",
+                    },
+                    "75%": {
+                        transform: "translateY(-20px) translateX(-10px)",
+                        opacity: "0.2",
                     },
                 },
             },

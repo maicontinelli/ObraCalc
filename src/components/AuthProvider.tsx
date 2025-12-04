@@ -9,6 +9,7 @@ type AuthContextType = {
     user: User | null;
     session: Session | null;
     loading: boolean;
+    isAuthenticated: boolean;
     signInWithGoogle: () => Promise<void>;
     signInWithEmail: (email: string) => Promise<void>;
     signOut: () => Promise<void>;
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
     user: null,
     session: null,
     loading: true,
+    isAuthenticated: false,
     signInWithGoogle: async () => { },
     signInWithEmail: async () => { },
     signOut: async () => { },
@@ -64,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, isAuthenticated: !!user, signInWithGoogle, signInWithEmail, signOut }}>
             {children}
         </AuthContext.Provider>
     );

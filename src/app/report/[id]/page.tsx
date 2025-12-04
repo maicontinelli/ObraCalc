@@ -28,22 +28,47 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     const [url, setUrl] = useState('');
 
     // Company information states
-    const [companyName, setCompanyName] = useState('');
-    const [companyPhone, setCompanyPhone] = useState('');
+    const [providerName, setProviderName] = useState(''); // Prestador (auto-filled)
+    const [companyName, setCompanyName] = useState(''); // Cliente (manual)
+    const [companyPhone, setCompanyPhone] = useState(''); // Contato (auto-filled)
     const [companyEmail, setCompanyEmail] = useState('');
 
     // Editable Project Title
-    const [editableTitle, setEditableTitle] = useState('');
+    const [editableTitle, setEditableTitle] = useState(''); // Serviço (manual)
 
-    // Load company info from localStorage
+    // Load company info from localStorage (only Prestador and Contato)
     useEffect(() => {
+        // Load user profile data from dashboard
+        // eslint-disable-next-line
+        const savedUserProfile = localStorage.getItem('user_profile_data');
+        if (savedUserProfile) {
+            try {
+                const userData = JSON.parse(savedUserProfile);
+                // Set provider name from user's full name (for Prestador field)
+                if (userData.fullName) {
+                    setProviderName(userData.fullName);
+                }
+                // Set company phone from user's phone (for Contato field)
+                if (userData.phone) {
+                    setCompanyPhone(userData.phone);
+                }
+                // Set company email from user's email
+                if (userData.email) {
+                    setCompanyEmail(userData.email);
+                }
+            } catch (e) {
+                console.error('Error loading user profile data:', e);
+            }
+        }
+
+        // Also check for legacy company_info (only if user profile didn't set values)
         const savedCompanyInfo = localStorage.getItem('company_info');
         if (savedCompanyInfo) {
             try {
                 const parsed = JSON.parse(savedCompanyInfo);
-                setCompanyName(parsed.name || '');
-                setCompanyPhone(parsed.phone || '');
-                setCompanyEmail(parsed.email || '');
+                if (parsed.name && !providerName) setProviderName(parsed.name);
+                if (parsed.phone && !companyPhone) setCompanyPhone(parsed.phone);
+                if (parsed.email && !companyEmail) setCompanyEmail(parsed.email);
             } catch (e) {
                 console.error('Error loading company info:', e);
             }
@@ -121,12 +146,8 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
         });
     }, [params]);
 
-    // Update editable title when data is loaded
-    useEffect(() => {
-        if (data?.title) {
-            setEditableTitle(data.title);
-        }
-    }, [data]);
+    // Keep editable title empty for manual input
+    // (Removed auto-fill from data.title)
 
     if (!data) return <div className="p-8 text-center">Carregando relatório...</div>;
 
@@ -326,7 +347,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M16 18h.01"/></svg>
                                 Prestador
                             </div>
-                            <div class="header-value">${data.client}</div>
+                            <div class="header-value">${providerName || ''}</div>
                         </div>
                         
                         <div class="header-item">
@@ -334,7 +355,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                 Contato
                             </div>
-                            <div class="header-value">${data.phone}</div>
+                            <div class="header-value">${companyPhone || ''}</div>
                         </div>
 
                         <div class="header-item">
@@ -342,7 +363,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25V7.86c0-.55-.45-1-1-1H16.5c-.85 0-1.65-.33-2.25-.93L13 4.71"/><path d="M16 22h6.5c.28 0 .5-.22.5-.5v-6"/></svg>
                                 Serviço
                             </div>
-                            <div class="header-value">${editableTitle}</div>
+                            <div class="header-value">${editableTitle || ''}</div>
                         </div>
 
                         <div class="header-item">
@@ -462,8 +483,14 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <Building2 size={12} className="text-gray-400" />
                                 Prestador
                             </div>
-                            <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">
-                                {data.client}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={providerName}
+                                    onChange={(e) => setProviderName(e.target.value)}
+                                    className="w-full bg-transparent border-b border-dashed border-gray-300 dark:border-gray-600 py-0.5 focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-400 dark:placeholder-gray-500 font-medium text-gray-900 dark:text-gray-100 text-sm"
+                                    placeholder="Nome do prestador"
+                                />
                             </div>
                         </div>
 
@@ -473,8 +500,14 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
                                 <Phone size={12} className="text-gray-400" />
                                 Contato
                             </div>
-                            <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">
-                                {data.phone}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={companyPhone}
+                                    onChange={(e) => setCompanyPhone(e.target.value)}
+                                    className="w-full bg-transparent border-b border-dashed border-gray-300 dark:border-gray-600 py-0.5 focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-400 dark:placeholder-gray-500 font-medium text-gray-900 dark:text-gray-100 text-sm"
+                                    placeholder="Telefone de contato"
+                                />
                             </div>
                         </div>
 
@@ -573,33 +606,9 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
 
                 {/* Footer */}
                 <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-                    <div className="max-w-3xl mx-auto text-sm text-gray-600 space-y-4">
-                        <p className="text-xs italic text-gray-500 dark:text-gray-400">
-                            Recomendação Técnica: Este serviço pode contar com o suporte de um engenheiro ou arquiteto credenciado de sua região, garantindo a qualidade e a segurança que você precisa.
-                        </p>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                            <div className="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                                <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 font-bold">Profissional Indicado 1</p>
-                                <div className="space-y-1">
-                                    <p><span className="font-semibold">Nome:</span> Eng. Carlos Mendes Silva</p>
-                                    <p><span className="font-semibold">Registro:</span> CREA-SP 123456-7</p>
-                                    <p><span className="font-semibold">Contato:</span> (11) 98765-4321</p>
-                                </div>
-                            </div>
-                            <div className="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                                <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 font-bold">Profissional Indicado 2</p>
-                                <div className="space-y-1">
-                                    <p><span className="font-semibold">Nome:</span> Arq. Ana Paula Souza</p>
-                                    <p><span className="font-semibold">Registro:</span> CAU-SP A12345-6</p>
-                                    <p><span className="font-semibold">Contato:</span> (11) 91234-5678</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-6 text-[10px] text-gray-400">
-                        <p>{url}</p>
-                    </div>
+                    <p className="text-xs italic text-gray-500 dark:text-gray-400">
+                        Recomendação Técnica: Este serviço pode contar com o suporte de um engenheiro ou arquiteto credenciado de sua região, garantindo a qualidade e a segurança que você precisa.
+                    </p>
                 </div>
             </div>
         </div>

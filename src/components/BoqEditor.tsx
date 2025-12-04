@@ -30,14 +30,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const [bdi, setBdi] = useState(20); // Default 20%
 
     const [projectName, setProjectName] = useState('Serviço');
-    const [clientName, setClientName] = useState('');
-    const [clientPhone, setClientPhone] = useState('');
 
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
     const [aiRequests, setAiRequests] = useState<{ id: string, query: string, guidance: string, timestamp: string }[]>([]);
 
-    const [showValidationMessage, setShowValidationMessage] = useState(false);
+
 
     // Initialize items from default BOQ based on type
     useEffect(() => {
@@ -50,8 +48,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     setItems(parsed.items);
                     if (parsed.bdi) setBdi(parsed.bdi);
                     if (parsed.title) setProjectName(parsed.title);
-                    if (parsed.client) setClientName(parsed.client);
-                    if (parsed.phone) setClientPhone(parsed.phone);
                     if (parsed.aiRequests) setAiRequests(parsed.aiRequests);
 
 
@@ -168,36 +164,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         setItems(prev => prev.map(item => item.id === id ? { ...item, unit: newUnit } : item));
     };
 
-    const formatPhoneNumber = (value: string) => {
-        // Remove tudo que não é número
-        const numbers = value.replace(/\D/g, '');
 
-        // Limita a 11 dígitos (DDD + 9 dígitos)
-        const limited = numbers.slice(0, 11);
-
-        // Aplica a máscara
-        if (limited.length <= 2) {
-            return limited;
-        } else if (limited.length <= 6) {
-            return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
-        } else if (limited.length <= 10) {
-            return `(${limited.slice(0, 2)}) ${limited.slice(2, 6)}-${limited.slice(6)}`;
-        } else {
-            return `(${limited.slice(0, 2)}) ${limited.slice(2, 7)}-${limited.slice(7)}`;
-        }
-    };
-
-    const handlePhoneChange = (value: string) => {
-        const formatted = formatPhoneNumber(value);
-        setClientPhone(formatted);
-    };
-
-    const isValidPhone = (phone: string) => {
-        // Remove caracteres não numéricos
-        const numbers = phone.replace(/\D/g, '');
-        // Verifica se tem 10 ou 11 dígitos (com ou sem 9 no celular)
-        return numbers.length >= 10 && numbers.length <= 11;
-    };
 
     const handleSave = async () => {
         try {
@@ -205,8 +172,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             const estimateData = {
                 id: estimateId,
                 title: projectName,
-                client: clientName,
-                phone: clientPhone,
                 date: new Date().toISOString(),
                 items: items,
                 bdi: bdi,
@@ -323,18 +288,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
 
     const handleGenerateReport = async () => {
-        if (!clientName.trim()) {
-            setShowValidationMessage(true);
-            setTimeout(() => setShowValidationMessage(false), 5000);
-            return;
-        }
-
-        if (!clientPhone.trim() || !isValidPhone(clientPhone)) {
-            setShowValidationMessage(true);
-            setTimeout(() => setShowValidationMessage(false), 5000);
-            return;
-        }
-
         // 1. Save to LocalStorage
         await handleSave();
 
@@ -346,83 +299,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
     return (
         <div className="pb-20 dark:bg-gray-900">
-            {/* Toolbar */}
-            {/* Toolbar */}
-            <div className="sticky top-16 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm mb-6 transition-all">
-                <div className="container mx-auto py-2 flex flex-wrap sm:flex-nowrap justify-between items-center gap-4 px-4">
-                    <div className="flex items-center gap-3 flex-1 w-full min-w-0 overflow-hidden">
-
-                        <div className="flex items-center gap-1 flex-1 min-w-0">
-                            <input
-                                type="text"
-                                value={clientName}
-                                onChange={(e) => setClientName(e.target.value)}
-                                className={`text-sm dark:bg-gray-800 p-1 rounded focus:ring-0 flex-1 min-w-[100px] placeholder-gray-400 dark:placeholder-gray-500 truncate transition-all ${showValidationMessage && !clientName.trim()
-                                    ? 'border-2 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-gray-900 dark:text-gray-100'
-                                    : 'text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600'
-                                    }`}
-                                placeholder="Prestador *"
-                                required
-                            />
-                        </div>
-                        <span className="text-gray-300 dark:text-gray-600 text-sm flex-shrink-0">/</span>
-                        <div className="flex items-center gap-1 flex-1 min-w-0">
-                            <input
-                                type="tel"
-                                value={clientPhone}
-                                onChange={(e) => handlePhoneChange(e.target.value)}
-                                className={`text-sm dark:bg-gray-800 p-1 rounded focus:ring-0 flex-1 min-w-[100px] placeholder-gray-400 dark:placeholder-gray-500 truncate transition-all ${showValidationMessage && !clientPhone.trim()
-                                    ? 'border-2 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-gray-900 dark:text-gray-100'
-                                    : 'text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600'
-                                    }`}
-                                placeholder="Telefone *"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={handleGenerateReport}
-                            className="btn btn-primary text-xs p-2 flex items-center justify-center"
-                            title="Salvar e Gerar Relatório"
-                        >
-                            <Save size={16} />
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* Validation Message Dropdown */}
-            {showValidationMessage && (
-                <div className="container mx-auto px-4 -mt-4 mb-4">
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-r-lg shadow-md animate-in slide-in-from-top-2 fade-in">
-                        <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-yellow-400 dark:text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-sm font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
-                                    Informações obrigatórias
-                                </h3>
-                                <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                                    Por favor, preencha o <strong>nome do cliente</strong> e o <strong>telefone</strong> para gerar o relatório.
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => setShowValidationMessage(false)}
-                                className="flex-shrink-0 text-yellow-400 hover:text-yellow-600 dark:text-yellow-500 dark:hover:text-yellow-300"
-                            >
-                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
                 {/* Main Editor */}
@@ -665,6 +541,15 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Generate Report Button */}
+                        <button
+                            onClick={handleGenerateReport}
+                            className="w-full btn btn-primary py-3 flex items-center justify-center gap-2 font-medium hover:scale-[1.02] transition-transform shadow-lg shadow-blue-500/20"
+                        >
+                            <Save size={18} />
+                            <span>Gerar Relatório</span>
+                        </button>
 
                         {/* Quick Stats or Tips */}
                         <div className="bg-[var(--color-accent)] dark:bg-gray-700 rounded-lg p-4 border border-[var(--color-primary)]/20 dark:border-gray-600">

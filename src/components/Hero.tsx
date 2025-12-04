@@ -1,4 +1,5 @@
 import AiAssistant from './AiAssistant';
+import MathParticles from './MathParticles';
 import Image from 'next/image';
 
 export function Hero() {
@@ -16,7 +17,7 @@ export function Hero() {
                         />
                     </div>
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-                        <span className="text-[#1a1a1a] dark:text-gray-100 animate-glow-border">
+                        <span className="text-[#1a1a1a] dark:text-gray-100">
                             Obra-Calc
                         </span>
                     </h1>
@@ -27,6 +28,7 @@ export function Hero() {
 
                 {/* AI Assistant Container */}
                 <div className="max-w-3xl mx-auto relative z-20">
+                    <MathParticles />
                     <AiAssistant />
                 </div>
 
