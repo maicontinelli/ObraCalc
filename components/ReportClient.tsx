@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, Printer, ArrowLeft } from 'lucide-react';
 import { getDddInfo } from '@/lib/ddd-data';
+import DOMPurify from 'isomorphic-dompurify';
 
 export default function ReportClient({ estimateId }: { estimateId: string }) {
     const router = useRouter();
@@ -58,6 +59,10 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         const providerDddInfo = data.providerPhone ? getDddInfo(data.providerPhone) : null;
         const clientDddInfo = data.clientPhone ? getDddInfo(data.clientPhone) : null;
 
+        // Helper to sanitize and format strings
+        const safe = (str: string) => DOMPurify.sanitize(str || '');
+        const formatMoney = (val: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
         // Generate items HTML
         const itemsHTML = categories.map(category => {
             const categoryItems = groupedItems[category];
@@ -71,11 +76,11 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 const itemTotal = price * item.quantity;
                 return `
                     <div class="item-row">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-unit">${item.unit}</div>
+                        <div class="item-name">${safe(item.name)}</div>
+                        <div class="item-unit">${safe(item.unit)}</div>
                         <div class="item-qty">${item.quantity}</div>
-                        <div class="item-price">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}</div>
-                        <div class="item-total">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(itemTotal)}</div>
+                        <div class="item-price">${formatMoney(price)}</div>
+                        <div class="item-total">${formatMoney(itemTotal)}</div>
                     </div>
                 `;
             }).join('');
@@ -83,8 +88,8 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             return `
                 <div class="category-section">
                     <div class="category-header">
-                        <div class="category-title">${category}</div>
-                        <div class="category-total">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}</div>
+                        <div class="category-title">${safe(category)}</div>
+                        <div class="category-total">${formatMoney(categoryTotal)}</div>
                     </div>
                     <div class="items-header">
                         <div>Serviço</div>
@@ -104,7 +109,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orçamento - ${data?.clientName || 'Relatório'}</title>
+    <title>Orçamento - ${safe(data?.clientName || 'Relatório')}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -291,32 +296,32 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             <div class="info-column">
                 <div class="info-block">
                     <div class="info-label">Prestador</div>
-                    <div class="info-value">${data.providerName || '-'}</div>
+                    <div class="info-value">${safe(data.providerName) || '-'}</div>
                 </div>
                 <div class="info-block">
                     <div class="info-label">Telefone Prestador</div>
-                    <div class="info-value">${data.providerPhone || '-'}</div>
-                    ${providerDddInfo ? `<div class="ddd-info"><span class="ddd-state">${providerDddInfo.state}</span> • ${providerDddInfo.region}</div>` : ''}
+                    <div class="info-value">${safe(data.providerPhone) || '-'}</div>
+                    ${providerDddInfo ? `<div class="ddd-info"><span class="ddd-state">${safe(providerDddInfo.state)}</span> • ${safe(providerDddInfo.region)}</div>` : ''}
                 </div>
                 <div class="info-block">
                     <div class="info-label">Tipo de Obra</div>
-                    <div class="info-value">${data.projectType || '-'}</div>
+                    <div class="info-value">${safe(data.projectType) || '-'}</div>
                 </div>
             </div>
             
             <div class="info-column">
                 <div class="info-block">
                     <div class="info-label">Cliente</div>
-                    <div class="info-value">${data.clientName || '-'}</div>
+                    <div class="info-value">${safe(data.clientName) || '-'}</div>
                 </div>
                 <div class="info-block">
                     <div class="info-label">Telefone Cliente</div>
-                    <div class="info-value">${data.clientPhone || '-'}</div>
-                    ${clientDddInfo ? `<div class="ddd-info"><span class="ddd-state">${clientDddInfo.state}</span> • ${clientDddInfo.region}</div>` : ''}
+                    <div class="info-value">${safe(data.clientPhone) || '-'}</div>
+                    ${clientDddInfo ? `<div class="ddd-info"><span class="ddd-state">${safe(clientDddInfo.state)}</span> • ${safe(clientDddInfo.region)}</div>` : ''}
                 </div>
                 <div class="info-block">
                     <div class="info-label">Prazo Estimado</div>
-                    <div class="info-value">${data.deadline || '-'}</div>
+                    <div class="info-value">${safe(data.deadline) || '-'}</div>
                 </div>
             </div>
         </div>
@@ -327,15 +332,15 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             <div class="totals-box">
                 <div class="total-row">
                     <div class="total-label">Subtotal</div>
-                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</div>
+                    <div class="total-value">${formatMoney(subtotal)}</div>
                 </div>
                 <div class="total-row">
                     <div class="total-label">BDI (${data.bdi || 20}%)</div>
-                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}</div>
+                    <div class="total-value">${formatMoney(bdiValue)}</div>
                 </div>
                 <div class="total-final">
                     <div class="total-label">Total Geral</div>
-                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</div>
+                    <div class="total-value">${formatMoney(total)}</div>
                 </div>
             </div>
         </div>
