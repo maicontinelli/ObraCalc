@@ -1,0 +1,627 @@
+'use client';
+
+import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { FileText, Printer, ArrowLeft } from 'lucide-react';
+import { getDddInfo } from '@/lib/ddd-data';
+
+export default function ReportClient({ estimateId }: { estimateId: string }) {
+    const router = useRouter();
+    const [data, setData] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const savedData = localStorage.getItem(`estimate_${estimateId}`);
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                setData(parsed);
+            } catch (e) {
+                console.error('Error loading data:', e);
+            }
+        }
+        setLoading(false);
+    }, [estimateId]);
+
+    // Get DDD info for phone numbers
+    const providerDddInfo = useMemo(() => data?.providerPhone ? getDddInfo(data.providerPhone) : null, [data?.providerPhone]);
+    const clientDddInfo = useMemo(() => data?.clientPhone ? getDddInfo(data.clientPhone) : null, [data?.clientPhone]);
+
+    const handlePrint = () => {
+        window.print();
+    };
+
+    const handleExportHTML = () => {
+        if (!data) return;
+
+        // Calculate values for export
+        const includedItems = data.items?.filter((i: any) => i.included) || [];
+        const subtotal = includedItems.reduce((sum: number, item: any) => {
+            const price = item.manualPrice !== undefined && item.manualPrice !== null ? item.manualPrice : item.price;
+            return sum + (Number(price) * Number(item.quantity));
+        }, 0);
+        const bdiValue = subtotal * ((data.bdi || 20) / 100);
+        const total = subtotal + bdiValue;
+
+        // Group items by category
+        const groupedItems: Record<string, any[]> = {};
+        includedItems.forEach((item: any) => {
+            const category = item.category || 'OUTROS';
+            if (!groupedItems[category]) {
+                groupedItems[category] = [];
+            }
+            groupedItems[category].push(item);
+        });
+        const categories = Object.keys(groupedItems);
+
+        // Get DDD info
+        const providerDddInfo = data.providerPhone ? getDddInfo(data.providerPhone) : null;
+        const clientDddInfo = data.clientPhone ? getDddInfo(data.clientPhone) : null;
+
+        // Generate items HTML
+        const itemsHTML = categories.map(category => {
+            const categoryItems = groupedItems[category];
+            const categoryTotal = categoryItems.reduce((sum: number, item: any) => {
+                const price = item.manualPrice ?? item.price;
+                return sum + (price * item.quantity);
+            }, 0);
+
+            const itemsRows = categoryItems.map(item => {
+                const price = item.manualPrice ?? item.price;
+                const itemTotal = price * item.quantity;
+                return `
+                    <div class="item-row">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-unit">${item.unit}</div>
+                        <div class="item-qty">${item.quantity}</div>
+                        <div class="item-price">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}</div>
+                        <div class="item-total">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(itemTotal)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="category-section">
+                    <div class="category-header">
+                        <div class="category-title">${category}</div>
+                        <div class="category-total">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}</div>
+                    </div>
+                    <div class="items-header">
+                        <div>Serviço</div>
+                        <div style="text-align: center;">Un.</div>
+                        <div style="text-align: center;">Qtd</div>
+                        <div style="text-align: right;">Unit</div>
+                        <div style="text-align: right;">Total</div>
+                    </div>
+                    ${itemsRows}
+                </div>
+            `;
+        }).join('');
+
+        const htmlContent = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento - ${data?.clientName || 'Relatório'}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f9fafb;
+            padding: 40px 20px;
+            color: #111827;
+            line-height: 1.5;
+        }
+        .container { 
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            padding: 48px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 24px;
+        }
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+        .info-column { }
+        .info-block {
+            margin-bottom: 12px;
+        }
+        .info-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        .info-value {
+            color: #111827;
+            font-weight: 500;
+        }
+        .ddd-info {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+        .ddd-state {
+            font-weight: 600;
+            color: #2563eb;
+        }
+        .category-section {
+            margin-bottom: 24px;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .category-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .category-total {
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+        }
+        .items-header {
+            display: grid;
+            grid-template-columns: 5fr 1fr 2fr 2fr 2fr;
+            gap: 16px;
+            padding: 8px 16px;
+            background: white;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .items-header div {
+            font-size: 9px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 5fr 1fr 2fr 2fr 2fr;
+            gap: 16px;
+            padding: 8px 16px;
+            border-bottom: 1px solid #f9fafb;
+            font-size: 11px;
+        }
+        .item-row:hover {
+            background: #f9fafb;
+        }
+        .item-name {
+            color: #374151;
+            font-weight: 500;
+        }
+        .item-unit {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        .item-qty {
+            text-align: center;
+            color: #6b7280;
+        }
+        .item-price {
+            text-align: right;
+            color: #6b7280;
+        }
+        .item-total {
+            text-align: right;
+            color: #374151;
+            font-weight: 600;
+        }
+        .totals-section {
+            margin-top: 32px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .totals-box {
+            width: 320px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        .total-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+        }
+        .total-value {
+            font-weight: 600;
+            color: #111827;
+            font-size: 12px;
+        }
+        .total-final {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+        .total-final .total-label {
+            font-size: 10px;
+            color: #111827;
+        }
+        .total-final .total-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #059669;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Orçamento de Obra</h1>
+        
+        <div class="header-grid">
+            <div class="info-column">
+                <div class="info-block">
+                    <div class="info-label">Prestador</div>
+                    <div class="info-value">${data.providerName || '-'}</div>
+                </div>
+                <div class="info-block">
+                    <div class="info-label">Telefone Prestador</div>
+                    <div class="info-value">${data.providerPhone || '-'}</div>
+                    ${providerDddInfo ? `<div class="ddd-info"><span class="ddd-state">${providerDddInfo.state}</span> • ${providerDddInfo.region}</div>` : ''}
+                </div>
+                <div class="info-block">
+                    <div class="info-label">Tipo de Obra</div>
+                    <div class="info-value">${data.projectType || '-'}</div>
+                </div>
+            </div>
+            
+            <div class="info-column">
+                <div class="info-block">
+                    <div class="info-label">Cliente</div>
+                    <div class="info-value">${data.clientName || '-'}</div>
+                </div>
+                <div class="info-block">
+                    <div class="info-label">Telefone Cliente</div>
+                    <div class="info-value">${data.clientPhone || '-'}</div>
+                    ${clientDddInfo ? `<div class="ddd-info"><span class="ddd-state">${clientDddInfo.state}</span> • ${clientDddInfo.region}</div>` : ''}
+                </div>
+                <div class="info-block">
+                    <div class="info-label">Prazo Estimado</div>
+                    <div class="info-value">${data.deadline || '-'}</div>
+                </div>
+            </div>
+        </div>
+
+        ${itemsHTML}
+
+        <div class="totals-section">
+            <div class="totals-box">
+                <div class="total-row">
+                    <div class="total-label">Subtotal</div>
+                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</div>
+                </div>
+                <div class="total-row">
+                    <div class="total-label">BDI (${data.bdi || 20}%)</div>
+                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}</div>
+                </div>
+                <div class="total-final">
+                    <div class="total-label">Total Geral</div>
+                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+
+        // Try to open in new window
+        const newWindow = window.open('', '_blank');
+
+        if (newWindow && !newWindow.closed) {
+            // Successfully opened new window
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+        } else {
+            // Popup was blocked, download instead
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `orcamento-${data?.clientName || estimateId}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen bg-gray-50">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Carregando relatório...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!data) {
+        return (
+            <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
+                <div className="text-center">
+                    <p className="text-xl mb-6 text-gray-800">Orçamento não encontrado</p>
+                    <button onClick={() => router.push('/')} className="btn btn-primary">
+                        Voltar para Home
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    const includedItems = data.items?.filter((i: any) => i.included) || [];
+    const subtotal = includedItems.reduce((sum: number, item: any) => {
+        const price = item.manualPrice !== undefined && item.manualPrice !== null ? item.manualPrice : item.price;
+        return sum + (Number(price) * Number(item.quantity));
+    }, 0);
+
+    const bdiValue = subtotal * ((data.bdi || 20) / 100);
+    const total = subtotal + bdiValue;
+
+    // Group items by category
+    const groupedItems: Record<string, any[]> = {};
+    includedItems.forEach((item: any) => {
+        const category = item.category || 'OUTROS';
+        if (!groupedItems[category]) {
+            groupedItems[category] = [];
+        }
+        groupedItems[category].push(item);
+    });
+
+    const categories = Object.keys(groupedItems);
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 print:bg-white">
+            <style jsx global>{`
+                @media print {
+                    @page { 
+                        margin: 15mm;
+                        size: A4;
+                    }
+                    body { 
+                        margin: 0; 
+                        background: white !important; 
+                    }
+                    nav, .no-print, footer, .footer { 
+                        display: none !important; 
+                    }
+                    .print-content { 
+                        box-shadow: none !important; 
+                        background: white !important; 
+                    }
+                    /* Remove any potential footer elements */
+                    *[class*="footer"], 
+                    *[class*="Footer"],
+                    *[id*="footer"],
+                    *[id*="Footer"] {
+                        display: none !important;
+                    }
+                    /* Ensure totals section uses condensed font sizes */
+                    .space-y-3 > div {
+                        font-size: 12px !important;
+                    }
+                    .space-y-3 span[class*="text-xs"],
+                    .space-y-3 span[class*="text-sm"] {
+                        font-size: 12px !important;
+                    }
+                    .space-y-3 span[class*="text-[10px]"] {
+                        font-size: 10px !important;
+                    }
+                    .space-y-3 span[class*="text-base"] {
+                        font-size: 16px !important;
+                    }
+                }
+            `}</style>
+
+            {/* Toolbar */}
+            <div className="no-print bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50">
+                <div className="max-w-[1600px] mx-auto px-6 py-4 flex justify-between items-center gap-4">
+                    <button
+                        onClick={() => router.push(`/editor/${estimateId}`)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    >
+                        <ArrowLeft size={18} /> Voltar ao Editor
+                    </button>
+
+                    <div className="flex gap-3">
+                        <button
+                            onClick={handleExportHTML}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                        >
+                            <FileText size={18} /> Exportar HTML
+                        </button>
+                        <button
+                            onClick={handlePrint}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
+                        >
+                            <Printer size={18} /> Gerar PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Report Content */}
+            <div id="report-content" className="max-w-[1600px] mx-auto p-6 lg:p-8 print-content">
+                {/* Header - Condensed */}
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        Orçamento de Obra
+                    </h1>
+
+                    {/* Info Grid - Condensed like editor */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-sm">
+                        {/* Prestador Column */}
+                        <div className="space-y-3">
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Prestador</div>
+                                <div className="text-gray-900 dark:text-white font-medium">{data.providerName || '-'}</div>
+                            </div>
+
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Telefone Prestador</div>
+                                <div className="text-gray-900 dark:text-white">{data.providerPhone || '-'}</div>
+                                {providerDddInfo && (
+                                    <div className="text-[10px] text-gray-500 mt-0.5">
+                                        <span className="font-semibold text-blue-600">{providerDddInfo.state}</span> • {providerDddInfo.region}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Tipo de Obra</div>
+                                <div className="text-gray-900 dark:text-white">{data.projectType || '-'}</div>
+                            </div>
+                        </div>
+
+                        {/* Cliente Column */}
+                        <div className="space-y-3">
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Cliente</div>
+                                <div className="text-gray-900 dark:text-white font-medium">{data.clientName || '-'}</div>
+                            </div>
+
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Telefone Cliente</div>
+                                <div className="text-gray-900 dark:text-white">{data.clientPhone || '-'}</div>
+                                {clientDddInfo && (
+                                    <div className="text-[10px] text-gray-500 mt-0.5">
+                                        <span className="font-semibold text-blue-600">{clientDddInfo.state}</span> • {clientDddInfo.region}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Prazo Estimado</div>
+                                <div className="text-gray-900 dark:text-white">{data.deadline || '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Items - Condensed Table Style */}
+                <div className="space-y-6">
+                    {categories.map((category) => {
+                        const categoryItems = groupedItems[category];
+                        const categoryTotal = categoryItems.reduce((sum: number, item: any) => {
+                            const price = item.manualPrice ?? item.price;
+                            return sum + (price * item.quantity);
+                        }, 0);
+
+                        return (
+                            <div key={category}>
+                                {/* Category Header */}
+                                <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                    <h3 className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                                        {category}
+                                    </h3>
+                                    <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}
+                                    </span>
+                                </div>
+
+                                {/* Column Headers */}
+                                <div className="grid grid-cols-12 gap-4 px-4 py-2 text-[9px] font-bold text-gray-400 uppercase tracking-wider bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
+                                    <div className="col-span-5">Serviço</div>
+                                    <div className="col-span-1 text-center">Un.</div>
+                                    <div className="col-span-2 text-center">Qtd</div>
+                                    <div className="col-span-2 text-right">Unit</div>
+                                    <div className="col-span-2 text-right">Total</div>
+                                </div>
+
+                                {/* Items */}
+                                <div className="bg-white dark:bg-gray-900">
+                                    {categoryItems.map((item: any) => {
+                                        const price = item.manualPrice ?? item.price;
+                                        const itemTotal = price * item.quantity;
+
+                                        return (
+                                            <div
+                                                key={item.id}
+                                                className="grid grid-cols-12 gap-4 px-4 py-2 text-[11px] border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                            >
+                                                <div className="col-span-5 text-gray-700 dark:text-gray-300 font-medium">{item.name}</div>
+                                                <div className="col-span-1 text-center text-gray-400 dark:text-gray-500 text-[10px] uppercase">{item.unit}</div>
+                                                <div className="col-span-2 text-center text-gray-600 dark:text-gray-400">{item.quantity}</div>
+                                                <div className="col-span-2 text-right text-gray-500 dark:text-gray-400">
+                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}
+                                                </div>
+                                                <div className="col-span-2 text-right text-gray-700 dark:text-gray-300 font-semibold">
+                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(itemTotal)}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Totals - Condensed */}
+                <div className="mt-8 flex justify-end">
+                    <div className="w-80 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <div className="space-y-3">
+                            <div className="flex justify-between text-xs">
+                                <span className="font-bold text-gray-700 dark:text-gray-400 uppercase text-[10px]">Subtotal</span>
+                                <span className="font-semibold text-gray-900 dark:text-white">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
+                                </span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                                <span className="font-bold text-gray-700 dark:text-gray-400 uppercase text-[10px]">BDI ({data.bdi || 20}%)</span>
+                                <span className="font-semibold text-gray-900 dark:text-white">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}
+                                </span>
+                            </div>
+                            <div className="flex justify-between text-sm font-bold border-t border-gray-200 dark:border-gray-700 pt-3">
+                                <span className="text-gray-900 dark:text-white uppercase text-[10px]">Total Geral</span>
+                                <span className="text-green-600 dark:text-green-400 text-base">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

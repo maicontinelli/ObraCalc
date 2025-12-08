@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  /* Retaining variables for compatibility, but Tailwind classes should be preferred */
+  --color-primary: #00704A;
+  --color-secondary: #1e3932;
+  --color-accent: #f2f9f7;
+  --color-surface: #f9fafb;
+}
+
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+
+  --color-primary: #00a86b;
+  --color-secondary: #2d5f4f;
+  --color-accent: #1a2e27;
+  --color-surface: #1f2937;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 transition-colors;
+  }
+
+  .dark body {
+    @apply bg-gray-900 text-gray-100;
+  }
+
+
+  /* Ensure print styles remain white */
+  @media print {
+    body {
+      background-color: white !important;
+      color: black !important;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-hover focus:ring-primary;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-gray-500;
+  }
+
+  .dark .btn-secondary {
+    @apply bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700;
+  }
+
+  .input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border;
+  }
+
+  .dark .input {
+    @apply bg-gray-800 border-gray-600 text-gray-100;
+  }
+}
+
+@layer utilities {
+
+  /* Animações para páginas de autenticação */
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 30px) scale(0.9);
+    }
+  }
+
+  @keyframes pulse-slow {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-slideUp {
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .animate-slideInRight {
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  .animate-float {
+    animation: float 20s infinite ease-in-out;
+  }
+
+  .animate-float-delayed {
+    animation: float 20s infinite ease-in-out;
+    animation-delay: 5s;
+  }
+
+  .animate-float-slow {
+    animation: float 25s infinite ease-in-out;
+    animation-delay: 10s;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 2s infinite;
+  }
+}

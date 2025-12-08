@@ -1,0 +1,136 @@
+'use client';
+
+
+import { Button } from '@/components/Button';
+import { Heart, BrickWall, Handshake, Rocket, Star, Building2, Trophy } from 'lucide-react';
+
+export default function SupportPage() {
+    return (
+        <div className="min-h-screen flex flex-col bg-white dark:bg-[#191919]">
+            <main className="flex-grow pt-20 pb-24">
+                {/* Hero Section */}
+                <div className="container mx-auto px-4 mb-20">
+                    <div className="text-center max-w-4xl mx-auto">
+                        <div className="inline-flex items-center justify-center p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full mb-6">
+                            <Heart className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+                        </div>
+                        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
+                            Torne-se um Membro Ativo da Construção
+                        </h1>
+                        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
+                            Sua contribuição não é só um apoio — é uma assinatura no futuro da ferramenta.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Manifesto Section */}
+                <div className="container mx-auto px-4 mb-24">
+                    <div className="max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800/50 rounded-3xl p-8 md:p-12 border border-gray-100 dark:border-gray-800">
+                        <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                            Construir um app inteligente, acessível e realmente útil exige mais do que tecnologia: exige comunidade, visão e colaboração real.
+                        </p>
+                        <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                            Se você acredita que o Brasil precisa de soluções mais simples e transparentes para criar orçamentos de obra e reformas, este é o momento de fazer parte de algo maior.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Why Support Section */}
+                <div className="container mx-auto px-4 mb-24">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-16">
+                        Por que apoiar o projeto?
+                    </h2>
+
+                    <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        <div className="bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
+                            <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mb-6">
+                                <BrickWall className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                                Você ajuda a construir uma ferramenta real
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                                Milhares de pessoas não sabem quanto custa um serviço, obra ou reforma. Seu apoio acelera o desenvolvimento de uma plataforma que traz clareza, preço médio e orientação inteligente.
+                            </p>
+                        </div>
+
+                        <div className="bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
+                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6">
+                                <Handshake className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                                Você participa como co–criador
+                            </h3>
+                            <ul className="space-y-2 text-gray-600 dark:text-gray-300">
+                                <li className="flex items-center gap-2">• Sugerem recursos</li>
+                                <li className="flex items-center gap-2">• Testam novas funções primeiro</li>
+                                <li className="flex items-center gap-2">• Ajudam a aperfeiçoar a experiência</li>
+                                <li className="flex items-center gap-2">• Influenciam o rumo do app</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
+                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6">
+                                <Rocket className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                                Futuro mais simples e acessível
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                                Quanto mais pessoas apoiam, mais rápido entregamos:
+                            </p>
+                            <ul className="space-y-2 text-gray-600 dark:text-gray-300 text-sm">
+                                <li className="flex items-center gap-2">• Mais bases de preços</li>
+                                <li className="flex items-center gap-2">• Mais categorias de serviços</li>
+                                <li className="flex items-center gap-2">• IA mais precisa</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                {/* How to Support Section */}
+                <div className="container mx-auto px-4 mb-24">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-16">
+                        Como você pode apoiar
+                    </h2>
+
+                    <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-colors">
+                            <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center mb-6">
+                                <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Apoio Individual</h3>
+                            <p className="text-gray-600 dark:text-gray-300 flex-grow">
+                                Para pessoas que acreditam na ideia e querem participar da evolução do app.
+                            </p>
+                            <Button className="mt-8 w-full bg-yellow-500 hover:bg-yellow-600 text-white border-0">Quero Apoiar</Button>
+                        </div>
+
+                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-colors">
+                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6">
+                                <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Apoio Empresarial</h3>
+                            <p className="text-gray-600 dark:text-gray-300 flex-grow">
+                                Para empresas que desejam fortalecer o setor, colaborar e ter visibilidade como apoiadoras oficiais.
+                            </p>
+                            <Button className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white border-0">Apoiar como Empresa</Button>
+                        </div>
+
+                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-colors">
+                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6">
+                                <Trophy className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Patrocínio Estratégico</h3>
+                            <p className="text-gray-600 dark:text-gray-300 flex-grow">
+                                Para marcas que buscam associação direta ao projeto, com destaque e benefícios exclusivos.
+                            </p>
+                            <Button className="mt-8 w-full bg-purple-600 hover:bg-purple-700 text-white border-0">Seja um Patrocinador</Button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    );
+}
