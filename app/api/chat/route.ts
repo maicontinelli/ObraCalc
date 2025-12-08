@@ -1,16 +1,29 @@
 import { NextResponse } from "next/server";
+import { callGroqApi, checkRateLimit, ChatMessageSchema } from "@/lib/ai";
 
 export async function POST(req: Request) {
     try {
-        const { message } = await req.json();
-        const apiKey = process.env.GROQ_API_KEY;
-
-        if (!apiKey) {
+        // Rate Limiting
+        const ip = req.headers.get("x-forwarded-for") || "unknown";
+        if (!checkRateLimit(ip)) {
             return NextResponse.json(
-                { error: "Chave de API do Groq não configurada." },
-                { status: 500 }
+                { error: "Muitas requisições. Tente novamente em alguns segundos." },
+                { status: 429 }
             );
         }
+
+        // Input Validation
+        const body = await req.json();
+        const validation = ChatMessageSchema.safeParse(body);
+
+        if (!validation.success) {
+            return NextResponse.json(
+                { error: "Entrada inválida.", details: validation.error.format() },
+                { status: 400 }
+            );
+        }
+
+        const { message } = validation.data;
 
         const systemPrompt = `Você é um assistente especialista em Engenharia Civil e Orçamentos de Obras.
 Seu objetivo é ajudar usuários a tirar dúvidas técnicas e criar estimativas de custos.
@@ -43,57 +56,17 @@ Seja técnico mas acessível.
 Use preços de mercado realistas para o Brasil (base SINAPI/média de mercado) quando possível.
 SEMPRE retorne APENAS JSON válido, sem texto adicional antes ou depois, sem markdown.`;
 
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
-                messages: [
-                    {
-                        role: 'system',
-                        content: systemPrompt
-                    },
-                    {
-                        role: 'user',
-                        content: message
-                    }
-                ],
-                temperature: 0.7,
-                max_tokens: 2000,
-                response_format: { type: "json_object" }
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || 'Erro ao comunicar com a API do Groq');
-        }
-
-        const data = await response.json();
-        const aiResponse = data.choices[0].message.content;
-
-        // Parse the JSON response
-        let parsedResponse;
         try {
-            // Clean up any potential markdown or extra text
-            let cleanedResponse = aiResponse.trim();
-            cleanedResponse = cleanedResponse.replace(/^```json\s*/i, "").replace(/\s*```$/i, "");
-            cleanedResponse = cleanedResponse.replace(/^```\s*/i, "").replace(/\s*```$/i, "");
-
-            parsedResponse = JSON.parse(cleanedResponse);
+            const result = await callGroqApi(systemPrompt, message, 0.7, 2000);
+            return NextResponse.json(result);
         } catch (parseError) {
-            console.error("Failed to parse AI response as JSON:", aiResponse);
-            // Fallback: return text-only response
-            parsedResponse = {
-                text: aiResponse,
+             // Fallback for when JSON parsing fails inside callGroqApi or if it returns invalid structure
+             // (Though callGroqApi handles JSON parse errors, we might want a fallback response structure here if it failed)
+             return NextResponse.json({
+                text: "Desculpe, ocorreu um erro ao processar a resposta da IA.",
                 suggestedBudget: null
-            };
+            });
         }
-
-        return NextResponse.json(parsedResponse);
 
     } catch (error: any) {
         console.error("Error calling Groq API:", error);
