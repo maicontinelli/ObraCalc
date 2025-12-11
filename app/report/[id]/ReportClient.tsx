@@ -158,7 +158,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         }
         .ddd-state {
             font-weight: 600;
-            color: #2563eb;
+            color: #00704A;
         }
         .category-section {
             margin-bottom: 24px;
@@ -368,7 +368,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gray-50">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
                     <p className="text-gray-600">Carregando relatório...</p>
                 </div>
             </div>
@@ -471,7 +471,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         </button>
                         <button
                             onClick={handlePrint}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors shadow-sm"
                         >
                             <Printer size={18} /> Gerar PDF
                         </button>
@@ -501,7 +501,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                                 <div className="text-gray-900 dark:text-white">{data.providerPhone || '-'}</div>
                                 {providerDddInfo && (
                                     <div className="text-[10px] text-gray-500 mt-0.5">
-                                        <span className="font-semibold text-blue-600">{providerDddInfo.state}</span> • {providerDddInfo.region}
+                                        <span className="font-semibold text-primary">{providerDddInfo.state}</span> • {providerDddInfo.region}
                                     </div>
                                 )}
                             </div>
@@ -524,7 +524,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                                 <div className="text-gray-900 dark:text-white">{data.clientPhone || '-'}</div>
                                 {clientDddInfo && (
                                     <div className="text-[10px] text-gray-500 mt-0.5">
-                                        <span className="font-semibold text-blue-600">{clientDddInfo.state}</span> • {clientDddInfo.region}
+                                        <span className="font-semibold text-primary">{clientDddInfo.state}</span> • {clientDddInfo.region}
                                     </div>
                                 )}
                             </div>

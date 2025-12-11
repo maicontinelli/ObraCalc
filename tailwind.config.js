@@ -11,14 +11,22 @@ module.exports = {
         extend: {
             colors: {
                 primary: {
-                    DEFAULT: '#2563EB', // Royal Blue
-                    hover: '#1D4ED8',
+                    DEFAULT: '#00704A', // Brand Green
+                    hover: '#005c3d',
                 },
-                secondary: '#1E3A8A', // Dark Blue
+                secondary: {
+                    DEFAULT: '#1E3A8A', // Deep Blue
+                    hover: '#1e3a8a',
+                },
                 accent: {
-                    DEFAULT: '#2563EB',
+                    DEFAULT: '#F97316', // Vibrant Orange for details
+                    hover: '#ea580c',
                     foreground: '#ffffff',
-                    light: '#EFF6FF', // Light Blue
+                    light: '#FFF7ED', // Orange-50
+                },
+                destructive: {
+                  DEFAULT: '#ef4444',
+                  foreground: '#ffffff',
                 },
             },
             fontFamily: {
