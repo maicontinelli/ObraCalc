@@ -25,12 +25,13 @@ module.exports = {
                     light: '#FFF7ED', // Orange-50
                 },
                 destructive: {
-                  DEFAULT: '#ef4444',
-                  foreground: '#ffffff',
+                    DEFAULT: '#ef4444',
+                    foreground: '#ffffff',
                 },
             },
             fontFamily: {
                 sans: ['var(--font-inter)', 'sans-serif'],
+                heading: ['var(--font-space)', 'sans-serif'],
             },
             animation: {
                 blob: "blob 7s infinite",

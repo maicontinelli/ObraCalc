@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Github, Twitter, Linkedin } from "lucide-react";
 
 export function Footer() {
@@ -7,8 +8,14 @@ export function Footer() {
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                     <div className="col-span-2 md:col-span-1">
-                        <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-white mb-4 block">
-                            ObraCalc
+                        <Link href="/" className="mb-4 block">
+                            <Image
+                                src="/obracalc-logo-new.png"
+                                alt="ObraCalc Logo"
+                                width={120}
+                                height={40}
+                                className="h-10 w-auto"
+                            />
                         </Link>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs">
                             A ferramenta definitiva para orçamentos de construção civil com inteligência artificial.

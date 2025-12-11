@@ -247,7 +247,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
+
             font-size: 12px;
         }
         .total-label {
@@ -285,37 +285,37 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
 </head>
 <body>
     <div class="container">
-        <h1>Orçamento de Obra</h1>
+        <h1 style="text-align: center;">Orçamento</h1>
         
         <div class="header-grid">
             <div class="info-column">
                 <div class="info-block">
-                    <div class="info-label">Prestador</div>
+                    <div class="info-label">👷 Prestador</div>
                     <div class="info-value">${data.providerName || '-'}</div>
                 </div>
                 <div class="info-block">
-                    <div class="info-label">Telefone Prestador</div>
+                    <div class="info-label">📞 Telefone Prestador</div>
                     <div class="info-value">${data.providerPhone || '-'}</div>
                     ${providerDddInfo ? `<div class="ddd-info"><span class="ddd-state">${providerDddInfo.state}</span> • ${providerDddInfo.region}</div>` : ''}
                 </div>
-                <div class="info-block">
-                    <div class="info-label">Tipo de Obra</div>
+                <div class="info-block" style="margin-top: 20px;">
+                    <div class="info-label">🏗️ Tipo de Obra</div>
                     <div class="info-value">${data.projectType || '-'}</div>
                 </div>
             </div>
             
             <div class="info-column">
                 <div class="info-block">
-                    <div class="info-label">Cliente</div>
+                    <div class="info-label">👤 Cliente</div>
                     <div class="info-value">${data.clientName || '-'}</div>
                 </div>
                 <div class="info-block">
-                    <div class="info-label">Telefone Cliente</div>
+                    <div class="info-label">📞 Telefone Cliente</div>
                     <div class="info-value">${data.clientPhone || '-'}</div>
                     ${clientDddInfo ? `<div class="ddd-info"><span class="ddd-state">${clientDddInfo.state}</span> • ${clientDddInfo.region}</div>` : ''}
                 </div>
-                <div class="info-block">
-                    <div class="info-label">Prazo Estimado</div>
+                <div class="info-block" style="margin-top: 20px;">
+                    <div class="info-label">📅 Prazo Estimado</div>
                     <div class="info-value">${data.deadline || '-'}</div>
                 </div>
             </div>
@@ -483,8 +483,8 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             <div id="report-content" className="max-w-[1600px] mx-auto p-6 lg:p-8 print-content">
                 {/* Header - Condensed */}
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                        Orçamento de Obra
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                        Orçamento
                     </h1>
 
                     {/* Info Grid - Condensed like editor */}
@@ -492,12 +492,12 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         {/* Prestador Column */}
                         <div className="space-y-3">
                             <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Prestador</div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">👷 Prestador</div>
                                 <div className="text-gray-900 dark:text-white font-medium">{data.providerName || '-'}</div>
                             </div>
 
                             <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Telefone Prestador</div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">📞 Telefone Prestador</div>
                                 <div className="text-gray-900 dark:text-white">{data.providerPhone || '-'}</div>
                                 {providerDddInfo && (
                                     <div className="text-[10px] text-gray-500 mt-0.5">
@@ -506,8 +506,8 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                                 )}
                             </div>
 
-                            <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Tipo de Obra</div>
+                            <div className="mt-5">
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">🏗️ Tipo de Obra</div>
                                 <div className="text-gray-900 dark:text-white">{data.projectType || '-'}</div>
                             </div>
                         </div>
@@ -515,12 +515,12 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         {/* Cliente Column */}
                         <div className="space-y-3">
                             <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Cliente</div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">👤 Cliente</div>
                                 <div className="text-gray-900 dark:text-white font-medium">{data.clientName || '-'}</div>
                             </div>
 
                             <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Telefone Cliente</div>
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">📞 Telefone Cliente</div>
                                 <div className="text-gray-900 dark:text-white">{data.clientPhone || '-'}</div>
                                 {clientDddInfo && (
                                     <div className="text-[10px] text-gray-500 mt-0.5">
@@ -529,8 +529,8 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                                 )}
                             </div>
 
-                            <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Prazo Estimado</div>
+                            <div className="mt-5">
+                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">📅 Prazo Estimado</div>
                                 <div className="text-gray-900 dark:text-white">{data.deadline || '-'}</div>
                             </div>
                         </div>

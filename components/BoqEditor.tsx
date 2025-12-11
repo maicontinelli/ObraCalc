@@ -265,6 +265,41 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const providerDddInfo = useMemo(() => getDddInfo(providerPhone), [providerPhone]);
     const clientDddInfo = useMemo(() => getDddInfo(clientPhone), [clientPhone]);
 
+    // Phone formatting helper
+    const formatPhoneNumber = (value: string) => {
+        const numbers = value.replace(/\D/g, '');
+        if (numbers.length <= 11) {
+            return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+                .replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+        }
+        return value;
+    };
+
+    const handlePhoneChange = (setter: (val: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+        const numeric = rawValue.replace(/\D/g, '');
+
+        // Limit to 11 digits
+        if (numeric.length > 11) return;
+
+        let formatted = numeric;
+        if (numeric.length > 2) formatted = `(${numeric.slice(0, 2)}) ${numeric.slice(2)}`;
+        if (numeric.length > 7) formatted = `(${numeric.slice(0, 2)}) ${numeric.slice(2, 7)}-${numeric.slice(7)}`;
+
+        setter(formatted);
+    };
+
+    const isFormValid = useMemo(() => {
+        return (
+            providerName.trim() !== '' &&
+            clientName.trim() !== '' &&
+            providerPhone.replace(/\D/g, '').length >= 10 &&
+            clientPhone.replace(/\D/g, '').length >= 10 &&
+            projectType !== '' &&
+            deadline !== ''
+        );
+    }, [providerName, clientName, providerPhone, clientPhone, projectType, deadline]);
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
             <div className="max-w-[1600px] mx-auto p-6 lg:p-8">
@@ -285,17 +320,23 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                         [item.category]: true
                                     }));
 
-                                    // Mark the item as included
-                                    toggleInclude(item.id, true);
-
-                                    // Focus on the quantity field after a short delay to allow category expansion
+                                    // Scroll to item after a short delay to allow expansion animation
                                     setTimeout(() => {
-                                        const quantityInput = document.querySelector(`input[data-item-id="${item.id}"]`) as HTMLInputElement;
-                                        if (quantityInput) {
-                                            quantityInput.focus();
-                                            quantityInput.select();
+                                        const element = document.getElementById(`item-${item.id}`);
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            // Optional: Add a temporary highlight effect
+                                            element.classList.add('bg-blue-50');
+                                            setTimeout(() => element.classList.remove('bg-blue-50'), 2000);
+
+                                            // Focus quantity input if possible
+                                            const quantityInput = element.querySelector('input[type="number"]') as HTMLInputElement;
+                                            if (quantityInput) {
+                                                quantityInput.focus();
+                                                quantityInput.select();
+                                            }
                                         }
-                                    }, 150);
+                                    }, 300);
                                 }}
                                 onAddCustom={(newItems, request) => {
                                     const requestId = crypto.randomUUID();
@@ -383,6 +424,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                     <div className="space-y-0 text-[11px]">
                                                         {categoryItems.map(item => (
                                                             <div
+                                                                id={`item-${item.id}`}
                                                                 key={item.id}
                                                                 onClick={() => toggleInclude(item.id, true)} // Select on row click
                                                                 className={`grid grid-cols-12 gap-4 px-4 py-1 items-center hover:bg-gray-50 transition-colors group/item cursor-pointer ${!item.included ? 'opacity-50' : ''}`}
@@ -486,130 +528,9 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     {/* RIGHT COLUMN: Sidebar (1/3) */}
                     <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6">
 
-                        {/* Information Card */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-6">
-                                Informações do Relatório
-                            </h3>
-
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
-                                        Prestador *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={providerName}
-                                        onChange={(e) => setProviderName(e.target.value)}
-                                        placeholder="Nome ou empresa"
-                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
-                                        Telefone Prestador *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={providerPhone}
-                                        onChange={(e) => setProviderPhone(e.target.value)}
-                                        placeholder="(00) 00000-0000"
-                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
-                                    />
-                                    {providerDddInfo && (
-                                        <div className="mt-1.5 text-[10px] text-gray-500 flex items-center gap-1.5">
-                                            <span className="font-semibold text-blue-600">{providerDddInfo.state}</span>
-                                            <span>•</span>
-                                            <span>{providerDddInfo.region}</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="pt-2">
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
-                                        Cliente *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={clientName}
-                                        onChange={(e) => setClientName(e.target.value)}
-                                        placeholder="Nome completo"
-                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
-                                        Telefone Cliente *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={clientPhone}
-                                        onChange={(e) => setClientPhone(e.target.value)}
-                                        placeholder="(00) 00000-0000"
-                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
-                                    />
-                                    {clientDddInfo && (
-                                        <div className="mt-1.5 text-[10px] text-gray-500 flex items-center gap-1.5">
-                                            <span className="font-semibold text-blue-600">{clientDddInfo.state}</span>
-                                            <span>•</span>
-                                            <span>{clientDddInfo.region}</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="pt-2">
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
-                                        Tipo de Obra *
-                                    </label>
-                                    <select
-                                        value={projectType}
-                                        onChange={(e) => setProjectType(e.target.value)}
-                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-500"
-                                    >
-                                        <option value="">Selecione...</option>
-                                        <option value="Construção Nova">Construção Nova</option>
-                                        <option value="Reforma">Reforma</option>
-                                        <option value="Ampliação">Ampliação</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
-                                        Prazo Estimado *
-                                    </label>
-                                    <select
-                                        value={deadline}
-                                        onChange={(e) => setDeadline(e.target.value)}
-                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-500"
-                                    >
-                                        <option value="">Selecione...</option>
-                                        <option value="imediato">Imediato (até 30 dias)</option>
-                                        <option value="curto">Curto prazo (30 a 90 dias)</option>
-                                        <option value="medio">Médio prazo (3 a 6 meses)</option>
-                                        <option value="longo">Longo prazo (+6 meses)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Generate Report Button - Sidebar Position */}
-                        <button
-                            onClick={handleGenerateReport}
-                            disabled={isSaving}
-                            className="w-full flex items-center justify-center px-6 py-4 text-base font-bold text-white transition-all duration-200 bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-blue-200"
-                        >
-                            {isSaving ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                    Salvando...
-                                </>
-                            ) : (
-                                <>
-                                    <FileText className="w-5 h-5 mr-2" />
-                                    Gerar Relatório
-                                </>
-                            )}
-                        </button>
 
                         {/* Totals Summary Card */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-6">
                                 Resumo do Orçamento
                             </h3>
@@ -651,10 +572,145 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             </div>
                         </div>
 
+                        {/* Information Card */}
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-6">
+                                Informações do Relatório
+                            </h3>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                        Prestador *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={providerName}
+                                        onChange={(e) => setProviderName(e.target.value)}
+                                        placeholder="Nome ou empresa"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                    />
+                                </div>
+                                <div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                            Telefone Prestador *
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            value={providerPhone}
+                                            onChange={handlePhoneChange(setProviderPhone)}
+                                            placeholder="(00) 00000-0000"
+                                            maxLength={15}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                        />
+                                        {providerDddInfo && (
+                                            <div className="mt-1.5 text-[10px] text-gray-500 flex items-center gap-1.5">
+                                                <span className="font-semibold text-blue-600">{providerDddInfo.state}</span>
+                                                <span>•</span>
+                                                <span>{providerDddInfo.region}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="pt-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                            Cliente *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={clientName}
+                                            onChange={(e) => setClientName(e.target.value)}
+                                            placeholder="Nome completo"
+                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                            Telefone Cliente *
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            value={clientPhone}
+                                            onChange={handlePhoneChange(setClientPhone)}
+                                            placeholder="(00) 00000-0000"
+                                            maxLength={15}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                        />
+                                        {clientDddInfo && (
+                                            <div className="mt-1.5 text-[10px] text-gray-500 flex items-center gap-1.5">
+                                                <span className="font-semibold text-blue-600">{clientDddInfo.state}</span>
+                                                <span>•</span>
+                                                <span>{clientDddInfo.region}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="pt-6">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                            Tipo de Obra *
+                                        </label>
+                                        <select
+                                            value={projectType}
+                                            onChange={(e) => setProjectType(e.target.value)}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-500"
+                                        >
+                                            <option value="">Selecione...</option>
+                                            <option value="Construção Nova">Construção Nova</option>
+                                            <option value="Reforma">Reforma</option>
+                                            <option value="Ampliação">Ampliação</option>
+                                        </select>
+                                    </div>
+                                    <div className="pt-6">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                            Prazo Estimado *
+                                        </label>
+                                        <select
+                                            value={deadline}
+                                            onChange={(e) => setDeadline(e.target.value)}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-500"
+                                        >
+                                            <option value="">Selecione...</option>
+                                            <option value="imediato">Imediato (até 30 dias)</option>
+                                            <option value="curto">Curto prazo (30 a 90 dias)</option>
+                                            <option value="medio">Médio prazo (3 a 6 meses)</option>
+                                            <option value="longo">Longo prazo (+6 meses)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {/* Generate Report Button - Relocated & Restyled */}
+                        <button
+                            onClick={handleGenerateReport}
+                            disabled={isSaving || !isFormValid}
+                            className={`w-full mb-6 relative group outline-none focus:outline-none ${isSaving || !isFormValid ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:scale-[1.02] active:scale-[0.98] transition-transform'}`}
+                        >
+                            <div className={`neon-border-wrapper ${isSaving || !isFormValid ? '' : 'shadow-lg hover:shadow-primary/20'}`}>
+                                <div className={`neon-border-content flex items-center justify-center gap-3 py-4 rounded-xl transition-colors duration-300 ${!isFormValid ? 'bg-white dark:bg-gray-800' : 'bg-blue-600'}`}>
+                                    {isSaving ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+                                            <span className="font-bold text-gray-500 uppercase tracking-widest text-xs">Salvando...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FileText className={`w-5 h-5 ${!isFormValid ? 'text-gray-300' : 'text-white'}`} />
+                                            <span className={`font-bold uppercase tracking-widest text-xs ${!isFormValid ? 'text-gray-300' : 'text-white'}`}>
+                                                Gerar Relatório
+                                            </span>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </button>
+
                     </div>
 
                 </div>
             </div>
         </div>
+
     );
 }

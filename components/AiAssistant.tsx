@@ -139,7 +139,7 @@ export default function AiAssistant() {
     };
 
     return (
-        <div className="w-full max-w-2xl mx-auto mt-12 mb-8">
+        <div className="w-full max-w-2xl mx-auto mt-0 mb-8">
             <div className="bg-transparent border border-white/20 dark:border-gray-700/30 rounded-2xl p-6 relative overflow-hidden transition-colors">
                 {/* Decorative background element removed */}
 
@@ -150,31 +150,35 @@ export default function AiAssistant() {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Pergunte sobre materiais, normas ou custos..."
-                            className="w-full pl-4 pr-12 py-4 rounded-xl border border-blue-200 dark:border-blue-800 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-primary dark:focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all shadow-sm text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
+                            className="w-full pl-4 pr-12 py-4 rounded-xl border border-orange-500 dark:border-orange-500 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-orange-500 dark:focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:focus:ring-orange-500/20 outline-none transition-all shadow-sm text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
 
                         <button
                             type="submit"
                             disabled={isLoading || !query.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary dark:bg-primary text-white rounded-lg hover:bg-primary/90 dark:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-orange-500 dark:bg-orange-500 text-white rounded-lg hover:bg-orange-600 dark:hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                         >
                             {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                         </button>
                     </form>
-                    <div className="flex items-center justify-center gap-2 mb-2 mt-4 text-primary dark:text-blue-400 font-semibold">
-                        <Sparkles size={20} />
-                        <h3>Assistente IA de Construção</h3>
-                    </div>
 
-                    <div className="flex justify-center mb-6 mt-[1.5cm]">
+                    <p className="text-sm font-normal text-gray-500 dark:text-gray-400 mt-4 text-center max-w-lg mx-auto leading-relaxed">
+                        Transforme qualquer ideia de obra ou serviço em um orçamento preciso em segundos — a IA faz os cálculos por você usando base de preços reais.
+                    </p>
+
+
+                    <div className="flex justify-center mb-6 mt-10">
                         <button
                             type="button"
                             onClick={() => {
                                 const newId = crypto.randomUUID();
                                 router.push(`/editor/${newId}?type=obra_nova`);
                             }}
-                            className="px-4 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700 border-2 border-blue-300 dark:border-blue-700 rounded-full transition-all hover:scale-105"
+                            className="relative inline-flex overflow-hidden rounded-xl p-[1px] group transition-all duration-300 hover:scale-105 shadow-md"
                         >
-                            Iniciar orçamento grátis
+                            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#F3F4F6_0%,#F97316_50%,#F3F4F6_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#111827_0%,#F97316_50%,#111827_100%)]" />
+                            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl bg-white dark:bg-gray-950 px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300 backdrop-blur-3xl gap-2">
+                                Iniciar Orçamento
+                            </span>
                         </button>
                     </div>
 

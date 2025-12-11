@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Loader2, Check, Bot, Send, AlertTriangle, FilePlus, Sparkles } from 'lucide-react';
+import { Plus, Loader2, Check, Bot, Send, AlertTriangle, FilePlus, Sparkles, Calculator } from 'lucide-react';
 
 export type BoqItem = {
     id: string;
@@ -140,28 +140,31 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
     };
 
     return (
-        <div className="w-full mb-6" ref={containerRef}>
-            <div className="relative group">
+        <div className="w-full mb-6 relative" ref={containerRef}>
+            <div className="group">
                 <form onSubmit={handleAiSearch} className="relative">
-                    <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => {
-                            setQuery(e.target.value);
-                            if (aiResponse) setAiResponse(null);
-                        }}
-                        onFocus={() => query && !aiResponse && setIsOpen(true)}
-                        placeholder="✨ Descreva sua obra ou item para a IA (ex: 'Reboco de parede 20m2')..."
-                        className="w-full pl-5 pr-12 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all text-base text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 shadow-sm hover:shadow-md"
-                    />
+                    {/* Spotlight Search Bar */}
+                    <div className="flex items-center relative bg-gray-100 dark:bg-gray-800 rounded-xl transition-all duration-300 border border-orange-500 focus-within:border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.2)] focus-within:bg-white dark:focus-within:bg-gray-950 focus-within:ring-2 focus-within:ring-orange-500/20 focus-within:shadow-lg">
+                        <input
+                            type="text"
+                            value={query}
+                            onChange={(e) => {
+                                setQuery(e.target.value);
+                                if (aiResponse) setAiResponse(null);
+                            }}
+                            onFocus={() => query && !aiResponse && setIsOpen(true)}
+                            placeholder="Descreva sua obra ou item para a IA (ex: 'Reboco de parede 20m2')..."
+                            className="w-full pl-5 pr-12 py-4 rounded-xl border-none outline-none bg-transparent text-base text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
+                        />
 
-                    <button
-                        type="submit"
-                        disabled={isAiLoading || !query.trim()}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
-                    >
-                        {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-                    </button>
+                        <button
+                            type="submit"
+                            disabled={isAiLoading || !query.trim()}
+                            className="absolute right-3 p-2 bg-orange-500 dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm border border-orange-500"
+                        >
+                            {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <Calculator size={18} />}
+                        </button>
+                    </div>
                 </form>
             </div>
 
