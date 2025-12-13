@@ -13,6 +13,7 @@ export type BoqItem = {
     included: boolean;
     category: string;
     isCustom?: boolean;
+    aiRequestId?: string;
 };
 
 type SuggestedItem = {
@@ -21,6 +22,7 @@ type SuggestedItem = {
     quantity: number;
     price: number;
     category: string;
+    included?: boolean;
 };
 
 type SuggestedBudget = {
@@ -119,13 +121,21 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
     const handleAddSuggestedItems = () => {
         if (!aiResponse?.suggestedBudget) return;
 
+        // Only add items that are currently selected/included in the UI state
+        // We need to track the selection state of suggested items if we want to allow user to toggle them BEFORE adding.
+        // For now, let's assume valid items are those with included=true from the AI response, 
+        // OR we can convert this to a local state to let user toggle.
+
+        // Since we didn't add local state for toggling AI items yet, let's just add all of them 
+        // but respect the 'included' flag as the initial state in the editor.
         const itemsToAdd = aiResponse.suggestedBudget.items.map(item => ({
             name: item.name,
             unit: item.unit,
             price: item.price,
             quantity: item.quantity,
             category: item.category,
-            manualPrice: item.price
+            manualPrice: item.price,
+            included: item.included !== undefined ? item.included : true // Pass this through
         }));
 
         onAddCustom(itemsToAdd, {
@@ -225,7 +235,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
             {aiResponse && (
                 <div className="mt-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-3 shadow-md animate-in fade-in duration-100 relative z-40">
                     <div className="flex gap-2">
-                        <div className="mt-0.5 bg-indigo-100 dark:bg-indigo-900/30 p-1 rounded h-fit text-indigo-600 dark:text-indigo-400 shrink-0">
+                        <div className="mt-0.5 bg-orange-100 dark:bg-orange-900/30 p-1 rounded h-fit text-orange-600 dark:text-orange-400 shrink-0">
                             <Bot size={12} />
                         </div>
                         <div className="space-y-3 w-full">
@@ -234,20 +244,24 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                             </div>
 
                             {aiResponse.suggestedBudget && (
-                                <div className="bg-indigo-50/50 dark:bg-indigo-900/10 rounded border border-indigo-200 dark:border-indigo-800/30 p-3">
+                                <div className="bg-orange-50/50 dark:bg-orange-900/10 rounded border border-orange-200 dark:border-orange-800/30 p-3">
                                     <div className="flex items-center justify-between mb-2">
-                                        <h4 className="font-semibold text-indigo-900 dark:text-indigo-300 text-[11px]">Sugestão de Itens</h4>
-                                        <span className="text-[9px] text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 px-1.5 py-0.5 rounded-full font-medium">
+                                        <h4 className="font-semibold text-orange-900 dark:text-orange-300 text-[11px]">Sugestão de Itens</h4>
+                                        <span className="text-[9px] text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-1.5 py-0.5 rounded-full font-medium">
                                             {aiResponse.suggestedBudget.items.length} itens
                                         </span>
                                     </div>
 
                                     <ul className="space-y-1 mb-3 max-h-60 overflow-y-auto">
                                         {aiResponse.suggestedBudget.items.map((item, idx) => (
-                                            <li key={idx} className="text-[11px] text-gray-700 dark:text-gray-300 flex justify-between items-center border-b border-indigo-100 dark:border-indigo-800/30 last:border-0 pb-1 last:pb-0">
-                                                <div className="flex-1 min-w-0">
-                                                    <span className="font-medium">{item.name}</span>
-                                                    <div className="text-[9px] text-gray-500 dark:text-gray-500">{item.category}</div>
+                                            <li key={idx} className={`text-[11px] flex justify-between items-center border-b border-orange-100 dark:border-orange-800/30 last:border-0 pb-1 last:pb-0 ${item.included === false ? 'opacity-60 grayscale' : 'text-gray-700 dark:text-gray-300'}`}>
+                                                <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                    {/* Show visual indicator if item is optional/unchecked */}
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${item.included === false ? 'bg-gray-300 dark:bg-gray-600' : 'bg-orange-500'}`}></div>
+                                                    <div className="min-w-0">
+                                                        <span className="font-medium">{item.name}</span>
+                                                        <div className="text-[9px] text-gray-500 dark:text-gray-500">{item.category}</div>
+                                                    </div>
                                                 </div>
                                                 <div className="text-right ml-2 flex-shrink-0">
                                                     <div className="font-semibold tabular-nums">~R$ {item.price}</div>
@@ -259,7 +273,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
 
                                     <button
                                         onClick={handleAddSuggestedItems}
-                                        className="w-full py-1.5 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white rounded text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5"
+                                        className="w-full py-1.5 bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-600 text-white rounded text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5"
                                     >
                                         <FilePlus size={12} />
                                         Adicionar Itens ao Orçamento

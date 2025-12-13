@@ -44,6 +44,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     // Load from localStorage on mount
     useEffect(() => {
         const savedData = localStorage.getItem(`estimate_${estimateId}`);
+        let finalItems: BoqItem[] = [];
+
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData);
@@ -74,11 +76,9 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     });
 
                     loadedItems = mergedItems;
-                } else {
-                    // Normal load: Ensure category names match current DEFAULT_ITEMS (uppercase) if needed
-                    // Or keep as is.
                 }
 
+                finalItems = loadedItems;
                 setItems(loadedItems);
                 setBdi(parsed.bdi || 20);
                 setProviderName(parsed.providerName || '');
@@ -91,12 +91,24 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
             } catch (e) {
                 console.error("Error loading estimate:", e);
+                finalItems = DEFAULT_ITEMS;
                 setItems(DEFAULT_ITEMS);
             }
         } else {
             // New estimate: Load defaults
+            finalItems = DEFAULT_ITEMS;
             setItems(DEFAULT_ITEMS);
         }
+
+        // Auto-expand categories that have custom/AI items
+        const initialExpanded: Record<string, boolean> = {};
+        finalItems.forEach((item: BoqItem) => {
+            if (item.isCustom || (item.aiRequestId && item.included)) {
+                initialExpanded[item.category] = true;
+            }
+        });
+        setExpandedCategories(prev => ({ ...prev, ...initialExpanded }));
+
         setIsLoaded(true);
     }, [estimateId, DEFAULT_ITEMS]);
 
@@ -354,6 +366,11 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     if (request) {
                                         setAiRequests(prev => [...prev, { ...request, id: requestId, timestamp: new Date().toISOString() }]);
                                     }
+                                    // Auto-expand the target category
+                                    setExpandedCategories(prev => ({
+                                        ...prev,
+                                        [targetCategory]: true
+                                    }));
                                 }}
                             />
                         </div>

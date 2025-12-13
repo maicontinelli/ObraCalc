@@ -11,6 +11,7 @@ type SuggestedItem = {
     quantity: number;
     price: number;
     category: string;
+    included?: boolean;
 };
 
 type SuggestedBudget = {
@@ -105,11 +106,11 @@ export default function AiAssistant() {
         // Create target category name from title or query (Single Group Logic)
         const targetCategory = (response.suggestedBudget.title || query || 'ORÇAMENTO PERSONALIZADO').toUpperCase();
 
-        // Create AI-suggested items (all checked)
+        // Create AI-suggested items
         const aiItems = response.suggestedBudget.items.map(item => ({
             id: crypto.randomUUID(),
             ...item,
-            included: true,
+            included: item.included !== undefined ? item.included : true, // Use AI suggestion or default to true
             isCustom: true,
             category: targetCategory, // Force single group
             aiRequestId: aiRequestId // Link items to this AI request
@@ -198,7 +199,7 @@ export default function AiAssistant() {
                     {response && (
                         <div ref={responseRef} className="mt-6 bg-white/40 dark:bg-gray-800/40 backdrop-blur-md rounded-xl p-4 border border-white/20 dark:border-gray-700/30 animate-in fade-in slide-in-from-bottom-2 shadow-sm">
                             <div className="flex gap-3">
-                                <div className="mt-1 bg-indigo-100/80 dark:bg-indigo-900/30 p-1.5 rounded-lg h-fit text-indigo-600 dark:text-indigo-400 shrink-0 backdrop-blur-sm">
+                                <div className="mt-1 bg-orange-100/80 dark:bg-orange-900/30 p-1.5 rounded-lg h-fit text-orange-600 dark:text-orange-400 shrink-0 backdrop-blur-sm">
                                     <Bot size={16} />
                                 </div>
                                 <div className="space-y-4 w-full">
@@ -207,10 +208,10 @@ export default function AiAssistant() {
                                     </div>
 
                                     {response.suggestedBudget && (
-                                        <div className="bg-indigo-50/40 dark:bg-indigo-900/20 rounded-lg p-4 border border-indigo-100/50 dark:border-indigo-800/30 backdrop-blur-sm">
+                                        <div className="bg-orange-50/40 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-100/50 dark:border-orange-800/30 backdrop-blur-sm">
                                             <div className="flex items-center justify-between mb-3">
-                                                <h4 className="font-semibold text-indigo-900 dark:text-indigo-300 text-sm">Orçamento Sugerido</h4>
-                                                <span className="text-xs text-indigo-600 dark:text-indigo-300 bg-indigo-100/50 dark:bg-indigo-900/50 px-2 py-1 rounded-full">
+                                                <h4 className="font-semibold text-orange-900 dark:text-orange-300 text-sm">Orçamento Sugerido</h4>
+                                                <span className="text-xs text-orange-600 dark:text-orange-300 bg-orange-100/50 dark:bg-orange-900/50 px-2 py-1 rounded-full">
                                                     {response.suggestedBudget.items.length} itens identificados
                                                 </span>
                                             </div>
@@ -229,7 +230,7 @@ export default function AiAssistant() {
 
                                             <button
                                                 onClick={handleCreateBudget}
-                                                className="w-full py-2 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-sm"
+                                                className="w-full py-2 bg-orange-500 dark:bg-orange-600 hover:bg-orange-600 dark:hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-sm"
                                             >
                                                 <FilePlus size={16} />
                                                 Criar orçamento com estes itens
