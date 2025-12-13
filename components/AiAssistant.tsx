@@ -150,7 +150,7 @@ export default function AiAssistant() {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Pergunte sobre materiais, normas ou custos..."
+                            placeholder="Descreva seu serviço (ex: construir muro de 15m, reformar cozinha, pintar casa)..."
                             className="w-full pl-4 pr-12 py-4 rounded-xl border border-orange-500 dark:border-orange-500 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-orange-500 dark:focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:focus:ring-orange-500/20 outline-none transition-all shadow-sm text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
 
                         <button
@@ -162,9 +162,7 @@ export default function AiAssistant() {
                         </button>
                     </form>
 
-                    <p className="text-sm font-normal text-gray-500 dark:text-gray-400 mt-4 text-center max-w-lg mx-auto leading-relaxed">
-                        Transforme qualquer ideia de obra ou serviço em um orçamento preciso em segundos — a IA faz os cálculos por você usando base de preços reais.
-                    </p>
+
 
 
                     <div className="flex justify-center mb-6 mt-10">

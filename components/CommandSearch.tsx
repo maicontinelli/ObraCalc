@@ -163,7 +163,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                                 if (aiResponse) setAiResponse(null);
                             }}
                             onFocus={() => query && !aiResponse && setIsOpen(true)}
-                            placeholder="Descreva sua obra ou item para a IA (ex: 'Reboco de parede 20m2')..."
+                            placeholder="Adicione outros serviços aqui (ex: 'Reboco de parede 20m2')..."
                             className="w-full pl-5 pr-12 py-4 rounded-xl border-none outline-none bg-transparent text-base text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
                         />
 

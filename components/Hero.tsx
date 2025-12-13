@@ -21,6 +21,10 @@ export function Hero() {
                     </h1>
                 </div>
 
+                <h2 className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium text-center mb-10 max-w-2xl mx-auto leading-relaxed">
+                    Orçamentos precisos em segundos — IA com base de preços reais do mercado.
+                </h2>
+
                 {/* AI Assistant Container (Search Bar) */}
                 <div className="max-w-3xl mx-auto relative z-20 mb-8">
                     <MathParticles />

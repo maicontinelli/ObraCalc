@@ -321,6 +321,13 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     {/* LEFT COLUMN: Main Content (2/3) */}
                     <div className="lg:col-span-2 space-y-6">
 
+                        {/* Labels for AI vs Manual */}
+                        <div className="flex items-center justify-between px-1 mb-2">
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-orange-500/80">
+                                ✨ Gerar com IA
+                            </span>
+                        </div>
+
                         {/* AI Assistant Search Bar */}
                         <div className="mb-2">
                             <CommandSearch
@@ -375,8 +382,15 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             />
                         </div>
 
+
+
                         {/* Main List Container */}
                         <div className="">
+                            <div className="mb-3 px-1">
+                                <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">
+                                    ✏️ Adicionar manualmente
+                                </span>
+                            </div>
                             {/* Items List Content - Removed divide-y, using space-y for cleaner separation */}
                             <div className="space-y-2">
                                 {categories.map((category) => {
