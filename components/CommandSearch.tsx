@@ -153,27 +153,30 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
         <div className="w-full mb-6 relative" ref={containerRef}>
             <div className="group">
                 <form onSubmit={handleAiSearch} className="relative">
-                    {/* Spotlight Search Bar */}
-                    <div className="flex items-center relative bg-gray-100 dark:bg-gray-800 rounded-xl transition-all duration-300 border border-orange-500 focus-within:border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.2)] focus-within:bg-white dark:focus-within:bg-gray-950 focus-within:ring-2 focus-within:ring-orange-500/20 focus-within:shadow-lg">
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={(e) => {
-                                setQuery(e.target.value);
-                                if (aiResponse) setAiResponse(null);
-                            }}
-                            onFocus={() => query && !aiResponse && setIsOpen(true)}
-                            placeholder="Adicione outros serviços aqui (ex: 'Reboco de parede 20m2')..."
-                            className="w-full pl-5 pr-12 py-4 rounded-xl border-none outline-none bg-transparent text-base text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
-                        />
+                    {/* Spotlight Search Bar with Animated Border */}
+                    <div className="relative inline-flex overflow-hidden rounded-xl p-[2px] w-full">
+                        <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#F3F4F6_0%,#00BCD4_50%,#F3F4F6_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#111827_0%,#00BCD4_50%,#111827_100%)]" />
+                        <div className="flex items-center relative bg-white dark:bg-gray-950 rounded-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-[#00BCD4]/20 focus-within:shadow-lg w-full z-10">
+                            <input
+                                type="text"
+                                value={query}
+                                onChange={(e) => {
+                                    setQuery(e.target.value);
+                                    if (aiResponse) setAiResponse(null);
+                                }}
+                                onFocus={() => query && !aiResponse && setIsOpen(true)}
+                                placeholder="Adicione outros serviços aqui (ex: 'Reboco de parede 20m2')..."
+                                className="w-full pl-5 pr-12 py-4 rounded-xl border-none outline-none bg-transparent text-base text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
+                            />
 
-                        <button
-                            type="submit"
-                            disabled={isAiLoading || !query.trim()}
-                            className="absolute right-3 p-2 bg-orange-500 dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm border border-orange-500"
-                        >
-                            {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <Calculator size={18} />}
-                        </button>
+                            <button
+                                type="submit"
+                                disabled={isAiLoading || !query.trim()}
+                                className="absolute right-3 p-2 bg-[#00BCD4] text-white hover:bg-[#00ACC1] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm z-20"
+                            >
+                                {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <Calculator size={18} />}
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

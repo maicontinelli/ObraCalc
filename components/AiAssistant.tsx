@@ -146,17 +146,21 @@ export default function AiAssistant() {
 
                 <div className="relative z-10">
                     <form onSubmit={handleSearch} className="relative">
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Descreva seu serviço (ex: construir muro de 15m, reformar cozinha, pintar casa)..."
-                            className="w-full pl-4 pr-12 py-4 rounded-xl border border-orange-500 dark:border-orange-500 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm focus:border-orange-500 dark:focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:focus:ring-orange-500/20 outline-none transition-all shadow-sm text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
+                        {/* Animated border wrapper for search bar */}
+                        <div className="relative inline-flex overflow-hidden rounded-xl p-[2px] w-full">
+                            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#F3F4F6_0%,#00BCD4_50%,#F3F4F6_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#111827_0%,#00BCD4_50%,#111827_100%)]" />
+                            <input
+                                type="text"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Descreva seu serviço (ex: construir muro de 15m, reformar cozinha, pintar casa)..."
+                                className="relative z-10 w-full pl-4 pr-12 py-4 rounded-xl border-0 bg-white dark:bg-gray-950 focus:ring-2 focus:ring-[#00BCD4]/20 dark:focus:ring-[#00BCD4]/20 outline-none transition-all text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
+                        </div>
 
                         <button
                             type="submit"
                             disabled={isLoading || !query.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-orange-500 dark:bg-orange-500 text-white rounded-lg hover:bg-orange-600 dark:hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[#00BCD4] text-white rounded-lg hover:bg-[#00ACC1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm z-20"
                         >
                             {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                         </button>
@@ -172,12 +176,9 @@ export default function AiAssistant() {
                                 const newId = crypto.randomUUID();
                                 router.push(`/editor/${newId}?type=obra_nova`);
                             }}
-                            className="relative inline-flex overflow-hidden rounded-xl p-[1px] group transition-all duration-300 hover:scale-105 shadow-md"
+                            className="px-6 py-2.5 rounded-xl border-2 border-[#00BCD4] bg-white dark:bg-gray-950 text-gray-600 dark:text-gray-300 text-sm font-bold uppercase tracking-wider hover:bg-[#00BCD4]/5 dark:hover:bg-[#00BCD4]/10 transition-all duration-300 hover:scale-105 shadow-md"
                         >
-                            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#F3F4F6_0%,#F97316_50%,#F3F4F6_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#111827_0%,#F97316_50%,#111827_100%)]" />
-                            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl bg-white dark:bg-gray-950 px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300 backdrop-blur-3xl gap-2">
-                                Iniciar Orçamento
-                            </span>
+                            Iniciar Orçamento
                         </button>
                     </div>
 
