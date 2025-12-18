@@ -121,7 +121,7 @@ export const processMemorialData = (polygonFeature: any, startPointIndex: number
     // Convert coordinates to UTM
     const utmPoints = coordinates.map((coord: number[], index: number) => {
         const [lon, lat] = coord;
-        const [e, n] = proj4(proj4.defs('EPSG:4326')!, projString, [lon, lat]);
+        const [e, n] = proj4('EPSG:4326', projString, [lon, lat]);
         return {
             id: '', // Will assign later
             originalIndex: index,
