@@ -410,7 +410,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
     const categories = Object.keys(groupedItems);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 print:bg-white">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 print:bg-white print:min-h-0 print:h-auto">
             <style jsx global>{`
                 @media print {
                     @page { 
@@ -482,13 +482,13 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             {/* Report Content */}
             <div id="report-content" className="max-w-[1600px] mx-auto p-6 lg:p-8 print-content">
                 {/* Header - Condensed */}
-                <div className="mb-8">
+                <div className="mb-8" style={{ breakInside: 'avoid' }}>
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
                         Orçamento
                     </h1>
 
-                    {/* Info Grid - Condensed like editor */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-sm">
+                    {/* Info Grid - Condensed like editor - Force 2 cols on print to match HTML export */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-x-12 gap-y-4 text-sm">
                         {/* Prestador Column */}
                         <div className="space-y-3">
                             <div>
