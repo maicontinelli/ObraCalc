@@ -8,7 +8,7 @@ export function Hero() {
             <div className="container mx-auto px-4 relative z-10">
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12">
                     <Image
-                        src="/obracalc-logo-new.png"
+                        src="/logo-custom.png"
                         alt="ObraCalc Logo"
                         width={100}
                         height={100}

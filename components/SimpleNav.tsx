@@ -9,7 +9,7 @@ export default function SimpleNav() {
                     <div className="flex items-center">
                         <Link href="/" className="flex-shrink-0 flex items-center gap-2">
                             <Image
-                                src="/obracalc-logo-new.png"
+                                src="/logo-custom.png"
                                 alt="ObraCalc Logo"
                                 width={32}
                                 height={32}
