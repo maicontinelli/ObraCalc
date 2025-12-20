@@ -39,6 +39,13 @@ export default function RelatorioFotograficoPage() {
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const selectedFiles = Array.from(e.target.files);
+
+            // Limit to 10 images to prevent localStorage issues
+            if (selectedFiles.length + images.length > 10) {
+                setError(`Máximo de 10 imagens permitidas. Você já tem ${images.length} e tentou adicionar ${selectedFiles.length}.`);
+                return;
+            }
+
             const validFiles = selectedFiles.filter(file =>
                 file.type.startsWith('image/')
             );
@@ -46,32 +53,28 @@ export default function RelatorioFotograficoPage() {
             if (validFiles.length !== selectedFiles.length) {
                 setError('Alguns arquivos não são imagens válidas e foram ignorados.');
             } else {
-                setError(null);
+                setError(null); // Clear error if all are valid
+            }
+
+            if (validFiles.length === 0) {
+                return; // No valid files to process
             }
 
             setIsCompressing(true);
 
             try {
-                // Compression options
+                // Ultra-aggressive compression for localStorage
                 const options = {
-                    maxSizeMB: 0.5, // Max 500KB
-                    maxWidthOrHeight: 1600, // Max dimension
+                    maxSizeMB: 0.1, // Max 100KB per image (was 200KB)
+                    maxWidthOrHeight: 1000, // Reduced from 1200
                     useWebWorker: true,
                     fileType: 'image/jpeg' as const,
-                    initialQuality: 0.8
+                    initialQuality: 0.6 // Lower quality (was 0.7)
                 };
 
                 // Compress all images
                 const compressedFiles = await Promise.all(
-                    validFiles.map(async (file) => {
-                        try {
-                            const compressed = await imageCompression(file, options);
-                            return compressed;
-                        } catch (err) {
-                            console.error('Error compressing image:', err);
-                            return file; // Use original if compression fails
-                        }
-                    })
+                    validFiles.map(file => imageCompression(file, options))
                 );
 
                 const newImages: ImageData[] = compressedFiles.map(file => ({
@@ -180,11 +183,43 @@ export default function RelatorioFotograficoPage() {
                 createdAt: new Date().toISOString()
             };
 
-            // Save to localStorage
+            // Save to sessionStorage (has more space than localStorage)
             const reportId = `photo_report_${Date.now()}`;
-            localStorage.setItem(reportId, JSON.stringify(reportData));
+            console.log('Saving report with ID:', reportId);
+
+            // Calculate approximate size
+            const dataString = JSON.stringify(reportData);
+            const sizeInMB = (dataString.length / (1024 * 1024)).toFixed(2);
+            console.log(`Report size: ${sizeInMB}MB`);
+
+            // Check if data is too large (sessionStorage limit is ~10MB)
+            if (dataString.length > 8 * 1024 * 1024) { // 8MB limit for safety
+                throw new Error(`Relatório muito grande (${sizeInMB}MB). Use menos imagens (máximo 5-6 recomendado).`);
+            }
+
+            try {
+                // Use sessionStorage instead of localStorage (more space)
+                sessionStorage.setItem(reportId, dataString);
+                console.log('Report saved successfully to sessionStorage');
+
+                // Verify it was saved
+                const saved = sessionStorage.getItem(reportId);
+                if (!saved) {
+                    throw new Error('Failed to save to sessionStorage');
+                }
+                console.log('Verified report in sessionStorage');
+            } catch (storageError: any) {
+                console.error('Storage error:', storageError);
+
+                // Provide specific error message
+                if (storageError.name === 'QuotaExceededError') {
+                    throw new Error(`Espaço insuficiente. Reduza para 3-5 imagens ou use imagens menores.`);
+                }
+                throw new Error('Erro ao salvar relatório. Tente com 3-5 imagens apenas.');
+            }
 
             // Navigate to report page
+            console.log('Navigating to:', `/relatorio-fotografico/${reportId}`);
             router.push(`/relatorio-fotografico/${reportId}`);
 
         } catch (err: any) {
@@ -248,7 +283,13 @@ export default function RelatorioFotograficoPage() {
                                 <div className="flex flex-col items-center">
                                     <CheckCircle className="h-12 w-12 text-[#00704A] mb-4" />
                                     <h3 className="text-lg font-medium text-gray-900">{images.length} imagem(ns) selecionada(s)</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Clique para adicionar mais imagens</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        {images.length >= 10 ? (
+                                            <span className="text-orange-600 font-medium">Limite máximo atingido (10 imagens)</span>
+                                        ) : (
+                                            `Você pode adicionar até ${10 - images.length} imagens`
+                                        )}
+                                    </p>
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center">

@@ -1,5 +1,6 @@
 import PhotoReportClient from './PhotoReportClient';
 
-export default function PhotoReportPage({ params }: { params: { id: string } }) {
-    return <PhotoReportClient reportId={params.id} />;
+export default async function PhotoReportPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    return <PhotoReportClient reportId={id} />;
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Printer, ArrowLeft, Download, User, MapPin, Building2, Layers, Calendar } from 'lucide-react';
+import { FileText, Printer, ArrowLeft, User, MapPin, Building2, Layers, Calendar } from 'lucide-react';
 
 interface ImageData {
     base64: string;
@@ -31,7 +31,8 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const savedData = localStorage.getItem(reportId);
+        // Try sessionStorage first (new), then localStorage (old reports)
+        const savedData = sessionStorage.getItem(reportId) || localStorage.getItem(reportId);
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData);
@@ -46,6 +47,7 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
     const handlePrint = () => {
         window.print();
     };
+
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -71,11 +73,16 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
     const handleExportHTML = () => {
         if (!data) return;
 
+        // Create images in 2-column grid layout
         const imagesHTML = data.images.map((img, index) => `
-            <div style="margin-bottom: 32px; page-break-inside: avoid;">
-                <img src="${img.base64}" alt="Imagem ${index + 1}" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;" />
-                <p style="font-size: 12px; font-weight: 600; color: #111827; margin-bottom: 4px;">${img.caption}</p>
-                ${img.analysis ? `<p style="font-size: 11px; color: #6b7280;">${img.analysis}</p>` : ''}
+            <div class="photo-card">
+                <div class="photo-container">
+                    <img src="${img.base64}" alt="Imagem ${index + 1}" />
+                </div>
+                <div class="photo-caption">
+                    <p class="caption-title">${img.caption}</p>
+                    ${img.analysis ? `<p class="caption-text">${img.analysis}</p>` : ''}
+                </div>
             </div>
         `).join('');
 
@@ -104,13 +111,14 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         h1 { 
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
             color: #111827;
             text-align: center;
-            margin-bottom: 32px;
-            padding-bottom: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
             border-bottom: 2px solid #e5e7eb;
+            line-height: 1.3;
         }
         h2 {
             font-size: 16px;
@@ -159,24 +167,54 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
             border-top: 1px solid #e5e7eb;
             margin: 32px 0;
         }
-        .signature {
-            margin-top: 48px;
-            text-align: center;
+        /* Photo Grid Styles */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
         }
-        .signature-line {
-            border-top: 1px solid #111827;
-            width: 300px;
-            margin: 0 auto 8px;
+        .photo-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+        .photo-container {
+            aspect-ratio: 4 / 3;
+            background: #f3f4f6;
+            overflow: hidden;
+        }
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-caption {
+            padding: 12px;
+        }
+        .caption-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        .caption-text {
+            font-size: 10px;
+            color: #6b7280;
+            line-height: 1.4;
         }
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; }
+            .photo-card { page-break-inside: avoid; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>RELATÓRIO FOTOGRÁFICO DE ACOMPANHAMENTO DE OBRA</h1>
+        <h1>RELATÓRIO FOTOGRÁFICO DE OBRA</h1>
         
         <h2>1. IDENTIFICAÇÃO DA OBRA</h2>
         <div class="info-grid">
@@ -238,7 +276,9 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
 
         <div class="section">
             <h2>4. REGISTRO FOTOGRÁFICO COMENTADO</h2>
-            ${imagesHTML}
+            <div class="photos-grid">
+                ${imagesHTML}
+            </div>
         </div>
 
         ${data.userObservations ? `
@@ -273,10 +313,19 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
             </div>
         </div>
 
-        <div class="signature">
-            <p style="margin-bottom: 48px;">${data.projectAddress.split(',')[0] || 'Local da Obra'}, ${formatDate(data.inspectionDate)}.</p>
-            <div class="signature-line"></div>
-            <p style="font-size: 12px; color: #6b7280;">${data.technicalResponsible || 'Responsável pelo Relatório'}</p>
+        <div style="margin-top: 64px; padding-top: 32px; border-top: 1px solid #e5e7eb; text-align: center;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
+                <img src="/logo-custom.png" alt="ObraFlow" style="height: 32px; opacity: 0.6;" />
+                <div>
+                    <p style="font-size: 14px; font-weight: 600; color: #374151; margin: 0;">ObraFlow</p>
+                    <p style="font-size: 10px; color: #6b7280; margin: 0; max-width: 400px;">
+                        Fluxo completo de documentação por IA — do orçamento ao relatório técnico.
+                    </p>
+                </div>
+            </div>
+            <p style="font-size: 9px; color: #9ca3af; margin: 0;">
+                Relatório gerado em ${formatDate(data.createdAt)} • ${data.projectAddress.split(',')[0] || 'Local da Obra'}
+            </p>
         </div>
     </div>
 </body>
@@ -335,12 +384,47 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                         margin: 0; 
                         background: white !important; 
                     }
-                    nav, .no-print { 
+                    /* Hide all non-content elements */
+                    nav, .no-print, footer, header,
+                    [class*="background"], [class*="Background"],
+                    [class*="blob"], [class*="decoration"],
+                    .absolute, [style*="background-image"] { 
                         display: none !important; 
                     }
                     .print-content { 
                         box-shadow: none !important; 
                         background: white !important; 
+                    }
+                    /* Grid layout for photos in print */
+                    .grid {
+                        display: grid !important;
+                        grid-template-columns: repeat(2, 1fr) !important;
+                        gap: 20px !important;
+                    }
+                    /* Prevent page breaks inside images */
+                    .photo-card {
+                        page-break-inside: avoid !important;
+                        break-inside: avoid !important;
+                    }
+                    /* Aspect ratio container */
+                    .aspect-\\[4\\/3\\] {
+                        aspect-ratio: 4 / 3 !important;
+                    }
+                    /* Image cover */
+                    .object-cover {
+                        object-fit: cover !important;
+                    }
+                    /* Force page break before if needed */
+                    .photo-card:nth-child(odd) {
+                        page-break-after: auto;
+                    }
+                    /* Prevent orphan pages */
+                    * {
+                        page-break-after: auto !important;
+                    }
+                    /* Ensure content ends cleanly */
+                    .print-content > *:last-child {
+                        page-break-after: avoid !important;
                     }
                 }
             `}</style>
@@ -360,13 +444,13 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                             onClick={handleExportHTML}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
                         >
-                            <FileText size={18} /> Exportar HTML
+                            <FileText size={18} /> HTML
                         </button>
                         <button
                             onClick={handlePrint}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors shadow-sm"
                         >
-                            <Printer size={18} /> Gerar PDF
+                            <Printer size={18} /> PDF
                         </button>
                     </div>
                 </div>
@@ -471,18 +555,20 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                     <h2 className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-6">
                         4. Registro Fotográfico Comentado
                     </h2>
-                    <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {data.images.map((img, index) => (
-                            <div key={index} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ breakInside: 'avoid' }}>
-                                <img
-                                    src={img.base64}
-                                    alt={`Imagem ${index + 1}`}
-                                    className="w-full h-auto"
-                                />
-                                <div className="p-4">
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">{img.caption}</p>
+                            <div key={index} className="photo-card bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ breakInside: 'avoid' }}>
+                                <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-900">
+                                    <img
+                                        src={img.base64}
+                                        alt={`Imagem ${index + 1}`}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div className="p-3">
+                                    <p className="text-xs font-semibold text-gray-900 dark:text-white mb-1">{img.caption}</p>
                                     {img.analysis && (
-                                        <p className="text-xs text-gray-600 dark:text-gray-400">{img.analysis}</p>
+                                        <p className="text-[10px] text-gray-600 dark:text-gray-400 leading-tight">{img.analysis}</p>
                                     )}
                                 </div>
                             </div>
@@ -538,15 +624,24 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                     </div>
                 </div>
 
-                {/* Signature */}
-                <div className="mt-12 text-center">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-12">
-                        {data.projectAddress.split(',')[0] || 'Local da Obra'}, {formatDate(data.inspectionDate)}.
-                    </p>
-                    <div className="inline-block">
-                        <div className="border-t border-gray-900 dark:border-gray-100 w-64 mb-2"></div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                            {data.technicalResponsible || 'Responsável pelo Relatório'}
+                {/* Platform Footer */}
+                <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-col items-center gap-3">
+                        <div className="flex items-center gap-3">
+                            <img
+                                src="/logo-custom.png"
+                                alt="ObraFlow"
+                                className="h-8 w-auto opacity-60"
+                            />
+                            <div className="text-center">
+                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">ObraFlow</p>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 max-w-md">
+                                    Fluxo completo de documentação por IA — do orçamento ao relatório técnico.
+                                </p>
+                            </div>
+                        </div>
+                        <p className="text-[9px] text-gray-400 dark:text-gray-500">
+                            Relatório gerado em {formatDate(data.createdAt)} • {data.projectAddress.split(',')[0] || 'Local da Obra'}
                         </p>
                     </div>
                 </div>

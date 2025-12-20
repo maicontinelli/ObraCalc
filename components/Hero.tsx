@@ -9,20 +9,20 @@ export function Hero() {
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12">
                     <Image
                         src="/logo-custom.png"
-                        alt="ObraCalc Logo"
+                        alt="ObraFlow Logo"
                         width={100}
                         height={100}
                         className="drop-shadow-xl"
                     />
                     <h1 className="text-5xl md:text-7xl font-heading font-bold tracking-tight leading-tight">
                         <span className="text-[#1a1a1a] dark:text-gray-100">
-                            ObraCalc
+                            ObraFlow
                         </span>
                     </h1>
                 </div>
 
                 <h2 className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium text-center mb-10 max-w-2xl mx-auto leading-relaxed">
-                    Plataforma completa para orçamentos e documentação de obras com inteligência artificial.
+                    Fluxo completo de documentação por IA — do orçamento ao relatório técnico.
                 </h2>
 
                 {/* AI Assistant Container (Search Bar) */}

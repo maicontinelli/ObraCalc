@@ -34,10 +34,10 @@ export function Features() {
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                        Plataforma Completa para Profissionais da Construção
+                        Fluxo Completo de Documentação com IA
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">
-                        Todas as ferramentas que você precisa para orçamentos e documentação técnica em um só lugar.
+                        Do orçamento ao relatório técnico — automatize seu processo com inteligência artificial.
                     </p>
                 </div>
 
