@@ -22,7 +22,7 @@ export function Hero() {
                 </div>
 
                 <h2 className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium text-center mb-10 max-w-2xl mx-auto leading-relaxed">
-                    Orçamentos precisos em segundos — IA com base de preços reais do mercado.
+                    Plataforma completa para orçamentos e documentação de obras com inteligência artificial.
                 </h2>
 
                 {/* AI Assistant Container (Search Bar) */}

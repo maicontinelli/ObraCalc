@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Sparkles, Send, Bot, Loader2, FilePlus, AlertTriangle } from 'lucide-react';
+import { Sparkles, Send, Bot, Loader2, FilePlus, AlertTriangle, BrainCircuit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { BOQ_TEMPLATES } from '@/lib/constants';
 
@@ -162,23 +162,40 @@ export default function AiAssistant() {
                             disabled={isLoading || !query.trim()}
                             className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[#00BCD4] text-white rounded-lg hover:bg-[#00ACC1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm z-20"
                         >
-                            {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                            {isLoading ? <Loader2 size={18} className="animate-spin" /> : <BrainCircuit size={18} />}
                         </button>
                     </form>
 
 
 
 
-                    <div className="flex justify-center mb-6 mt-10">
+                    <div className="flex flex-wrap justify-center gap-2 mb-6 mt-8">
                         <button
                             type="button"
                             onClick={() => {
                                 const newId = crypto.randomUUID();
                                 router.push(`/editor/${newId}?type=obra_nova`);
                             }}
-                            className="px-6 py-2.5 rounded-xl border-2 border-[#00BCD4] bg-white dark:bg-gray-950 text-gray-600 dark:text-gray-300 text-sm font-bold uppercase tracking-wider hover:bg-[#00BCD4]/5 dark:hover:bg-[#00BCD4]/10 transition-all duration-300 hover:scale-105 shadow-md"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00BCD4]/10 dark:bg-[#00BCD4]/20 text-[#00BCD4] dark:text-[#00BCD4] text-xs font-semibold uppercase tracking-wide hover:bg-[#00BCD4]/20 dark:hover:bg-[#00BCD4]/30 transition-all border border-[#00BCD4]/30"
                         >
-                            Iniciar Orçamento
+                            <FilePlus size={14} />
+                            Orçamento
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => router.push('/topografia')}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wide hover:bg-blue-500/20 dark:hover:bg-blue-500/30 transition-all border border-blue-500/30"
+                        >
+                            <Sparkles size={14} />
+                            Topografia
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => router.push('/relatorio-fotografico')}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-xs font-semibold uppercase tracking-wide hover:bg-purple-500/20 dark:hover:bg-purple-500/30 transition-all border border-purple-500/30"
+                        >
+                            <Bot size={14} />
+                            Relatório Foto
                         </button>
                     </div>
 

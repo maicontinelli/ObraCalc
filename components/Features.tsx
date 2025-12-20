@@ -1,28 +1,30 @@
-import { Calculator, FileText, Zap, ShieldCheck } from "lucide-react";
+import { Calculator, FileText, Zap, Camera } from "lucide-react";
 import Link from "next/link";
 
 const features = [
     {
         icon: <Calculator className="h-6 w-6 text-primary dark:text-blue-400" />,
-        title: "Cálculos Precisos",
-        description: "Baseado na tabela SINAPI atualizada e preços médios de mercado por região."
+        title: "Orçamentos Inteligentes",
+        description: "Cálculos precisos baseados na tabela SINAPI atualizada e preços médios de mercado por região."
     },
     {
         icon: <Zap className="h-6 w-6 text-primary dark:text-blue-400" />,
         title: "IA Generativa",
-        description: "Descreva sua obra e nossa IA gera a lista completa de materiais e serviços."
+        description: "Descreva sua obra e nossa IA gera automaticamente a lista completa de materiais e serviços."
     },
     {
         icon: <FileText className="h-6 w-6 text-primary dark:text-blue-400" />,
-        title: "Topografia",
-        description: "Crie o memorial descritivo técnico + planilha pronta para prefeitura e cartório.",
-        link: "/memorial",
-        linkText: "Novo: Memorial Descritivo"
+        title: "Memorial de Topografia",
+        description: "Gere memorial descritivo técnico + planilha Excel pronta para prefeitura e cartório.",
+        link: "/topografia",
+        linkText: "Acessar Topografia"
     },
     {
-        icon: <ShieldCheck className="h-6 w-6 text-primary dark:text-blue-400" />,
-        title: "Segurança de Dados",
-        description: "Seus orçamentos salvos localmente e na nuvem com total privacidade."
+        icon: <Camera className="h-6 w-6 text-primary dark:text-blue-400" />,
+        title: "Relatório Fotográfico",
+        description: "IA analisa fotos da obra e gera relatório técnico profissional automaticamente.",
+        link: "/relatorio-fotografico",
+        linkText: "Novo: Relatório com IA"
     }
 ];
 
@@ -32,10 +34,10 @@ export function Features() {
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                        Conheça todos os nossos serviços de engenharia
+                        Plataforma Completa para Profissionais da Construção
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">
-                        Ferramentas poderosas para simplificar o dia a dia do profissional.
+                        Todas as ferramentas que você precisa para orçamentos e documentação técnica em um só lugar.
                     </p>
                 </div>
 

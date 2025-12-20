@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Printer, ArrowLeft } from 'lucide-react';
+import { FileText, Printer, ArrowLeft, User, Phone, Building2, Calendar } from 'lucide-react';
 import { getDddInfo } from '@/lib/ddd-data';
 
 export default function ReportClient({ estimateId }: { estimateId: string }) {
@@ -131,21 +131,44 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .header-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 48px;
+            gap: 64px;
             margin-bottom: 32px;
             font-size: 14px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
         }
-        .info-column { }
+        .info-column { 
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
         .info-block {
-            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            color: #6b7280;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .info-content {
+            flex: 1;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         .info-label {
             font-size: 10px;
             font-weight: 700;
-            color: #374151;
+            color: #4b5563;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 4px;
         }
         .info-value {
             color: #111827;
@@ -155,6 +178,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             font-size: 10px;
             color: #6b7280;
             margin-top: 2px;
+            width: 100%;
         }
         .ddd-state {
             font-weight: 600;
@@ -290,33 +314,49 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         <div class="header-grid">
             <div class="info-column">
                 <div class="info-block">
-                    <div class="info-label">👷 Prestador</div>
-                    <div class="info-value">${data.providerName || '-'}</div>
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div class="info-content">
+                        <span class="info-label">PRESTADOR:</span>
+                        <span class="info-value">${data.providerName || '-'}</span>
+                    </div>
                 </div>
                 <div class="info-block">
-                    <div class="info-label">📞 Telefone Prestador</div>
-                    <div class="info-value">${data.providerPhone || '-'}</div>
-                    ${providerDddInfo ? `<div class="ddd-info"><span class="ddd-state">${providerDddInfo.state}</span> • ${providerDddInfo.region}</div>` : ''}
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <div class="info-content">
+                        <span class="info-label">TELEFONE:</span>
+                        <span class="info-value">${data.providerPhone || '-'}</span>
+                    </div>
                 </div>
-                <div class="info-block" style="margin-top: 20px;">
-                    <div class="info-label">🏗️ Tipo de Obra</div>
-                    <div class="info-value">${data.projectType || '-'}</div>
+                <div class="info-block">
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
+                    <div class="info-content">
+                        <span class="info-label">TIPO DE OBRA:</span>
+                        <span class="info-value">${data.projectType || '-'}</span>
+                    </div>
                 </div>
             </div>
             
             <div class="info-column">
                 <div class="info-block">
-                    <div class="info-label">👤 Cliente</div>
-                    <div class="info-value">${data.clientName || '-'}</div>
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div class="info-content">
+                        <span class="info-label">CLIENTE:</span>
+                        <span class="info-value">${data.clientName || '-'}</span>
+                    </div>
                 </div>
                 <div class="info-block">
-                    <div class="info-label">📞 Telefone Cliente</div>
-                    <div class="info-value">${data.clientPhone || '-'}</div>
-                    ${clientDddInfo ? `<div class="ddd-info"><span class="ddd-state">${clientDddInfo.state}</span> • ${clientDddInfo.region}</div>` : ''}
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <div class="info-content">
+                        <span class="info-label">TELEFONE:</span>
+                        <span class="info-value">${data.clientPhone || '-'}</span>
+                    </div>
                 </div>
-                <div class="info-block" style="margin-top: 20px;">
-                    <div class="info-label">📅 Prazo Estimado</div>
-                    <div class="info-value">${data.deadline || '-'}</div>
+                <div class="info-block">
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                    <div class="info-content">
+                        <span class="info-label">PRAZO:</span>
+                        <span class="info-value">${data.deadline || '-'}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -482,56 +522,64 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             {/* Report Content */}
             <div id="report-content" className="max-w-[1600px] mx-auto p-6 lg:p-8 print-content">
                 {/* Header - Condensed */}
-                <div className="mb-8" style={{ breakInside: 'avoid' }}>
+                <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6" style={{ breakInside: 'avoid' }}>
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
                         Orçamento
                     </h1>
 
-                    {/* Info Grid - Condensed like editor - Force 2 cols on print to match HTML export */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-x-12 gap-y-4 text-sm">
+                    {/* Info Grid - Two columns with inline icons */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-x-16 gap-y-0 text-sm">
                         {/* Prestador Column */}
                         <div className="space-y-3">
-                            <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">👷 Prestador</div>
-                                <div className="text-gray-900 dark:text-white font-medium">{data.providerName || '-'}</div>
+                            <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">PRESTADOR:</span>
+                                    <span className="text-gray-900 dark:text-white font-medium">{data.providerName || '-'}</span>
+                                </div>
                             </div>
 
-                            <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">📞 Telefone Prestador</div>
-                                <div className="text-gray-900 dark:text-white">{data.providerPhone || '-'}</div>
-                                {providerDddInfo && (
-                                    <div className="text-[10px] text-gray-500 mt-0.5">
-                                        <span className="font-semibold text-primary">{providerDddInfo.state}</span> • {providerDddInfo.region}
-                                    </div>
-                                )}
+                            <div className="flex items-center gap-2">
+                                <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">TELEFONE:</span>
+                                    <span className="text-gray-900 dark:text-white">{data.providerPhone || '-'}</span>
+                                </div>
                             </div>
 
-                            <div className="mt-5">
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">🏗️ Tipo de Obra</div>
-                                <div className="text-gray-900 dark:text-white">{data.projectType || '-'}</div>
+                            <div className="flex items-center gap-2">
+                                <Building2 className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">TIPO DE OBRA:</span>
+                                    <span className="text-gray-900 dark:text-white">{data.projectType || '-'}</span>
+                                </div>
                             </div>
                         </div>
 
                         {/* Cliente Column */}
                         <div className="space-y-3">
-                            <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">👤 Cliente</div>
-                                <div className="text-gray-900 dark:text-white font-medium">{data.clientName || '-'}</div>
+                            <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">CLIENTE:</span>
+                                    <span className="text-gray-900 dark:text-white font-medium">{data.clientName || '-'}</span>
+                                </div>
                             </div>
 
-                            <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">📞 Telefone Cliente</div>
-                                <div className="text-gray-900 dark:text-white">{data.clientPhone || '-'}</div>
-                                {clientDddInfo && (
-                                    <div className="text-[10px] text-gray-500 mt-0.5">
-                                        <span className="font-semibold text-primary">{clientDddInfo.state}</span> • {clientDddInfo.region}
-                                    </div>
-                                )}
+                            <div className="flex items-center gap-2">
+                                <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">TELEFONE:</span>
+                                    <span className="text-gray-900 dark:text-white">{data.clientPhone || '-'}</span>
+                                </div>
                             </div>
 
-                            <div className="mt-5">
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">📅 Prazo Estimado</div>
-                                <div className="text-gray-900 dark:text-white">{data.deadline || '-'}</div>
+                            <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">PRAZO:</span>
+                                    <span className="text-gray-900 dark:text-white">{data.deadline || '-'}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
