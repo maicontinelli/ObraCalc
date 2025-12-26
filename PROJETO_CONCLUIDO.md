@@ -1,4 +1,4 @@
-# 🎉 OBRACALC SIMPLE - CONCLUÍDO
+# 🎉 OBRAFLOW SIMPLE - CONCLUÍDO
 
 ## ✅ TUDO FUNCIONANDO
 
@@ -124,7 +124,7 @@ obracalc-simple/
 
 ## ⚡ DIFERENÇAS DO PROJETO ANTIGO
 
-| Feature | Projeto Antigo | ObraCalc Simple |
+| Feature | Projeto Antigo | Obraflow Simple |
 |---------|---------------|-----------------|
 | Auth | ✅ Login/Logout | ❌ Removido |
 | Dashboard | ✅ Histórico | ❌ Removido |

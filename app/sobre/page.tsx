@@ -34,7 +34,7 @@ export default function AboutPage() {
                                     &quot;Após anos gerenciando obras e lidando com a complexidade das tabelas SINAPI, ORSE e SICRO, percebi que a maior dor do nosso setor não era a falta de dados, mas a dificuldade em acessá-los e conectá-los de forma inteligente.&quot;
                                 </p>
                                 <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-                                    O ObraCalc nasceu dessa necessidade: unir a solidez da engenharia civil sênior com a agilidade da Inteligência Artificial moderna. Não é apenas uma calculadora, é um assistente que entende de obra.
+                                    O Obraflow nasceu dessa necessidade: unir a solidez da engenharia civil sênior com a agilidade da Inteligência Artificial moderna. Não é apenas uma calculadora, é um assistente que entende de obra.
                                 </p>
                             </div>
                         </div>
@@ -94,7 +94,7 @@ export default function AboutPage() {
                                 Construído para a comunidade
                             </h2>
                             <p className="text-xl opacity-90 mb-10 max-w-2xl mx-auto">
-                                O ObraCalc é uma ferramenta viva, que evolui com o feedback de milhares de profissionais que a utilizam diariamente.
+                                O Obraflow é uma ferramenta viva, que evolui com o feedback de milhares de profissionais que a utilizam diariamente.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link href="/auth/cadastro">
