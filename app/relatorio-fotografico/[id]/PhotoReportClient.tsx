@@ -315,9 +315,9 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
 
         <div style="margin-top: 64px; padding-top: 32px; border-top: 1px solid #e5e7eb; text-align: center;">
             <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
-                <img src="/logo-custom.png" alt="ObraFlow" style="height: 32px; opacity: 0.6;" />
+                <img src="/logo-custom.png" alt="ObraCalc" style="height: 32px; opacity: 0.6;" />
                 <div>
-                    <p style="font-size: 14px; font-weight: 600; color: #374151; margin: 0;">ObraFlow</p>
+                    <p style="font-size: 14px; font-weight: 600; color: #374151; margin: 0;">ObraCalc</p>
                     <p style="font-size: 10px; color: #6b7280; margin: 0; max-width: 400px;">
                         Fluxo completo de documentação por IA — do orçamento ao relatório técnico.
                     </p>
@@ -630,11 +630,11 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                         <div className="flex items-center gap-3">
                             <img
                                 src="/logo-custom.png"
-                                alt="ObraFlow"
+                                alt="ObraCalc"
                                 className="h-8 w-auto opacity-60"
                             />
                             <div className="text-center">
-                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">ObraFlow</p>
+                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">ObraCalc</p>
                                 <p className="text-[10px] text-gray-500 dark:text-gray-400 max-w-md">
                                     Fluxo completo de documentação por IA — do orçamento ao relatório técnico.
                                 </p>

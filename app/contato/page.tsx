@@ -72,7 +72,7 @@ export default function ContatoPage() {
                         </h1>
 
                         <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-                            Com mais de 25 anos dedicados à engenharia de custos e orçamentação, desenvolvi o <strong>Obraflow</strong> para democratizar
+                            Com mais de 25 anos dedicados à engenharia de custos e orçamentação, desenvolvi o <strong>ObraCalc</strong> para democratizar
                             o acesso a orçamentos profissionais. Minha missão é simplificar processos complexos e tornar a construção civil mais acessível e transparente.
                         </p>
 
@@ -88,7 +88,7 @@ export default function ContatoPage() {
                                 href="/sobre"
                                 className="btn bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-8 py-3 text-lg hover:border-primary dark:hover:border-primary transition-all"
                             >
-                                Conhecer o Obraflow
+                                Conhecer o ObraCalc
                             </Link>
                         </div>
                     </div>
@@ -135,7 +135,7 @@ export default function ContatoPage() {
                                 </div>
                                 <div>
                                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                                        Por que criei o Obraflow?
+                                        Por que criei o ObraCalc?
                                     </h2>
                                     <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
                                         <p>
@@ -143,7 +143,7 @@ export default function ContatoPage() {
                                             Pequenos construtores, arquitetos autônomos e proprietários muitas vezes não têm acesso a ferramentas profissionais de orçamentação.
                                         </p>
                                         <p>
-                                            <strong className="text-gray-900 dark:text-white">O Obraflow nasceu dessa necessidade.</strong> Uma plataforma que combina
+                                            <strong className="text-gray-900 dark:text-white">O ObraCalc nasceu dessa necessidade.</strong> Uma plataforma que combina
                                             inteligência artificial com décadas de conhecimento técnico, tornando orçamentos precisos acessíveis a todos –
                                             desde uma reforma residencial até grandes empreendimentos.
                                         </p>

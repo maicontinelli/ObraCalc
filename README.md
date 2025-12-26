@@ -1,6 +1,6 @@
-# 🏗️ Obraflow Simple
+# 🏗️ ObraCalc Simple
 
-Versão simplificada do Obraflow - Sistema de orçamentos de construção sem autenticação.
+Versão simplificada do ObraCalc - Sistema de orçamentos de construção sem autenticação.
 
 ## ✨ Funcionalidades
 

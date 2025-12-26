@@ -10,13 +10,13 @@ export default function SimpleNav() {
                         <Link href="/" className="flex-shrink-0 flex items-center gap-2">
                             <Image
                                 src="/logo-custom.png"
-                                alt="ObraFlow Logo"
+                                alt="ObraCalc Logo"
                                 width={32}
                                 height={32}
                                 className="h-8 w-auto"
                                 priority
                             />
-                            <span className="font-heading font-bold text-xl text-black dark:text-white tracking-tight">ObraFlow</span>
+                            <span className="font-heading font-bold text-xl text-black dark:text-white tracking-tight">ObraCalc</span>
                         </Link>
                     </div>
                     <div className="flex items-center space-x-6">

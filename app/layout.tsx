@@ -17,7 +17,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-    title: "Obraflow - Orçamentos de Construção",
+    title: "ObraCalc - Orçamentos de Construção",
     description: "Sistema simples e gratuito para criar orçamentos de construção com IA",
 };
 

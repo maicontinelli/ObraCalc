@@ -9,14 +9,14 @@ export function Hero() {
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12">
                     <Image
                         src="/logo-custom.png"
-                        alt="ObraFlow Logo"
+                        alt="ObraCalc Logo"
                         width={100}
                         height={100}
                         className="drop-shadow-xl"
                     />
                     <h1 className="text-5xl md:text-7xl font-heading font-bold tracking-tight leading-tight">
                         <span className="text-[#1a1a1a] dark:text-gray-100">
-                            ObraFlow
+                            ObraCalc
                         </span>
                     </h1>
                 </div>
