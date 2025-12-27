@@ -26,6 +26,13 @@ type Profile = {
     full_name: string;
     created_at: string;
     subscription_tier?: string;
+    company_name?: string;
+    profession?: string;
+    phone?: string;
+    city?: string;
+    state?: string;
+    registration_number?: string;
+    team_size?: string;
 };
 
 type Lead = {
@@ -291,37 +298,47 @@ export default function AdminDashboard() {
                                     <thead className="bg-gray-50 dark:bg-gray-800 text-gray-500 font-medium border-b border-gray-200 dark:border-gray-700">
                                         <tr>
                                             <th className="p-4 pl-6">Nome / Email</th>
-                                            <th className="p-4">Empresa / Profissão</th>
-                                            <th className="p-4">Localização (Prestador)</th>
-                                            <th className="p-4">Cadastrado em</th>
-                                            <th className="p-4 pr-6 text-right">Status</th>
+                                            <th className="p-4">Profissão / Registro</th>
+                                            <th className="p-4">Localização</th>
+                                            <th className="p-4">Empresa / Equipe</th>
+                                            <th className="p-4">Contato</th>
+                                            <th className="p-4 pr-6 text-right">Data</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                                        {filteredUsers.map((user: any) => (
+                                        {filteredUsers.map((user) => (
                                             <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                                                 <td className="p-4 pl-6">
                                                     <div className="font-bold text-gray-900 dark:text-white">{user.full_name || 'Sem nome'}</div>
                                                     <div className="text-xs text-gray-500">{user.email}</div>
                                                 </td>
-                                                <td className="p-4 text-gray-600 dark:text-gray-300">
-                                                    <div className="font-medium">{user.company_name || '-'}</div>
-                                                    <div className="text-xs text-gray-400">{user.profession || 'Não informado'}</div>
+                                                <td className="p-4">
+                                                    <div className="font-medium text-gray-900 dark:text-white">{user.profession || '-'}</div>
+                                                    {user.registration_number && (
+                                                        <div className="text-xs text-gray-500 font-mono">Reg: {user.registration_number}</div>
+                                                    )}
                                                 </td>
-                                                <td className="p-4 text-gray-600 dark:text-gray-300">
-                                                    {user.city ? (
-                                                        <span className="flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md w-fit">
-                                                            <MapPin size={12} /> {user.city}
+                                                <td className="p-4">
+                                                    {(user.city || user.state) ? (
+                                                        <div className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
+                                                            <MapPin size={14} className="text-gray-400" />
+                                                            {user.city}{user.state ? `, ${user.state}` : ''}
+                                                        </div>
+                                                    ) : <span className="text-gray-400">-</span>}
+                                                </td>
+                                                <td className="p-4">
+                                                    <div className="font-medium text-gray-900 dark:text-white">{user.company_name || '-'}</div>
+                                                    {user.team_size && (
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
+                                                            {user.team_size}
                                                         </span>
-                                                    ) : '-'}
+                                                    )}
                                                 </td>
-                                                <td className="p-4 text-gray-400 text-xs">
+                                                <td className="p-4 text-xs font-mono text-gray-600 dark:text-gray-400">
+                                                    {user.phone || '-'}
+                                                </td>
+                                                <td className="p-4 pr-6 text-right text-xs text-gray-400">
                                                     {new Date(user.created_at).toLocaleDateString('pt-BR')}
-                                                </td>
-                                                <td className="p-4 pr-6 text-right">
-                                                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold">
-                                                        <CheckCircle2 size={12} /> Ativo
-                                                    </span>
                                                 </td>
                                             </tr>
                                         ))}
