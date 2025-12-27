@@ -2,16 +2,22 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Printer, ArrowLeft, User, Phone, Building2, Calendar } from 'lucide-react';
+import { FileText, Printer, ArrowLeft, User as UserIcon, Phone, Building2, Calendar } from 'lucide-react';
 import { getDddInfo } from '@/lib/ddd-data';
 import { createClient } from '@/lib/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 export default function ReportClient({ estimateId }: { estimateId: string }) {
     const router = useRouter();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<User | null>(null);
 
     const supabase = createClient();
+
+    useEffect(() => {
+        supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    }, [supabase]);
 
     useEffect(() => {
         const loadReportData = async () => {
@@ -299,7 +305,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .total-row {
             display: flex;
             justify-content: space-between;
-
+            
             font-size: 12px;
         }
         .total-label {
@@ -560,7 +566,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         {/* Prestador Column */}
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
-                                <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <UserIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
                                 <div className="flex items-baseline gap-1.5">
                                     <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">PRESTADOR:</span>
                                     <span className="text-gray-900 dark:text-white font-medium">{data.providerName || '-'}</span>
@@ -587,7 +593,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         {/* Cliente Column */}
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
-                                <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <UserIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
                                 <div className="flex items-baseline gap-1.5">
                                     <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">CLIENTE:</span>
                                     <span className="text-gray-900 dark:text-white font-medium">{data.clientName || '-'}</span>
@@ -698,6 +704,33 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     </div>
                 </div>
             </div>
+
+            {/* Guest Warning Banner */}
+            {!loading && !user && (
+                <div className="no-print fixed bottom-0 left-0 right-0 bg-yellow-50 border-t border-yellow-200 p-4 shadow-lg z-50">
+                    <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-yellow-100 text-yellow-700 rounded-full">
+                                <span className="text-xl">⚠️</span>
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-yellow-800">
+                                    Atenção: Este orçamento é temporário
+                                </p>
+                                <p className="text-xs text-yellow-700 mt-0.5">
+                                    Ele não está salvo na nuvem e será perdido se você limpar o navegador.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => router.push('/login')}
+                            className="w-full sm:w-auto px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-bold rounded-lg shadow-sm transition-colors whitespace-nowrap"
+                        >
+                            Salvar na Nuvem Agora
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
