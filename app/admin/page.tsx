@@ -48,11 +48,25 @@ type Lead = {
     user_email?: string; // We will join this manually or via view
 };
 
+type AnonymousLead = {
+    id: string;
+    created_at: string;
+    provider_name: string;
+    provider_phone: string;
+    client_name: string;
+    client_phone: string;
+    project_type: string;
+    work_city: string;
+    work_state: string;
+    origin: string;
+};
+
 export default function AdminDashboard() {
-    const [activeTab, setActiveTab] = useState<'users' | 'leads'>('leads');
+    const [activeTab, setActiveTab] = useState<'users' | 'leads' | 'anonymous'>('leads');
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState<Profile[]>([]);
     const [leads, setLeads] = useState<Lead[]>([]);
+    const [anonymousLeads, setAnonymousLeads] = useState<AnonymousLead[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -100,6 +114,14 @@ export default function AdminDashboard() {
             setLeads(enrichedLeads);
         }
 
+        // Load Anonymous Leads
+        const { data: anon } = await supabase
+            .from('anonymous_leads')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (anon) setAnonymousLeads(anon);
+
         setLoading(false);
     };
 
@@ -112,6 +134,12 @@ export default function AdminDashboard() {
     const filteredUsers = users.filter(u =>
         (u.email?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
         (u.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || '')
+    );
+
+    const filteredAnonymous = anonymousLeads.filter(a =>
+        (a.provider_name?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
+        (a.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
+        (a.project_type?.toLowerCase().includes(searchTerm.toLowerCase()) || '')
     );
 
     if (!isAdmin) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
@@ -144,19 +172,31 @@ export default function AdminDashboard() {
 
             <div className="container mx-auto p-6 max-w-7xl">
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-sm font-medium text-gray-500 mb-1">Total de Leads</p>
+                                <p className="text-sm font-medium text-gray-500 mb-1">Leads (Usuários)</p>
                                 <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{leads.length}</h3>
                             </div>
                             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                                 <FileText size={20} />
                             </div>
                         </div>
-                        <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
-                            <span className="font-bold">+{leads.filter(l => new Date(l.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length}</span> essa semana
+                    </div>
+
+                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 border-l-4 border-l-orange-500">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="text-sm font-medium text-gray-500 mb-1">Leads Externos</p>
+                                <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{anonymousLeads.length}</h3>
+                            </div>
+                            <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                                <Search size={20} />
+                            </div>
+                        </div>
+                        <p className="text-xs text-orange-600 mt-2 font-bold">
+                            Sem cadastro
                         </p>
                     </div>
 
@@ -207,6 +247,12 @@ export default function AdminDashboard() {
                                 className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'users' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
                             >
                                 Usuários
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('anonymous')}
+                                className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'anonymous' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
+                            >
+                                Leads Externos
                             </button>
                         </div>
 
@@ -291,7 +337,7 @@ export default function AdminDashboard() {
                                     </tbody>
                                 </table>
                             </div>
-                        ) : (
+                        ) : activeTab === 'users' ? (
                             // USERS TABLE
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
@@ -339,6 +385,53 @@ export default function AdminDashboard() {
                                                 </td>
                                                 <td className="p-4 pr-6 text-right text-xs text-gray-400">
                                                     {new Date(user.created_at).toLocaleDateString('pt-BR')}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            // ANONYMOUS LEADS TABLE
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-orange-50 dark:bg-orange-950/20 text-orange-800 dark:text-orange-400 font-medium border-b border-orange-100 dark:border-orange-900">
+                                        <tr>
+                                            <th className="p-4 pl-6">Prestador (Sem cadastro)</th>
+                                            <th className="p-4">Cliente / Obra Captada</th>
+                                            <th className="p-4">Local da Obra</th>
+                                            <th className="p-4 text-right pr-6">Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                                        {filteredAnonymous.map((lead) => (
+                                            <tr key={lead.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                                <td className="p-4 pl-6">
+                                                    <div className="font-bold text-gray-900 dark:text-white">{lead.provider_name || 'Anônimo'}</div>
+                                                    <div className="flex items-center gap-1 text-xs text-gray-500 font-mono mt-0.5">
+                                                        <CheckCircle2 size={12} className="text-green-500" />
+                                                        {lead.provider_phone || '-'}
+                                                    </div>
+                                                </td>
+                                                <td className="p-4">
+                                                    <div className="font-medium text-gray-900 dark:text-white">{lead.client_name || '-'}</div>
+                                                    <div className="text-xs text-gray-500 flex items-center gap-2">
+                                                        <span>{lead.project_type}</span>
+                                                        <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                                        <span className="font-mono">{lead.client_phone}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="p-4">
+                                                    {(lead.work_city || lead.work_state) ? (
+                                                        <div className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 w-fit px-2 py-1 rounded">
+                                                            <MapPin size={14} className="text-gray-500" />
+                                                            {lead.work_city}{lead.work_state ? `, ${lead.work_state}` : ''}
+                                                        </div>
+                                                    ) : <span className="text-gray-400">-</span>}
+                                                </td>
+                                                <td className="p-4 pr-6 text-right text-xs text-gray-400">
+                                                    {new Date(lead.created_at).toLocaleDateString('pt-BR')} <br />
+                                                    {new Date(lead.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                 </td>
                                             </tr>
                                         ))}

@@ -348,6 +348,21 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         if (user) {
             await handleSaveToCloud();
         } else {
+            // "Arapuca de Leads": Silent capture for anonymous users
+            // Fire-and-forget: we don't await this nor block the user flow
+            supabase.from('anonymous_leads').insert({
+                provider_name: providerName,
+                provider_phone: providerPhone,
+                client_name: clientName,
+                client_phone: clientPhone,
+                project_type: projectType,
+                work_city: workCity,
+                work_state: workState,
+                origin: 'editor_guest'
+            }).then(({ error }) => {
+                if (error) console.error('Lead Trap Error:', error);
+            });
+
             // Small delay locally only
             await new Promise(resolve => setTimeout(resolve, 500));
         }
