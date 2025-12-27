@@ -55,7 +55,11 @@ export default function DashboardPage() {
         full_name: '',
         company_name: '',
         phone: '',
-        address: ''
+        city: '',
+        state: '',
+        profession: '',
+        registration_number: '',
+        team_size: ''
     });
 
     // Load Data
@@ -84,7 +88,11 @@ export default function DashboardPage() {
                         full_name: profile.full_name || '',
                         company_name: profile.company_name || '',
                         phone: profile.phone || '',
-                        address: profile.city || '' // Using 'city' column for address field
+                        city: profile.city || '',
+                        state: profile.state || '',
+                        profession: profile.profession || '',
+                        registration_number: profile.registration_number || '',
+                        team_size: profile.team_size || ''
                     });
                 } else if (user.user_metadata) {
                     // Fallback to auth metadata if profile is empty (migration)
@@ -92,7 +100,11 @@ export default function DashboardPage() {
                         full_name: user.user_metadata.full_name || '',
                         company_name: user.user_metadata.company_name || '',
                         phone: user.user_metadata.phone || '',
-                        address: user.user_metadata.address || ''
+                        city: user.user_metadata.city || '',
+                        state: user.user_metadata.state || '',
+                        profession: '',
+                        registration_number: '',
+                        team_size: ''
                     });
                 }
 
@@ -151,7 +163,11 @@ export default function DashboardPage() {
                     full_name: profileData.full_name,
                     company_name: profileData.company_name,
                     phone: profileData.phone,
-                    city: profileData.address,
+                    city: profileData.city,
+                    state: profileData.state,
+                    profession: profileData.profession,
+                    registration_number: profileData.registration_number,
+                    team_size: profileData.team_size,
                     updated_at: new Date().toISOString()
                 });
 
@@ -236,56 +252,145 @@ export default function DashboardPage() {
                     {isProfileExpanded && (
                         <div className="p-6 pt-0 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                {/* 1. Dados Pessoais */}
+                                <div className="md:col-span-2">
+                                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                                        <UserIcon size={16} className="text-primary" />
+                                        Dados Pessoais
+                                    </h4>
+                                </div>
                                 <div>
                                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Nome Completo</label>
                                     <div className="relative">
-                                        <UserIcon size={16} className="absolute left-3 top-3 text-gray-400" />
                                         <input
                                             type="text"
                                             value={profileData.full_name}
                                             onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
-                                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                             placeholder="Seu nome"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Nome da Empresa</label>
-                                    <div className="relative">
-                                        <Building2 size={16} className="absolute left-3 top-3 text-gray-400" />
-                                        <input
-                                            type="text"
-                                            value={profileData.company_name}
-                                            onChange={(e) => setProfileData({ ...profileData, company_name: e.target.value })}
-                                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                            placeholder="Ex: Construções Silva"
                                         />
                                     </div>
                                 </div>
                                 <div>
                                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Telefone / WhatsApp</label>
                                     <div className="relative">
-                                        <Phone size={16} className="absolute left-3 top-3 text-gray-400" />
                                         <input
                                             type="text"
                                             value={profileData.phone}
                                             onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                             placeholder="(00) 00000-0000"
                                         />
                                     </div>
                                 </div>
+
+                                {/* 2. Localização */}
+                                <div className="md:col-span-2 mt-4">
+                                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                                        <MapPin size={16} className="text-primary" />
+                                        Localização
+                                    </h4>
+                                </div>
                                 <div>
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Endereço / Cidade</label>
+                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Cidade</label>
                                     <div className="relative">
-                                        <MapPin size={16} className="absolute left-3 top-3 text-gray-400" />
                                         <input
                                             type="text"
-                                            value={profileData.address}
-                                            onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
-                                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                            placeholder="Ex: São Paulo, SP"
+                                            value={profileData.city}
+                                            onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            placeholder="Sua cidade"
                                         />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Estado (UF)</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            maxLength={2}
+                                            value={profileData.state}
+                                            onChange={(e) => setProfileData({ ...profileData, state: e.target.value.toUpperCase() })}
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all uppercase"
+                                            placeholder="UF"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* 3. Qualificação */}
+                                <div className="md:col-span-2 mt-4">
+                                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                                        <FileText size={16} className="text-primary" />
+                                        Qualificação Profissional
+                                    </h4>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Profissão *</label>
+                                    <div className="relative">
+                                        <select
+                                            value={profileData.profession}
+                                            onChange={(e) => setProfileData({ ...profileData, profession: e.target.value })}
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none"
+                                        >
+                                            <option value="">Selecione...</option>
+                                            <option value="Engenheiro">Engenheiro</option>
+                                            <option value="Arquiteto">Arquiteto</option>
+                                            <option value="Empreiteiro">Empreiteiro</option>
+                                            <option value="Orçamentista">Orçamentista</option>
+                                            <option value="Designer de Interiores">Designer de Interiores</option>
+                                            <option value="Mestre de Obras">Mestre de Obras</option>
+                                            <option value="Outros">Outros</option>
+                                        </select>
+                                        <ChevronDown size={16} className="absolute right-4 top-3.5 text-gray-400 pointer-events-none" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Nº Registro (CREA/CAU/Outro)</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={profileData.registration_number}
+                                            onChange={(e) => setProfileData({ ...profileData, registration_number: e.target.value })}
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            placeholder="Opcional"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* 4. Dados Empresariais */}
+                                <div className="md:col-span-2 mt-4">
+                                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                                        <Building2 size={16} className="text-primary" />
+                                        Dados Empresariais
+                                    </h4>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Nome da Empresa</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={profileData.company_name}
+                                            onChange={(e) => setProfileData({ ...profileData, company_name: e.target.value })}
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            placeholder="Ex: Construções Silva"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Tamanho da Equipe</label>
+                                    <div className="relative">
+                                        <select
+                                            value={profileData.team_size}
+                                            onChange={(e) => setProfileData({ ...profileData, team_size: e.target.value })}
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none"
+                                        >
+                                            <option value="">Selecione...</option>
+                                            <option value="Autônomo">Trabalho sozinho (Autônomo)</option>
+                                            <option value="Pequena">Pequena (2 a 5 pessoas)</option>
+                                            <option value="Média">Média (6 a 10 pessoas)</option>
+                                            <option value="Grande">Grande (Mais de 10 pessoas)</option>
+                                        </select>
+                                        <ChevronDown size={16} className="absolute right-4 top-3.5 text-gray-400 pointer-events-none" />
                                     </div>
                                 </div>
                             </div>
