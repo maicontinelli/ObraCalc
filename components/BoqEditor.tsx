@@ -407,8 +407,27 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     }, [groupedItems]);
 
     // Get DDD info for phone numbers
+    // Get DDD info for phone numbers
     const providerDddInfo = useMemo(() => getDddInfo(providerPhone), [providerPhone]);
     const clientDddInfo = useMemo(() => getDddInfo(clientPhone), [clientPhone]);
+
+    // Auto-fill Work Location from Client Phone DDD
+    useEffect(() => {
+        if (clientDddInfo) {
+            // Only auto-fill if fields are empty to avoid overwriting user manual input
+            if (!workState) {
+                setWorkState(clientDddInfo.state);
+            }
+            if (!workCity) {
+                // Use the first city or region as a suggestion
+                // Ideally we would put the 'region' string, but city field implies a specific city.
+                // Let's use the first city in the list as a best guess/suggestion.
+                if (clientDddInfo.cities.length > 0) {
+                    setWorkCity(clientDddInfo.cities[0]);
+                }
+            }
+        }
+    }, [clientDddInfo, workState, workCity]);
 
     // Phone formatting helper
     const formatPhoneNumber = (value: string) => {
