@@ -281,7 +281,7 @@ export default function AdminDashboard() {
                                                         {new Date(lead.updated_at).toLocaleDateString('pt-BR')}
                                                     </td>
                                                     <td className="p-4 pr-6 text-right">
-                                                        <Link href={`/editor/${lead.id}`} className="text-primary hover:underline font-medium text-xs">
+                                                        <Link href={`/report/${lead.id}`} className="text-primary hover:underline font-medium text-xs">
                                                             Ver
                                                         </Link>
                                                     </td>
