@@ -4,24 +4,52 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, Printer, ArrowLeft, User, Phone, Building2, Calendar } from 'lucide-react';
 import { getDddInfo } from '@/lib/ddd-data';
+import { createClient } from '@/lib/supabase/client';
 
 export default function ReportClient({ estimateId }: { estimateId: string }) {
     const router = useRouter();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
+    const supabase = createClient();
+
     useEffect(() => {
-        const savedData = localStorage.getItem(`estimate_${estimateId}`);
-        if (savedData) {
-            try {
-                const parsed = JSON.parse(savedData);
-                setData(parsed);
-            } catch (e) {
-                console.error('Error loading data:', e);
+        const loadReportData = async () => {
+            // 1. Try Local Storage first (fastest for creator)
+            const savedData = localStorage.getItem(`estimate_${estimateId}`);
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    setData(parsed);
+                    setLoading(false);
+                    return;
+                } catch (e) {
+                    console.error('Error parsing local data:', e);
+                }
             }
-        }
-        setLoading(false);
-    }, [estimateId]);
+
+            // 2. Fallback to Supabase (for Admin or shared links)
+            try {
+                const { data: budget, error } = await supabase
+                    .from('budgets')
+                    .select('content')
+                    .eq('id', estimateId)
+                    .single();
+
+                if (budget && budget.content) {
+                    setData(budget.content);
+                } else if (error) {
+                    console.error('Error fetching from Supabase:', error);
+                }
+            } catch (err) {
+                console.error('Unexpected error loading report:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadReportData();
+    }, [estimateId, supabase]);
 
     // Get DDD info for phone numbers
     const providerDddInfo = useMemo(() => data?.providerPhone ? getDddInfo(data.providerPhone) : null, [data?.providerPhone]);
