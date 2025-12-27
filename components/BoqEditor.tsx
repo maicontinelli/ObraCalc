@@ -2,15 +2,22 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Plus, Trash2, FileText, Settings, ChevronDown, Sparkles, Loader2 } from 'lucide-react';
+import { Plus, Trash2, FileText, Settings, ChevronDown, Sparkles, Loader2, Cloud, CloudOff } from 'lucide-react';
 import CommandSearch, { BoqItem } from './CommandSearch';
 import { BOQ_TEMPLATES } from '@/lib/constants';
+import { createClient } from '@/lib/supabase/client';
+import { User } from '@supabase/supabase-js';
 import { getDddInfo } from '@/lib/ddd-data';
 
 export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const type = (searchParams?.get('type') as 'obra_nova') || 'obra_nova';
+
+    const supabase = createClient();
+    const [user, setUser] = useState<User | null>(null);
+    const [isCloudSynced, setIsCloudSynced] = useState(false);
+    const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
     const [items, setItems] = useState<BoqItem[]>([]);
     const [bdi, setBdi] = useState(20);
@@ -20,6 +27,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const [deadline, setDeadline] = useState('');
     const [providerPhone, setProviderPhone] = useState('');
     const [clientPhone, setClientPhone] = useState('');
+    const [workCity, setWorkCity] = useState('');
+    const [workState, setWorkState] = useState('');
     const [aiRequests, setAiRequests] = useState<any[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -41,80 +50,131 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         );
     }, []);
 
-    // Load from localStorage on mount
+    // Auth Check
     useEffect(() => {
-        const savedData = localStorage.getItem(`estimate_${estimateId}`);
-        let finalItems: BoqItem[] = [];
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+        };
+        checkUser();
+    }, []);
 
-        if (savedData) {
-            try {
-                const parsed = JSON.parse(savedData);
+    // Load Data
+    useEffect(() => {
+        const loadData = async () => {
+            let dataToLoad = null;
+            let fromCloud = false;
 
-                // INTELLIGENT MERGE/RECOVERY Logic
-                let loadedItems = parsed.items || [];
+            // 1. Try Supabase first if logged in
+            if (user) {
+                try {
+                    const { data, error } = await supabase
+                        .from('budgets')
+                        .select('content, updated_at')
+                        .eq('id', estimateId)
+                        .maybeSingle();
 
-                // If the loaded items are using the OLD IDs (def-...), we might want to migrate or just use them.
-                // But for AI integration (item_...), we need to ensure we don't discard them.
-
-                const hasStructure = loadedItems.some((i: BoqItem) => i.category.includes('ESTRUTURA') || i.category.includes('Estrutura'));
-
-                // If it looks like a very empty list or broken previous load, merge defaults
-                if (loadedItems.length < 10 && !hasStructure) {
-                    const mergedItems = [...DEFAULT_ITEMS];
-
-                    // Restore user/AI items
-                    loadedItems.forEach((savedItem: BoqItem) => {
-                        const index = mergedItems.findIndex(def => def.id === savedItem.id);
-                        if (index !== -1) {
-                            if (savedItem.quantity > 0 || savedItem.included) {
-                                mergedItems[index] = { ...mergedItems[index], ...savedItem };
-                            }
-                        } else if (savedItem.isCustom || savedItem.included) {
-                            // Preserve AI suggestions or custom items
-                            mergedItems.push(savedItem);
-                        }
-                    });
-
-                    loadedItems = mergedItems;
+                    if (data && data.content) {
+                        dataToLoad = data.content;
+                        fromCloud = true;
+                        setLastSaved(new Date(data.updated_at));
+                        setIsCloudSynced(true);
+                    }
+                } catch (err) {
+                    console.error("Error loading from cloud:", err);
                 }
+            }
 
-                finalItems = loadedItems;
-                setItems(loadedItems);
-                setBdi(parsed.bdi || 20);
-                setProviderName(parsed.providerName || '');
-                setClientName(parsed.clientName || '');
-                setProjectType(parsed.projectType || '');
-                setDeadline(parsed.deadline || '');
-                setProviderPhone(parsed.providerPhone || '');
-                setClientPhone(parsed.clientPhone || '');
-                setAiRequests(parsed.aiRequests || []);
+            // 2. Fallback to LocalStorage if not in cloud
+            if (!dataToLoad) {
+                const localData = localStorage.getItem(`estimate_${estimateId}`);
+                if (localData) {
+                    dataToLoad = JSON.parse(localData);
+                }
+            }
 
-            } catch (e) {
-                console.error("Error loading estimate:", e);
+            // 3. Apply Data
+            let finalItems: BoqItem[] = [];
+
+            if (dataToLoad) {
+                try {
+                    const parsed = dataToLoad;
+                    let loadedItems = parsed.items || [];
+                    const hasStructure = loadedItems.some((i: BoqItem) => i.category?.includes('ESTRUTURA') || i.category?.includes('Estrutura'));
+
+                    if (loadedItems.length < 10 && !hasStructure) {
+                        const mergedItems = [...DEFAULT_ITEMS];
+                        loadedItems.forEach((savedItem: BoqItem) => {
+                            const index = mergedItems.findIndex(def => def.id === savedItem.id);
+                            if (index !== -1) {
+                                if (savedItem.quantity > 0 || savedItem.included) {
+                                    mergedItems[index] = { ...mergedItems[index], ...savedItem };
+                                }
+                            } else if (savedItem.isCustom || savedItem.included) {
+                                mergedItems.push(savedItem);
+                            }
+                        });
+                        loadedItems = mergedItems;
+                    }
+
+                    finalItems = loadedItems;
+                    setItems(loadedItems);
+                    setBdi(parsed.bdi || 20);
+                    setProviderName(parsed.providerName || '');
+                    setClientName(parsed.clientName || '');
+                    setProjectType(parsed.projectType || '');
+                    setDeadline(parsed.deadline || '');
+                    setProviderPhone(parsed.providerPhone || '');
+                    setClientPhone(parsed.clientPhone || '');
+                    setWorkCity(parsed.workCity || '');
+                    setWorkState(parsed.workState || '');
+                    setAiRequests(parsed.aiRequests || []);
+                } catch (e) {
+                    console.error("Error parsing estimate:", e);
+                    finalItems = DEFAULT_ITEMS;
+                    setItems(DEFAULT_ITEMS);
+                }
+            } else {
                 finalItems = DEFAULT_ITEMS;
                 setItems(DEFAULT_ITEMS);
             }
-        } else {
-            // New estimate: Load defaults
-            finalItems = DEFAULT_ITEMS;
-            setItems(DEFAULT_ITEMS);
+
+            // Auto-fill Provider Info from User Profile if empty (New Budget Strategy)
+            if (user && user.user_metadata) {
+                // Prefer company name, fallback to full name
+                const profileName = user.user_metadata.company_name || user.user_metadata.full_name;
+                const profilePhone = user.user_metadata.phone;
+
+                // Only overwrite if current state is empty (don't overwrite saved data)
+                if (!providerName && !dataToLoad?.providerName && profileName) {
+                    setProviderName(profileName);
+                }
+                if (!providerPhone && !dataToLoad?.providerPhone && profilePhone) {
+                    setProviderPhone(profilePhone);
+                }
+            }
+
+            // 4. Auto-expand
+            const initialExpanded: Record<string, boolean> = {};
+            finalItems.forEach((item: BoqItem) => {
+                if (item.isCustom || (item.aiRequestId && item.included)) {
+                    initialExpanded[item.category] = true;
+                }
+            });
+            setExpandedCategories(prev => ({ ...prev, ...initialExpanded }));
+
+            setIsLoaded(true);
+        };
+
+        if (!isLoaded || user) { // Reload if user changes (login)
+            loadData();
         }
 
-        // Auto-expand categories that have custom/AI items
-        const initialExpanded: Record<string, boolean> = {};
-        finalItems.forEach((item: BoqItem) => {
-            if (item.isCustom || (item.aiRequestId && item.included)) {
-                initialExpanded[item.category] = true;
-            }
-        });
-        setExpandedCategories(prev => ({ ...prev, ...initialExpanded }));
+    }, [estimateId, user, DEFAULT_ITEMS]);
 
-        setIsLoaded(true);
-    }, [estimateId, DEFAULT_ITEMS]);
-
-    // Save to localStorage on change
+    // Save to localStorage ONLY (Cloud save will be manual)
     useEffect(() => {
-        if (!isLoaded) return; // Prevent overwriting with initial empty state
+        if (!isLoaded) return;
 
         const dataToSave = {
             id: estimateId,
@@ -126,17 +186,37 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             deadline,
             providerPhone,
             clientPhone,
+            workCity,
+            workState,
             updatedAt: new Date().toISOString(),
             aiRequests
         };
+
+        // LocalStorage (Immediate & Cheap)
         localStorage.setItem(`estimate_${estimateId}`, JSON.stringify(dataToSave));
 
-        // Update list of estimates
+        // Update estimates list locally
         const estimatesList = JSON.parse(localStorage.getItem('estimates_list') || '[]');
-        if (!estimatesList.find((e: any) => e.id === estimateId)) {
-            localStorage.setItem('estimates_list', JSON.stringify([...estimatesList, { id: estimateId, clientName, updatedAt: new Date().toISOString() }]));
+        const existingIndex = estimatesList.findIndex((e: any) => e.id === estimateId);
+
+        const listEntry = {
+            id: estimateId,
+            clientName: clientName || 'Novo Orçamento',
+            updatedAt: new Date().toISOString()
+        };
+
+        if (existingIndex >= 0) {
+            estimatesList[existingIndex] = listEntry;
+        } else {
+            estimatesList.push(listEntry);
         }
-    }, [estimateId, items, bdi, providerName, clientName, projectType, deadline, providerPhone, clientPhone, aiRequests, isLoaded]);
+        localStorage.setItem('estimates_list', JSON.stringify(estimatesList));
+
+        // Note: Cloud save removed from here to reduce traffic. 
+        // Will be triggered manually or on report generation.
+        setIsCloudSynced(false);
+
+    }, [estimateId, items, bdi, providerName, clientName, projectType, deadline, providerPhone, clientPhone, workCity, workState, aiRequests, isLoaded]);
 
 
     // Handlers
@@ -198,9 +278,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         }));
     };
 
-    const handleGenerateReport = async () => {
-        setIsSaving(true);
-        // Force save one last time before navigating
+    const handleSaveToCloud = async () => {
+        if (!user) return;
+        setIsCloudSynced(false);
+
         const dataToSave = {
             id: estimateId,
             items,
@@ -211,13 +292,65 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             deadline,
             providerPhone,
             clientPhone,
+            workCity,
+            workState,
+            updatedAt: new Date().toISOString(),
+            aiRequests
+        };
+
+        try {
+            const { error } = await supabase.from('budgets').upsert({
+                id: estimateId,
+                user_id: user.id,
+                title: clientName ? `${clientName}` : 'Sem Título',
+                content: dataToSave,
+                updated_at: new Date().toISOString(),
+                client_name: clientName,
+                client_phone: clientPhone,
+                project_type: projectType,
+                work_city: workCity,
+                work_state: workState,
+                status: 'draft'
+            });
+
+            if (!error) {
+                setIsCloudSynced(true);
+                setLastSaved(new Date());
+            } else {
+                console.error('Supabase Save Error:', error);
+            }
+        } catch (err) {
+            console.error('Cloud Save Exception:', err);
+        }
+    };
+
+    const handleGenerateReport = async () => {
+        setIsSaving(true);
+        // Force save locally one last time
+        const dataToSave = {
+            id: estimateId,
+            items,
+            bdi,
+            providerName,
+            clientName,
+            projectType,
+            deadline,
+            providerPhone,
+            clientPhone,
+            workCity,
+            workState,
             updatedAt: new Date().toISOString(),
             aiRequests
         };
         localStorage.setItem(`estimate_${estimateId}`, JSON.stringify(dataToSave));
 
-        // Small delay to ensure storage write
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Save to Cloud if logged in
+        if (user) {
+            await handleSaveToCloud();
+        } else {
+            // Small delay locally only
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
 
         router.push(`/report/${estimateId}`);
     };
@@ -326,6 +459,28 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             <span className="text-[10px] uppercase font-bold tracking-wider text-orange-500/80">
                                 ✨ Gerar com IA
                             </span>
+
+                            {/* Cloud Save Button */}
+                            {user && (
+                                <button
+                                    onClick={handleSaveToCloud}
+                                    disabled={isCloudSynced}
+                                    className={`flex items-center gap-1.5 transition-all duration-300 px-2 py-1 rounded-md group ${isCloudSynced ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50 hover:bg-blue-100 cursor-pointer'}`}
+                                    title={isCloudSynced ? "Sincronizado com a nuvem" : "Clique para salvar na nuvem"}
+                                >
+                                    {isCloudSynced ? (
+                                        <>
+                                            <Cloud className="w-3 h-3 text-green-500" />
+                                            <span className="text-[10px] font-medium">Salvo {lastSaved ? `às ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CloudOff className="w-3 h-3 text-blue-500 group-hover:scale-110 transition-transform" />
+                                            <span className="text-[10px] font-medium">Salvar na Nuvem</span>
+                                        </>
+                                    )}
+                                </button>
+                            )}
                         </div>
 
                         {/* AI Assistant Search Bar */}
@@ -654,6 +809,33 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                             placeholder="Nome completo"
                                             className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
                                         />
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-3 pt-2">
+                                        <div className="col-span-2">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                                Cidade da Obra
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={workCity}
+                                                onChange={(e) => setWorkCity(e.target.value)}
+                                                placeholder="Ex: São Paulo"
+                                                className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                                UF
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={workState}
+                                                onChange={(e) => setWorkState(e.target.value.toUpperCase().slice(0, 2))}
+                                                placeholder="UF"
+                                                maxLength={2}
+                                                className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400 uppercase"
+                                            />
+                                        </div>
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
