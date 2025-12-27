@@ -142,7 +142,7 @@ export default function DashboardPage() {
         setIsSavingProfile(true);
 
         try {
-            // Update public.profiles (Admin Visible)
+            // Update public.profiles (Source of Truth)
             const { error } = await supabase
                 .from('profiles')
                 .upsert({
@@ -151,18 +151,14 @@ export default function DashboardPage() {
                     full_name: profileData.full_name,
                     company_name: profileData.company_name,
                     phone: profileData.phone,
-                    city: profileData.address, // Mapping address input to city column
+                    city: profileData.address,
                     updated_at: new Date().toISOString()
                 });
 
             if (error) {
                 console.error('Error updating profile:', error);
-                alert('Erro ao salvar perfil. Tente novamente.');
+                alert(`Erro ao salvar: ${error.message || 'Verifique sua conexão.'}`);
             } else {
-                // Optional: Update Auth Metadata too for redundancy
-                await supabase.auth.updateUser({
-                    data: profileData
-                });
                 alert('Perfil atualizado com sucesso!');
                 setIsProfileExpanded(false);
             }
