@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { Button } from '@/components/Button';
 import Link from 'next/link';
@@ -7,6 +8,35 @@ import Link from 'next/link';
 
 
 export default function PlansPage() {
+    const [loading, setLoading] = useState<string | null>(null);
+
+    const handleSubscribe = async (priceId: string) => {
+        setLoading(priceId);
+        try {
+            const response = await fetch('/api/stripe/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ priceId }),
+            });
+
+            const data = await response.json();
+
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('Erro ao criar sessão de checkout:', data.error);
+                alert('Ocorreu um erro ao iniciar o pagamento. Tente novamente.');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro de conexão. Verifique sua internet.');
+        } finally {
+            setLoading(null);
+        }
+    };
+
     const plans = [
         {
             name: 'Grátis',
@@ -25,14 +55,15 @@ export default function PlansPage() {
                 'Apenas 1 usuário',
             ],
             cta: 'Começar Grátis',
-            href: '/login',
+            href: '/login', // Mantém link interno para login
+            priceId: null,
             popular: false,
         },
         {
             name: 'Profissional',
-            price: 'R$ 19,90',
+            price: 'R$ 18,30',
             period: '/mês',
-            description: 'Para profissionais que precisam de organização e histórico.',
+            description: 'Organização e histórico profissional. 30 dias grátis.',
             features: [
                 'Tudo do plano Grátis',
                 'Salva todos os orçamentos',
@@ -44,7 +75,8 @@ export default function PlansPage() {
             ],
             limitations: [],
             cta: 'Assinar',
-            href: 'https://pay.cakto.com.br/3fewkqc_673678',
+            href: 'https://buy.stripe.com/00w28rbqrgAp10Q51d6g800',
+            priceId: null, // Usando Link de Pagamento direto
             popular: true,
         },
         {
@@ -61,8 +93,9 @@ export default function PlansPage() {
                 'Personalização de relatórios',
             ],
             limitations: [],
-            cta: 'Falar com Vendas',
-            href: 'https://pay.cakto.com.br/qd8rytv',
+            cta: 'Assinar', // Alterado de "Falar com Vendas" para fluxo direto
+            href: null,
+            priceId: 'price_PLACEHOLDER_NEGOCIO', // USUÁRIO DEVE SUBSTITUIR ISSO
             popular: false,
         },
     ];
@@ -142,17 +175,35 @@ export default function PlansPage() {
                                     </ul>
                                 </div>
 
-                                <Link href={plan.href} className="w-full" target={plan.price === 'R$ 0' ? '_self' : '_blank'}>
+                                {plan.href ? (
+                                    <Link
+                                        href={plan.href}
+                                        className="w-full"
+                                        target={plan.href.startsWith('http') ? '_blank' : '_self'}
+                                    >
+                                        <Button
+                                            className={`w-full h-12 text-lg font-medium ${plan.popular
+                                                ? 'bg-[#74D2E7] hover:bg-[#74D2E7]/90 text-white'
+                                                : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
+                                                }`}
+                                            variant={plan.popular ? 'default' : 'outline'}
+                                        >
+                                            {plan.cta}
+                                        </Button>
+                                    </Link>
+                                ) : (
                                     <Button
                                         className={`w-full h-12 text-lg font-medium ${plan.popular
                                             ? 'bg-[#74D2E7] hover:bg-[#74D2E7]/90 text-white'
                                             : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                                             }`}
                                         variant={plan.popular ? 'default' : 'outline'}
+                                        onClick={() => plan.priceId && handleSubscribe(plan.priceId)}
+                                        disabled={loading === plan.priceId}
                                     >
-                                        {plan.cta}
+                                        {loading === plan.priceId ? 'Processando...' : plan.cta}
                                     </Button>
-                                </Link>
+                                )}
                             </div>
                         ))}
                     </div>

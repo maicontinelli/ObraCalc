@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Printer, ArrowLeft, User as UserIcon, Phone, Building2, Calendar } from 'lucide-react';
+import { FileText, Printer, ArrowLeft, User as UserIcon, Phone, Building2, Calendar, Sparkles, Cloud } from 'lucide-react';
 import { getDddInfo } from '@/lib/ddd-data';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -323,9 +323,51 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .item-name { font-weight: 500; }
         .item-row div { align-self: center; }
         
+        /* Footer Layout */
+        .footer-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0 40px 40px 40px;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .footer-left {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .footer-box {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 200px;
+            width: fit-content;
+        }
+        .box-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .box-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .box-icon { font-size: 12px; }
+
         /* Totals */
         .totals-section {
-            margin: 40px;
+            margin: 0; /* Handled by wrapper */
             display: flex;
             justify-content: flex-end;
         }
@@ -416,23 +458,42 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
 
         ${itemsHTML}
 
-        <div class="totals-section">
-            <div class="totals-box">
-                <div class="total-row">
-                    <span style="color: #6b7280; font-weight: 600;">SUBTOTAL</span>
-                    <span style="font-weight: 600;">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</span>
-                </div>
-                <div class="total-row">
-                    <span style="color: #6b7280; font-weight: 600;">BDI (${data.bdi || 20}%)</span>
-                    <span style="font-weight: 600;">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}</span>
-                </div>
-                <div class="total-final">
-                    <span style="font-weight: 700; color: #111827;">TOTAL GERAL</span>
-                    <span class="total-val">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</span>
+        <div class="footer-wrapper">
+             <div class="footer-left">
+                  <div class="footer-box">
+                       <div class="box-title">Legenda:</div>
+                       <div class="box-item"><span class="box-icon">🛠️</span> Composição (Serviço + Material)</div>
+                       <div class="box-item"><span class="box-icon">🔨</span> Mão de Obra (Apenas Execução)</div>
+                       <div class="box-item"><span class="box-icon">🧱</span> Material (Insumo Isolado)</div>
+                  </div>
+                  ${!user ? `
+                  <div class="footer-box">
+                       <div class="box-title">Plano Gratuito:</div>
+                       <div class="box-item"><span class="box-icon">✨</span> Gerado por ObraCalc</div>
+                       <div class="box-item"><span class="box-icon">🔒</span> Versão não salva na nuvem</div>
+                  </div>
+                  ` : ''}
+             </div>
+             
+             <div class="totals-section">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span style="color: #6b7280; font-weight: 600;">SUBTOTAL</span>
+                        <span style="font-weight: 600;">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</span>
+                    </div>
+                    <div class="total-row">
+                        <span style="color: #6b7280; font-weight: 600;">BDI (${data.bdi || 20}%)</span>
+                        <span style="font-weight: 600;">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}</span>
+                    </div>
+                    <div class="total-final">
+                        <span style="font-weight: 700; color: #111827;">TOTAL GERAL</span>
+                        <span class="total-val">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    ${!user ? '<div class="watermark">Gerado gratuitamente por ObraCalc</div>' : ''}
 </body>
 </html>`;
 
@@ -572,6 +633,24 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     .space-y-3 span[class*="text-base"] {
                         font-size: 16px !important;
                     }
+                    .watermark {
+                        text-align: center;
+                        color: #9ca3af;
+                        font-size: 10px;
+                        margin-top: 40px;
+                        margin-bottom: 20px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    }
+                    @media print {
+                        .watermark {
+                            display: block !important;
+                            position: fixed;
+                            bottom: 10px;
+                            left: 0;
+                            width: 100%;
+                        }
+                    }
                 }
             `}</style>
 
@@ -580,12 +659,31 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 <div className="max-w-[1600px] mx-auto px-6 py-4 flex justify-between items-center gap-4">
                     <button
                         onClick={() => router.push(`/editor/${estimateId}`)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
                     >
                         <ArrowLeft size={18} /> Voltar ao Editor
                     </button>
 
                     <div className="flex gap-3">
+                        {/* Guest Actions (Discreet) */}
+                        {!user && (
+                            <>
+                                <button
+                                    onClick={() => router.push('/login')}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                                    title="Crie uma conta para salvar"
+                                >
+                                    <Cloud size={18} /> <span className="hidden sm:inline">Salvar na Nuvem</span>
+                                </button>
+                                <button
+                                    onClick={() => router.push('/planos')}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                                >
+                                    <Sparkles size={18} /> <span className="hidden sm:inline">Remover Marca d'Água</span>
+                                </button>
+                            </>
+                        )}
+
                         <button
                             onClick={handleExportHTML}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
@@ -767,23 +865,42 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 {/* Footer Section: Legend & Totals Side-by-Side */}
                 <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-stretch gap-8 break-inside-avoid">
 
-                    {/* Legend Island (Left) */}
-                    <div className="w-full md:w-80 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-center">
-                        <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Legenda:</h3>
-                        <div className="flex flex-col gap-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm">🛠️</span>
-                                <span>Composição (Serviço + Material)</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm">🔨</span>
-                                <span>Mão de Obra (Apenas Execução)</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm">🧱</span>
-                                <span>Material (Insumo Isolado)</span>
+                    <div className="flex flex-col lg:flex-row gap-4">
+                        {/* Legend Island (Left) */}
+                        <div className="w-full md:w-72 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-center">
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Legenda:</h3>
+                            <div className="flex flex-col gap-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">🛠️</span>
+                                    <span>Composição (Serviço + Material)</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">🔨</span>
+                                    <span>Mão de Obra (Apenas Execução)</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">🧱</span>
+                                    <span>Material (Insumo Isolado)</span>
+                                </div>
                             </div>
                         </div>
+
+                        {/* Branding/Watermark Island (Hidden for Paid Plans) */}
+                        {!user && (
+                            <div className="w-full md:w-72 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-center">
+                                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Plano Gratuito:</h3>
+                                <div className="flex flex-col gap-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm">✨</span>
+                                        <span>Gerado por ObraCalc</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm">🔒</span>
+                                        <span>Versão não salva na nuvem</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Totals Box (Right) */}
@@ -811,33 +928,6 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     </div>
                 </div>
             </div>
-
-            {/* Guest Warning Banner */}
-            {!loading && !user && (
-                <div className="no-print fixed bottom-0 left-0 right-0 bg-yellow-50 border-t border-yellow-200 p-4 shadow-lg z-50">
-                    <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-yellow-100 text-yellow-700 rounded-full">
-                                <span className="text-xl">⚠️</span>
-                            </div>
-                            <div>
-                                <p className="text-sm font-bold text-yellow-800">
-                                    Atenção: Este orçamento é temporário
-                                </p>
-                                <p className="text-xs text-yellow-700 mt-0.5">
-                                    Ele não está salvo na nuvem e será perdido se você limpar o navegador.
-                                </p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() => router.push('/login')}
-                            className="w-full sm:w-auto px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-bold rounded-lg shadow-sm transition-colors whitespace-nowrap"
-                        >
-                            Salvar na Nuvem Agora
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

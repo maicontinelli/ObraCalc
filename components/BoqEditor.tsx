@@ -32,6 +32,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const [aiRequests, setAiRequests] = useState<any[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [budgetCount, setBudgetCount] = useState(0); // Track budget count for limits
 
     const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
 
@@ -50,11 +51,19 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         );
     }, []);
 
-    // Auth Check
+    // Auth & Limit Check
     useEffect(() => {
         const checkUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             setUser(user);
+
+            if (user) {
+                const { count } = await supabase
+                    .from('budgets')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', user.id);
+                setBudgetCount(count || 0);
+            }
         };
         checkUser();
     }, []);
@@ -219,11 +228,30 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     }, [estimateId, items, bdi, providerName, clientName, projectType, deadline, providerPhone, clientPhone, workCity, workState, aiRequests, isLoaded]);
 
 
+    const MAX_FREE_ITEMS = 20;
+    // TODO: Connect this to real subscription state. For now, only Logged users are "Premium" enough to bypass the initial limit.
+    // Ideally, we should check user.subscription_status or similar.
+    const isPremium = !!user;
+
     // Handlers
     const toggleInclude = (id: string, forceState?: boolean) => {
+        const item = items.find(i => i.id === id);
+        if (!item) return;
+
+        const willBeIncluded = forceState !== undefined ? forceState : !item.included;
+
+        // Count currently included items
+        const currentCount = items.filter(i => i.included).length;
+
+        // If we are turning it ON, and we are NOT premium, and we hit the limit
+        if (willBeIncluded && !item.included && !isPremium && currentCount >= MAX_FREE_ITEMS) {
+            alert(`Limpo do Plano Grátis atingido! \n\nVocê só pode adicionar até ${MAX_FREE_ITEMS} itens no plano gratuito.\n\nAssine o Plano Profissional para criar orçamentos ilimitados.`);
+            return;
+        }
+
         setItems(prev => prev.map(item => {
             if (item.id === id) {
-                return { ...item, included: forceState !== undefined ? forceState : !item.included };
+                return { ...item, included: willBeIncluded };
             }
             return item;
         }));
@@ -280,6 +308,22 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
     const handleSaveToCloud = async () => {
         if (!user) return;
+
+        // Restriction: Free Plan Limit (Max 3 Budgets)
+        // Ensure we are not blocking updates to existing (already saved) budgets.
+        // We assume 'lastSaved' is non-null if it's an existing cloud budget AND we are just updating.
+        // If lastSaved is null, it's a new insertion.
+        const MAX_FREE_BUDGETS = 3;
+        // Re-read isPremium from scope or define logic here. 
+        // We will strictly enforce limit for ALL users until "pro" plan bit is set in DB.
+        // Temporary: Treat everyone as Free for this test.
+        const isUserPremium = false;
+
+        if (!isUserPremium && !lastSaved && budgetCount >= MAX_FREE_BUDGETS) {
+            alert(`Limite do Plano Grátis Atingido!\n\nVocê já possui ${budgetCount} orçamentos salvos.\nO plano gratuito permite salvar até ${MAX_FREE_BUDGETS} orçamentos.\n\nAssine o Plano Profissional para criar orçamentos ilimitados.`);
+            return;
+        }
+
         setIsCloudSynced(false);
 
         const dataToSave = {
@@ -981,8 +1025,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             onClick={handleGenerateReport}
                             disabled={isSaving || !isFormValid}
                             className={`w-full mb-6 py-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 outline-none focus:outline-none ${isSaving || !isFormValid
-                                    ? 'bg-green-100 text-green-700 cursor-not-allowed opacity-80'
-                                    : 'bg-green-600 hover:bg-green-700 text-white hover:scale-[1.02] active:scale-[0.98]'
+                                ? 'bg-green-100 text-green-700 cursor-not-allowed opacity-80'
+                                : 'bg-green-600 hover:bg-green-700 text-white hover:scale-[1.02] active:scale-[0.98]'
                                 }`}
                         >
                             {isSaving ? (
