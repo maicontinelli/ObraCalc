@@ -8,14 +8,16 @@ const features = [
     {
         icon: <Calculator className="h-6 w-6 text-primary dark:text-blue-400" />,
         title: "Orçamentos Inteligentes",
-        description: "Cálculos precisos baseados na tabela SINAPI atualizada e preços médios de mercado por região.",
+        description: "Cálculos precisos baseados na tabela SINAPI atualizada e preços médios de mercado.",
         action: 'new',
         linkText: "Novo Orçamento"
     },
     {
-        icon: <Zap className="h-6 w-6 text-primary dark:text-blue-400" />,
+        icon: <Zap className="h-6 w-6 text-yellow-500" />,
         title: "IA Generativa",
-        description: "Descreva sua obra e nossa IA gera automaticamente a lista completa de materiais e serviços."
+        description: "Descreva sua obra e nossa IA gera automaticamente a lista completa de materiais e serviços.",
+        action: 'new',
+        linkText: "Experimentar IA"
     },
     {
         icon: <Map className="h-6 w-6 text-[#C2410C]" />,
@@ -44,42 +46,49 @@ export function Features() {
     };
 
     return (
-        <section className="py-24 bg-white dark:bg-[#191919]">
+        <section className="py-24 bg-gray-50 dark:bg-[#191919]">
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                         Fluxo Completo de Documentação com IA
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">
-                        Do orçamento ao relatório técnico — automatize seu processo com inteligência artificial.
+                        Do orçamento ao relatório técnico — ferramentas integradas e prontas para usar.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {features.map((feature, index) => {
                         const content = (
                             <>
-                                <div className="w-12 h-12 bg-white dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-sm mb-4">
-                                    {feature.icon}
+                                <div className="mb-6 flex justify-between items-start">
+                                    <div className="w-12 h-12 bg-gray-50 dark:bg-gray-700/50 rounded-2xl flex items-center justify-center shadow-inner">
+                                        {feature.icon}
+                                    </div>
+                                    <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                                        Novo
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
                                     {feature.title}
                                 </h3>
-                                <p className="text-gray-600 dark:text-gray-400 leading-relaxed flex-grow">
+                                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6 flex-grow">
                                     {feature.description}
                                 </p>
+
                                 {(feature as any).linkText && (
-                                    <span className="mt-4 text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
+                                    <button className="w-full mt-auto py-3 px-4 bg-white dark:bg-gray-800 border-2 border-primary/10 hover:border-primary/30 dark:border-blue-500/20 dark:hover:border-blue-500/50 text-primary dark:text-blue-400 rounded-xl font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white dark:group-hover:bg-blue-600 dark:group-hover:text-white transition-all duration-300">
                                         {(feature as any).linkText}
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                         </svg>
-                                    </span>
+                                    </button>
                                 )}
                             </>
                         );
 
-                        const className = "p-6 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-indigo-50 dark:hover:bg-gray-800 transition-colors border border-gray-100 dark:border-gray-700/50 flex flex-col h-full cursor-pointer";
+                        const className = "group p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-black/50 hover:shadow-2xl hover:shadow-primary/10 dark:hover:shadow-blue-900/10 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer relative overflow-hidden";
 
                         if ((feature as any).link) {
                             return (
