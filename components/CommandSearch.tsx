@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Loader2, Check, Bot, Send, AlertTriangle, FilePlus, Sparkles, Calculator } from 'lucide-react';
+import { Plus, Loader2, Check, Bot, Send, AlertTriangle, FilePlus, Sparkles, Calculator, ArrowRight } from 'lucide-react';
 
 export type BoqItem = {
     id: string;
@@ -14,6 +14,7 @@ export type BoqItem = {
     category: string;
     isCustom?: boolean;
     aiRequestId?: string;
+    type?: 'material' | 'service' | 'equipment' | 'composition';
 };
 
 type SuggestedItem = {
@@ -23,6 +24,7 @@ type SuggestedItem = {
     price: number;
     category: string;
     included?: boolean;
+    type?: 'material' | 'service' | 'equipment' | 'composition';
 };
 
 type SuggestedBudget = {
@@ -153,30 +155,37 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
         <div className="w-full mb-6 relative" ref={containerRef}>
             <div className="group">
                 <form onSubmit={handleAiSearch} className="relative">
-                    {/* Spotlight Search Bar with Animated Border */}
-                    <div className="relative inline-flex overflow-hidden rounded-xl p-[2px] w-full">
-                        <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#F3F4F6_0%,#00BCD4_50%,#F3F4F6_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#111827_0%,#00BCD4_50%,#111827_100%)]" />
-                        <div className="flex items-center relative bg-white dark:bg-gray-950 rounded-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-[#00BCD4]/20 focus-within:shadow-lg w-full z-10">
-                            <input
-                                type="text"
-                                value={query}
-                                onChange={(e) => {
-                                    setQuery(e.target.value);
-                                    if (aiResponse) setAiResponse(null);
-                                }}
-                                onFocus={() => query && !aiResponse && setIsOpen(true)}
-                                placeholder="Adicione outros serviços aqui (ex: 'Reboco de parede 20m2')..."
-                                className="w-full pl-5 pr-12 py-4 rounded-xl border-none outline-none bg-transparent text-base text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
-                            />
-
-                            <button
-                                type="submit"
-                                disabled={isAiLoading || !query.trim()}
-                                className="absolute right-3 p-2 bg-[#00BCD4] text-white hover:bg-[#00ACC1] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm z-20"
-                            >
-                                {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <Calculator size={18} />}
-                            </button>
+                    {/* Glassmorphism Search Bar - Neon Orange Style */}
+                    <div className="relative flex items-center w-full rounded-full transition-all duration-300
+                            bg-white/70 dark:bg-gray-900/60 
+                            backdrop-blur-xl 
+                            border border-white/50 dark:border-gray-700/50
+                            shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]
+                            hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90 dark:hover:bg-gray-900/80
+                            focus-within:ring-4 focus-within:ring-[#FF6600]/10 focus-within:border-[#FF6600]/50"
+                    >
+                        <div className="pl-6 text-gray-400 dark:text-gray-500">
+                            <Sparkles size={20} className="animate-pulse text-[#FF6600]" />
                         </div>
+                        <input
+                            type="text"
+                            value={query}
+                            onChange={(e) => {
+                                setQuery(e.target.value);
+                                if (aiResponse) setAiResponse(null);
+                            }}
+                            onFocus={() => query && !aiResponse && setIsOpen(true)}
+                            placeholder="Adicionar mais serviços ao orçamento..."
+                            className="w-full pl-4 pr-14 py-4 rounded-full border-none outline-none bg-transparent text-lg text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+                        />
+
+                        <button
+                            type="submit"
+                            disabled={isAiLoading || !query.trim()}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-gray-100/50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-300"
+                        >
+                            {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={18} />}
+                        </button>
                     </div>
                 </form>
             </div>
@@ -256,22 +265,30 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                                     </div>
 
                                     <ul className="space-y-1 mb-3 max-h-60 overflow-y-auto">
-                                        {aiResponse.suggestedBudget.items.map((item, idx) => (
-                                            <li key={idx} className={`text-[11px] flex justify-between items-center border-b border-orange-100 dark:border-orange-800/30 last:border-0 pb-1 last:pb-0 ${item.included === false ? 'opacity-60 grayscale' : 'text-gray-700 dark:text-gray-300'}`}>
-                                                <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                    {/* Show visual indicator if item is optional/unchecked */}
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${item.included === false ? 'bg-gray-300 dark:bg-gray-600' : 'bg-orange-500'}`}></div>
-                                                    <div className="min-w-0">
-                                                        <span className="font-medium">{item.name}</span>
-                                                        <div className="text-[9px] text-gray-500 dark:text-gray-500">{item.category}</div>
+                                        {aiResponse.suggestedBudget.items
+                                            .sort((a, b) => (a.type === 'service' ? -1 : 1))
+                                            .map((item, idx) => (
+                                                <li key={idx} className={`text-[11px] flex justify-between items-center border-b border-orange-100 dark:border-orange-800/30 last:border-0 pb-1 last:pb-0 ${item.included === false ? 'opacity-60 grayscale' : 'text-gray-700 dark:text-gray-300'}`}>
+                                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                        {/* Show visual indicator if item is optional/unchecked */}
+                                                        <div className={`w-1.5 h-1.5 shrink-0 rounded-full ${item.included === false ? 'bg-gray-300 dark:bg-gray-600' : 'bg-orange-500'}`}></div>
+
+                                                        {/* Type Icon */}
+                                                        <span title={item.type === 'service' ? 'Serviço' : item.type === 'material' ? 'Material' : 'Composição'} className="text-[10px] shrink-0 opacity-70 cursor-help">
+                                                            {item.type === 'service' ? '🔨' : item.type === 'material' ? '🧱' : '🛠️'}
+                                                        </span>
+
+                                                        <div className="min-w-0">
+                                                            <span className="font-medium">{item.name}</span>
+                                                            <div className="text-[9px] text-gray-500 dark:text-gray-500">{item.category}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="text-right ml-2 flex-shrink-0">
-                                                    <div className="font-semibold tabular-nums">~R$ {item.price}</div>
-                                                    <div className="text-[9px] text-gray-500 dark:text-gray-500 font-mono uppercase">{item.quantity} {item.unit}</div>
-                                                </div>
-                                            </li>
-                                        ))}
+                                                    <div className="text-right ml-2 flex-shrink-0">
+                                                        <div className="font-semibold tabular-nums">~R$ {item.price}</div>
+                                                        <div className="text-[9px] text-gray-500 dark:text-gray-500 font-mono uppercase">{item.quantity} {item.unit}</div>
+                                                    </div>
+                                                </li>
+                                            ))}
                                     </ul>
 
                                     <button

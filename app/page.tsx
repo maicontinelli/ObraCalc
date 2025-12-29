@@ -28,7 +28,7 @@ export default function Home() {
 
         {/* CTA Section */}
         {/* CTA Section */}
-        <section className="py-24 bg-accent text-white text-center relative overflow-hidden">
+        <section className="py-24 bg-[#E89E37] text-white text-center relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-10">
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -42,14 +42,15 @@ export default function Home() {
               Junte-se a mais de 5.000 engenheiros e arquitetos que economizam 80% do tempo de orçamento.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={() => handleStart('obra_nova')}
-                className="bg-white text-accent hover:bg-white/90 border-0 h-14 px-8 text-lg font-semibold shadow-lg transition-transform hover:scale-105"
-                data-testid="button-cta"
-              >
-                Criar Orçamento Grátis
-              </Button>
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="bg-white text-[#E89E37] hover:bg-white/90 border-0 h-14 px-8 text-lg font-semibold shadow-lg transition-transform hover:scale-105"
+                  data-testid="button-cta"
+                >
+                  Começar Agora
+                </Button>
+              </Link>
               <Link href="/contato">
                 <Button
                   size="lg"

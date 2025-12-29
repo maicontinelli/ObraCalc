@@ -100,17 +100,47 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 return sum + (price * item.quantity);
             }, 0);
 
-            const itemsRows = categoryItems.map(item => {
-                const price = item.manualPrice ?? item.price;
-                const itemTotal = price * item.quantity;
+            // Group items by type
+            const groups: Record<string, any[]> = { composition: [], service: [], material: [] };
+            categoryItems.forEach((item: any) => {
+                let type = item.type;
+                if (!type || (type !== 'service' && type !== 'material')) {
+                    type = 'composition';
+                }
+                groups[type].push(item);
+            });
+
+            // Define display order and headers
+            const orderedGroups = [
+                { id: 'composition', title: 'Composições', icon: '🛠️', items: groups.composition },
+                { id: 'service', title: 'Serviços', icon: '🔨', items: groups.service },
+                { id: 'material', title: 'Materiais', icon: '🧱', items: groups.material }
+            ].filter(g => g.items.length > 0);
+
+            const sectionsHTML = orderedGroups.map(g => {
+                const rows = g.items.map(item => {
+                    const price = item.manualPrice ?? item.price;
+                    const itemTotal = price * item.quantity;
+                    return `
+                        <div class="item-row">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-unit">${item.unit}</div>
+                            <div class="item-qty">${item.quantity}</div>
+                            <div class="item-price">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}</div>
+                            <div class="item-total">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(itemTotal)}</div>
+                        </div>
+                    `;
+                }).join('');
+
                 return `
-                    <div class="item-row">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-unit">${item.unit}</div>
-                        <div class="item-qty">${item.quantity}</div>
-                        <div class="item-price">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}</div>
-                        <div class="item-total">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(itemTotal)}</div>
+                    <div class="items-header">
+                        <div><span style="font-size: 14px; margin-right: 6px; vertical-align: middle;">${g.icon}</span>${g.title}</div>
+                        <div style="text-align: center;">Un.</div>
+                        <div style="text-align: center;">Qtd</div>
+                        <div style="text-align: right;">Unit</div>
+                        <div style="text-align: right;">Total</div>
                     </div>
+                    ${rows}
                 `;
             }).join('');
 
@@ -120,14 +150,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         <div class="category-title">${category}</div>
                         <div class="category-total">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}</div>
                     </div>
-                    <div class="items-header">
-                        <div>Serviço</div>
-                        <div style="text-align: center;">Un.</div>
-                        <div style="text-align: center;">Qtd</div>
-                        <div style="text-align: right;">Unit</div>
-                        <div style="text-align: right;">Total</div>
-                    </div>
-                    ${itemsRows}
+                    ${sectionsHTML}
                 </div>
             `;
         }).join('');
@@ -145,7 +168,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: #f9fafb;
             padding: 40px 20px;
-            color: #111827;
+            color: #374151;
             line-height: 1.5;
         }
         .container { 
@@ -186,7 +209,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .info-icon {
             width: 16px;
             height: 16px;
-            color: #6b7280;
+            color: #4b5563;
             flex-shrink: 0;
             margin-top: 2px;
         }
@@ -232,14 +255,14 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .category-title {
             font-size: 12px;
             font-weight: 700;
-            color: #6b7280;
+            color: #374151;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         .category-total {
             font-size: 12px;
             font-weight: 700;
-            color: #374151;
+            color: #111827;
         }
         .items-header {
             display: grid;
@@ -252,7 +275,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .items-header div {
             font-size: 9px;
             font-weight: 700;
-            color: #9ca3af;
+            color: #4b5563;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -273,21 +296,21 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         }
         .item-unit {
             text-align: center;
-            color: #9ca3af;
+            color: #6b7280;
             font-size: 10px;
             text-transform: uppercase;
         }
         .item-qty {
             text-align: center;
-            color: #6b7280;
+            color: #374151;
         }
         .item-price {
             text-align: right;
-            color: #6b7280;
+            color: #374151;
         }
         .item-total {
             text-align: right;
-            color: #374151;
+            color: #111827;
             font-weight: 600;
         }
         .totals-section {
@@ -494,6 +517,8 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     body { 
                         margin: 0; 
                         background: white !important; 
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
                     }
                     nav, .no-print, footer, .footer { 
                         display: none !important; 
@@ -502,6 +527,27 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         box-shadow: none !important; 
                         background: white !important; 
                     }
+                    
+                    /* Balanced colors for print */
+                    div, span, p, h1, h2, h3, h4, h5, h6 {
+                        color: #374151 !important; /* Dark Grey base */
+                    }
+                    
+                    /* Highlights - Black */
+                    .font-bold, .font-semibold, h1, h2, .item-total, .total-value {
+                        color: #000000 !important;
+                    }
+
+                    /* Secondary - Discreet Grey */
+                    .text-gray-400, .text-gray-500, .uppercase.text-xs {
+                        color: #4b5563 !important;
+                    }
+
+                    /* Keep Total Green */
+                    .text-green-600, .text-green-600 * {
+                        color: #16a34a !important;
+                    }
+
                     /* Remove any potential footer elements */
                     *[class*="footer"], 
                     *[class*="Footer"],
@@ -640,47 +686,96 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                                     </span>
                                 </div>
 
-                                {/* Column Headers */}
-                                <div className="grid grid-cols-12 gap-4 px-4 py-2 text-[9px] font-bold text-gray-400 uppercase tracking-wider bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
-                                    <div className="col-span-5">Serviço</div>
-                                    <div className="col-span-1 text-center">Un.</div>
-                                    <div className="col-span-2 text-center">Qtd</div>
-                                    <div className="col-span-2 text-right">Unit</div>
-                                    <div className="col-span-2 text-right">Total</div>
-                                </div>
-
-                                {/* Items */}
+                                {/* Sections by Type */}
                                 <div className="bg-white dark:bg-gray-900">
-                                    {categoryItems.map((item: any) => {
-                                        const price = item.manualPrice ?? item.price;
-                                        const itemTotal = price * item.quantity;
+                                    {(() => {
+                                        // Group items
+                                        const groups: Record<string, any[]> = { composition: [], service: [], material: [] };
+                                        categoryItems.forEach((item: any) => {
+                                            let type = item.type;
+                                            if (!type || (type !== 'service' && type !== 'material')) {
+                                                type = 'composition';
+                                            }
+                                            groups[type].push(item);
+                                        });
 
-                                        return (
-                                            <div
-                                                key={item.id}
-                                                className="grid grid-cols-12 gap-4 px-4 py-2 text-[11px] border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                                            >
-                                                <div className="col-span-5 text-gray-700 dark:text-gray-300 font-medium">{item.name}</div>
-                                                <div className="col-span-1 text-center text-gray-400 dark:text-gray-500 text-[10px] uppercase">{item.unit}</div>
-                                                <div className="col-span-2 text-center text-gray-600 dark:text-gray-400">{item.quantity}</div>
-                                                <div className="col-span-2 text-right text-gray-500 dark:text-gray-400">
-                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}
+                                        const orderedGroups = [
+                                            { id: 'composition', title: 'Composições', icon: '🛠️', items: groups.composition },
+                                            { id: 'service', title: 'Serviços', icon: '🔨', items: groups.service },
+                                            { id: 'material', title: 'Materiais', icon: '🧱', items: groups.material }
+                                        ].filter(g => g.items.length > 0);
+
+                                        return orderedGroups.map(g => (
+                                            <div key={g.id}>
+                                                {/* Group Header as Column Header */}
+                                                <div className="grid grid-cols-12 gap-4 px-4 py-2 text-[9px] font-bold text-gray-400 uppercase tracking-wider bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 mt-2 first:mt-0">
+                                                    <div className="col-span-5 flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                                                        <span className="text-sm leading-none">{g.icon}</span>
+                                                        <span>{g.title}</span>
+                                                    </div>
+                                                    <div className="col-span-1 text-center">Un.</div>
+                                                    <div className="col-span-2 text-center">Qtd</div>
+                                                    <div className="col-span-2 text-right">Unit</div>
+                                                    <div className="col-span-2 text-right">Total</div>
                                                 </div>
-                                                <div className="col-span-2 text-right text-gray-700 dark:text-gray-300 font-semibold">
-                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(itemTotal)}
-                                                </div>
+
+                                                {/* Rows */}
+                                                {g.items.map((item: any) => {
+                                                    const price = item.manualPrice ?? item.price;
+                                                    const itemTotal = price * item.quantity;
+
+                                                    return (
+                                                        <div
+                                                            key={item.id}
+                                                            className="grid grid-cols-12 gap-4 px-4 py-2 text-[11px] border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                                        >
+                                                            <div className="col-span-5 text-gray-700 dark:text-gray-300 font-medium">
+                                                                {item.name}
+                                                            </div>
+                                                            <div className="col-span-1 text-center text-gray-400 dark:text-gray-500 text-[10px] uppercase">{item.unit}</div>
+                                                            <div className="col-span-2 text-center text-gray-600 dark:text-gray-400">{item.quantity}</div>
+                                                            <div className="col-span-2 text-right text-gray-500 dark:text-gray-400">
+                                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}
+                                                            </div>
+                                                            <div className="col-span-2 text-right text-gray-700 dark:text-gray-300 font-semibold">
+                                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(itemTotal)}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
-                                        );
-                                    })}
+                                        ));
+                                    })()}
                                 </div>
                             </div>
                         );
                     })}
                 </div>
 
-                {/* Totals - Condensed */}
-                <div className="mt-8 flex justify-end">
-                    <div className="w-80 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                {/* Footer Section: Legend & Totals Side-by-Side */}
+                <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-stretch gap-8 break-inside-avoid">
+
+                    {/* Legend Island (Left) */}
+                    <div className="w-full md:w-80 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-center">
+                        <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Legenda:</h3>
+                        <div className="flex flex-col gap-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm">🛠️</span>
+                                <span>Composição (Serviço + Material)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm">🔨</span>
+                                <span>Mão de Obra (Apenas Execução)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm">🧱</span>
+                                <span>Material (Insumo Isolado)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Totals Box (Right) */}
+                    <div className="w-full md:w-80 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
                         <div className="space-y-3">
                             <div className="flex justify-between text-xs">
                                 <span className="font-bold text-gray-700 dark:text-gray-400 uppercase text-[10px]">Subtotal</span>

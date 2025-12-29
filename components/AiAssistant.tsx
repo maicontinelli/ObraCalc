@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Sparkles, Send, Bot, Loader2, FilePlus, AlertTriangle, BrainCircuit } from 'lucide-react';
+import { Sparkles, Send, Bot, Loader2, FilePlus, AlertTriangle, BrainCircuit, Map, Camera, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { BOQ_TEMPLATES } from '@/lib/constants';
 
@@ -12,6 +12,7 @@ type SuggestedItem = {
     price: number;
     category: string;
     included?: boolean;
+    type?: 'material' | 'service' | 'equipment';
 };
 
 type SuggestedBudget = {
@@ -145,59 +146,40 @@ export default function AiAssistant() {
                 {/* Decorative background element removed */}
 
                 <div className="relative z-10">
-                    <form onSubmit={handleSearch} className="relative">
-                        {/* Animated border wrapper for search bar */}
-                        <div className="relative inline-flex overflow-hidden rounded-xl p-[2px] w-full">
-                            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#F3F4F6_0%,#00BCD4_50%,#F3F4F6_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#111827_0%,#00BCD4_50%,#111827_100%)]" />
+                    <form onSubmit={handleSearch} className="relative group z-20">
+                        <div className="relative flex items-center w-full rounded-full transition-all duration-300
+                            bg-white/70 dark:bg-gray-900/60 
+                            backdrop-blur-xl 
+                            border border-white/50 dark:border-gray-700/50
+                            shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]
+                            hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90 dark:hover:bg-gray-900/80
+                            focus-within:ring-4 focus-within:ring-[#FF6600]/10 focus-within:border-[#FF6600]/50"
+                        >
+                            <div className="pl-6 text-gray-400 dark:text-gray-500">
+                                <Sparkles size={20} className="animate-pulse text-[#FF6600]" />
+                            </div>
                             <input
                                 type="text"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Descreva seu serviço (ex: construir muro de 15m, reformar cozinha, pintar casa)..."
-                                className="relative z-10 w-full pl-4 pr-12 py-4 rounded-xl border-0 bg-white dark:bg-gray-950 focus:ring-2 focus:ring-[#00BCD4]/20 dark:focus:ring-[#00BCD4]/20 outline-none transition-all text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
-                        </div>
+                                placeholder="O que vamos orçar hoje? (ex: Pintura de parede 20m2)"
+                                className="w-full pl-4 pr-14 py-5 rounded-full border-none outline-none bg-transparent text-lg text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+                            />
 
-                        <button
-                            type="submit"
-                            disabled={isLoading || !query.trim()}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[#00BCD4] text-white rounded-lg hover:bg-[#00ACC1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm z-20"
-                        >
-                            {isLoading ? <Loader2 size={18} className="animate-spin" /> : <BrainCircuit size={18} />}
-                        </button>
+                            <button
+                                type="submit"
+                                disabled={isLoading || !query.trim()}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-gray-100/50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-300"
+                            >
+                                {isLoading ? <Loader2 size={20} className="animate-spin" /> : <ArrowRight size={20} />}
+                            </button>
+                        </div>
                     </form>
 
 
 
 
-                    <div className="flex flex-wrap justify-center gap-2 mb-6 mt-8">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                const newId = crypto.randomUUID();
-                                router.push(`/editor/${newId}?type=obra_nova`);
-                            }}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00BCD4]/10 dark:bg-[#00BCD4]/20 text-[#00BCD4] dark:text-[#00BCD4] text-xs font-semibold uppercase tracking-wide hover:bg-[#00BCD4]/20 dark:hover:bg-[#00BCD4]/30 transition-all border border-[#00BCD4]/30"
-                        >
-                            <FilePlus size={14} />
-                            Orçamento
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => router.push('/topografia')}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wide hover:bg-blue-500/20 dark:hover:bg-blue-500/30 transition-all border border-blue-500/30"
-                        >
-                            <Sparkles size={14} />
-                            Topografia
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => router.push('/relatorio-fotografico')}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-xs font-semibold uppercase tracking-wide hover:bg-purple-500/20 dark:hover:bg-purple-500/30 transition-all border border-purple-500/30"
-                        >
-                            <Bot size={14} />
-                            Relatório Foto
-                        </button>
-                    </div>
+
 
                     {error && (
                         <div className="mt-4 p-3 bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm text-red-600 dark:text-red-400 rounded-lg text-sm flex items-center gap-2 border border-red-100 dark:border-red-800/50">
@@ -233,15 +215,19 @@ export default function AiAssistant() {
                                             </div>
 
                                             <ul className="space-y-2 mb-4">
-                                                {response.suggestedBudget.items.slice(0, 3).map((item, idx) => (
-                                                    <li key={idx} className="text-xs text-gray-700 dark:text-gray-300 flex justify-between">
-                                                        <span>{item.name}</span>
-                                                        <span className="font-medium">~R$ {item.price}</span>
-                                                    </li>
-                                                ))}
-                                                {response.suggestedBudget.items.length > 3 && (
-                                                    <li className="text-xs text-gray-500 dark:text-gray-400 italic">...e mais {response.suggestedBudget.items.length - 3} itens</li>
-                                                )}
+                                                {response.suggestedBudget.items
+                                                    .sort((a, b) => (a.type === 'service' ? -1 : 1))
+                                                    .map((item, idx) => (
+                                                        <li key={idx} className="text-xs text-gray-700 dark:text-gray-300 flex justify-between items-center bg-white/50 dark:bg-black/20 px-2 py-1.5 rounded">
+                                                            <div className="flex items-center gap-2 overflow-hidden">
+                                                                <span title={item.type === 'service' ? 'Serviço' : 'Material'} className="text-[10px] shrink-0 opacity-70">
+                                                                    {item.type === 'service' ? '🔨' : '🧱'}
+                                                                </span>
+                                                                <span className="truncate">{item.name}</span>
+                                                            </div>
+                                                            <span className="font-medium shrink-0 ml-2">~R$ {item.price}</span>
+                                                        </li>
+                                                    ))}
                                             </ul>
 
                                             <button

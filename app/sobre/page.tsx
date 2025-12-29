@@ -8,24 +8,32 @@ import { Brain, Database, Users, TrendingUp, ShieldCheck, Lightbulb } from 'luci
 export default function AboutPage() {
     return (
         <div className="min-h-screen flex flex-col bg-white dark:bg-[#191919]">
-            <main className="flex-grow pt-20 pb-24">
+            <main className="flex-grow pb-24">
                 {/* Hero Section */}
-                <div className="container mx-auto px-4 mb-24">
-                    <div className="max-w-4xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-8 leading-tight">
-                            Transformando a engenharia de custos com <span className="text-primary">inteligência e precisão</span>
-                        </h1>
-                        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
-                            Nascemos da experiência de quem vive o canteiro de obras e da visão de que orçar não precisa ser complexo, demorado ou impreciso.
-                        </p>
+                {/* Hero Section */}
+                <section className="relative overflow-hidden bg-gradient-to-br from-[#3B82F6]/5 via-white to-[#3B82F6]/5 dark:from-[#3B82F6]/10 dark:via-gray-900 dark:to-[#3B82F6]/10 py-20 border-b border-gray-100 dark:border-gray-800 mb-24">
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#3B82F6]/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#3B82F6]/10 rounded-full blur-3xl"></div>
                     </div>
-                </div>
+
+                    <div className="container mx-auto px-4 relative z-10">
+                        <div className="max-w-4xl mx-auto text-center">
+                            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-8 leading-tight">
+                                Transformando a engenharia de custos com <span className="text-[#3B82F6]">inteligência e precisão</span>
+                            </h1>
+                            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
+                                Nascemos da experiência de quem vive o canteiro de obras e da visão de que orçar não precisa ser complexo, demorado ou impreciso.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
                 {/* The Story Section */}
                 <div className="container mx-auto px-4 mb-32">
                     <div className="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
                         <div className="relative">
-                            <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
+                            <div className="absolute -top-4 -left-4 w-24 h-24 bg-[#3B82F6]/10 rounded-full blur-2xl"></div>
                             <div className="relative bg-gray-50 dark:bg-gray-800/50 p-8 rounded-3xl border border-gray-100 dark:border-gray-800">
                                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     De Engenheiro para Engenheiro
@@ -41,7 +49,7 @@ export default function AboutPage() {
                         <div>
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="bg-white dark:bg-[#191919] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
-                                    <Database className="w-8 h-8 text-primary mb-4" />
+                                    <Database className="w-8 h-8 text-[#3B82F6] mb-4" />
                                     <h4 className="font-bold text-gray-900 dark:text-white mb-2">Bases Oficiais</h4>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">SINAPI, ORSE e SICRO integrados e atualizados.</p>
                                 </div>
@@ -82,7 +90,7 @@ export default function AboutPage() {
 
                 {/* Team/Community Section */}
                 <div className="container mx-auto px-4 mb-24">
-                    <div className="max-w-5xl mx-auto bg-primary text-white rounded-3xl p-12 md:p-20 text-center relative overflow-hidden">
+                    <div className="max-w-5xl mx-auto bg-[#3B82F6] text-white rounded-3xl p-12 md:p-20 text-center relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-full opacity-10">
                             <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
                             <div className="absolute bottom-10 right-10 w-48 h-48 bg-white rounded-full blur-3xl"></div>
@@ -97,14 +105,16 @@ export default function AboutPage() {
                                 O ObraCalc é uma ferramenta viva, que evolui com o feedback de milhares de profissionais que a utilizam diariamente.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Link href="/auth/cadastro">
-                                    <Button size="lg" className="bg-white text-primary hover:bg-white/90 border-0 text-lg h-12 px-8 font-semibold">
+                                <Link href="/login">
+                                    <Button size="lg" className="bg-white text-[#3B82F6] hover:bg-white/90 border-0 text-lg h-12 px-8 font-semibold">
                                         Começar Agora
                                     </Button>
                                 </Link>
-                                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 text-lg h-12 px-8 font-semibold bg-transparent">
-                                    Falar com o Fundador
-                                </Button>
+                                <Link href="/contato">
+                                    <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 text-lg h-12 px-8 font-semibold bg-transparent">
+                                        Falar com o Fundador
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </div>

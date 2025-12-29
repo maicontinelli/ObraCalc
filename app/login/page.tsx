@@ -108,7 +108,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-primary hover:bg-primary/90 text-white font-semibold p-3 rounded-xl transition-all shadow-lg hover:shadow-primary/20 h-12 flex items-center justify-center"
+                            className="w-full bg-[#E89E37] hover:bg-[#E89E37]/90 text-white font-semibold p-3 rounded-xl transition-all shadow-lg hover:shadow-[#E89E37]/20 h-12 flex items-center justify-center"
                         >
                             {loading ? <Loader2 className="animate-spin" /> : 'Entrar com Link Mágico'}
                         </button>
@@ -117,8 +117,8 @@ export default function LoginPage() {
 
                 {message && (
                     <div className={`mt-6 p-4 rounded-lg flex items-start gap-3 text-sm ${message.type === 'success'
-                            ? 'bg-green-50 text-green-700 border border-green-200'
-                            : 'bg-red-50 text-red-700 border border-red-200'
+                        ? 'bg-green-50 text-green-700 border border-green-200'
+                        : 'bg-red-50 text-red-700 border border-red-200'
                         }`}>
                         {message.type === 'success' ? <CheckCircle2 className="shrink-0 mt-0.5" size={16} /> : <XCircle className="shrink-0 mt-0.5" size={16} />}
                         <p>{message.text}</p>

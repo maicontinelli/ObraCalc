@@ -43,7 +43,7 @@ export default function PlansPage() {
                 'Rentabilize com indicação de serviços',
             ],
             limitations: [],
-            cta: 'Assinar Plano Profissional',
+            cta: 'Assinar',
             href: 'https://pay.cakto.com.br/3fewkqc_673678',
             popular: true,
         },
@@ -69,28 +69,37 @@ export default function PlansPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-white dark:bg-[#191919]">
-            <main className="flex-grow pt-20 pb-24">
-                <div className="container mx-auto px-4">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
-                            Escolha o plano ideal para sua obra
-                        </h1>
-                        <p className="text-xl text-gray-600 dark:text-gray-300">
-                            Comece gratuitamente e evolua conforme suas necessidades de gerenciamento e equipe.
-                        </p>
+            <main className="flex-grow pb-24">
+                <section className="relative overflow-hidden bg-gradient-to-br from-[#74D2E7]/5 via-white to-[#74D2E7]/5 dark:from-[#74D2E7]/10 dark:via-gray-900 dark:to-[#74D2E7]/10 py-20 border-b border-gray-100 dark:border-gray-800 mb-16">
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#74D2E7]/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#74D2E7]/10 rounded-full blur-3xl"></div>
                     </div>
 
+                    <div className="container mx-auto px-4 relative z-10">
+                        <div className="text-center max-w-3xl mx-auto">
+                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
+                                Escolha o plano ideal para começar
+                            </h1>
+                            <p className="text-xl text-gray-600 dark:text-gray-300">
+                                Comece gratuitamente e evolua conforme suas necessidades de gerenciamento e equipe.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
                         {plans.map((plan) => (
                             <div
                                 key={plan.name}
                                 className={`relative flex flex-col p-8 rounded-2xl border ${plan.popular
-                                    ? 'border-primary shadow-lg ring-1 ring-primary'
+                                    ? 'border-[#74D2E7] shadow-lg ring-1 ring-[#74D2E7]'
                                     : 'border-gray-200 dark:border-gray-800'
                                     } bg-white dark:bg-[#191919] transition-shadow hover:shadow-xl`}
                             >
                                 {plan.popular && (
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-sm font-medium rounded-full">
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#74D2E7] text-white text-sm font-medium rounded-full">
                                         Mais Popular
                                     </div>
                                 )}
@@ -116,7 +125,7 @@ export default function PlansPage() {
                                     <ul className="space-y-4">
                                         {plan.features.map((feature) => (
                                             <li key={feature} className="flex items-start gap-3">
-                                                <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                                                <Check className="w-5 h-5 text-[#74D2E7] flex-shrink-0 mt-0.5" />
                                                 <span className="text-gray-600 dark:text-gray-300 text-sm">
                                                     {feature}
                                                 </span>
@@ -136,7 +145,7 @@ export default function PlansPage() {
                                 <Link href={plan.href} className="w-full" target={plan.price === 'R$ 0' ? '_self' : '_blank'}>
                                     <Button
                                         className={`w-full h-12 text-lg font-medium ${plan.popular
-                                            ? 'bg-primary hover:bg-primary/90 text-white'
+                                            ? 'bg-[#74D2E7] hover:bg-[#74D2E7]/90 text-white'
                                             : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                                             }`}
                                         variant={plan.popular ? 'default' : 'outline'}

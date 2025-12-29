@@ -41,7 +41,8 @@ O formato do JSON deve ser EXATAMENTE este:
         "quantity": 1,
         "price": 0,
         "category": "Itens Adicionais",
-        "included": true // false se for uma sugestão opcional/incerta
+        "included": true, // false se for uma sugestão opcional/incerta
+        "type": "material" | "service" | "equipment" // Categorize o item
       }
     ]
   }

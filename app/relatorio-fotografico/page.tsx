@@ -233,16 +233,24 @@ export default function RelatorioFotograficoPage() {
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
             {/* Hero Section */}
-            <div className="bg-white border-b border-gray-200 pt-16 pb-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl font-extrabold text-[#00704A] sm:text-5xl mb-4">
-                        Relatório Fotográfico de Obra com IA
-                    </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Envie fotos da obra e a IA gera automaticamente um relatório fotográfico técnico profissional, pronto para entrega ao cliente.
-                    </p>
+            {/* Hero Section */}
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#6366F1]/5 via-white to-[#6366F1]/5 border-b border-gray-200 pt-16 pb-12">
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#6366F1]/10 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#6366F1]/10 rounded-full blur-3xl"></div>
                 </div>
-            </div>
+
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                            Relatório Fotográfico de Obra com <span className="text-[#6366F1]">IA</span>
+                        </h1>
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                            Envie fotos da obra e a IA gera automaticamente um relatório fotográfico técnico profissional, pronto para entrega ao cliente.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
 
@@ -260,7 +268,7 @@ export default function RelatorioFotograficoPage() {
                     {/* Upload Section */}
                     <div className="p-8">
                         <div
-                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${images.length > 0 ? 'border-[#00704A]/50 bg-[#00704A]/5' : 'border-gray-300 hover:border-[#00704A] hover:bg-gray-50'
+                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${images.length > 0 ? 'border-[#6366F1]/50 bg-[#6366F1]/5' : 'border-gray-300 hover:border-[#6366F1] hover:bg-gray-50'
                                 }`}
                             onClick={() => fileInputRef.current?.click()}
                         >
@@ -275,13 +283,13 @@ export default function RelatorioFotograficoPage() {
 
                             {isCompressing ? (
                                 <div className="flex flex-col items-center">
-                                    <RefreshCw className="h-12 w-12 text-[#00704A] mb-4 animate-spin" />
+                                    <RefreshCw className="h-12 w-12 text-[#6366F1] mb-4 animate-spin" />
                                     <h3 className="text-lg font-medium text-gray-900">Otimizando imagens...</h3>
                                     <p className="text-sm text-gray-500 mt-1">Reduzindo tamanho para melhor performance</p>
                                 </div>
                             ) : images.length > 0 ? (
                                 <div className="flex flex-col items-center">
-                                    <CheckCircle className="h-12 w-12 text-[#00704A] mb-4" />
+                                    <CheckCircle className="h-12 w-12 text-[#6366F1] mb-4" />
                                     <h3 className="text-lg font-medium text-gray-900">{images.length} imagem(ns) selecionada(s)</h3>
                                     <p className="text-sm text-gray-500 mt-1">
                                         {images.length >= 10 ? (
@@ -348,7 +356,7 @@ export default function RelatorioFotograficoPage() {
                                     value={clientName}
                                     onChange={(e) => setClientName(e.target.value)}
                                     placeholder="Ex: João Silva"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 />
                             </div>
                             <div>
@@ -359,7 +367,7 @@ export default function RelatorioFotograficoPage() {
                                     value={projectAddress}
                                     onChange={(e) => setProjectAddress(e.target.value)}
                                     placeholder="Ex: Rua das Flores, 123 - São Paulo/SP"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 />
                             </div>
                             <div>
@@ -368,7 +376,7 @@ export default function RelatorioFotograficoPage() {
                                     id="projectType"
                                     value={projectType}
                                     onChange={(e) => setProjectType(e.target.value as ProjectType)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 >
                                     <option value="Residencial">Residencial</option>
                                     <option value="Comercial">Comercial</option>
@@ -381,7 +389,7 @@ export default function RelatorioFotograficoPage() {
                                     id="projectStage"
                                     value={projectStage}
                                     onChange={(e) => setProjectStage(e.target.value as ProjectStage)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 >
                                     <option value="Inicial">Inicial</option>
                                     <option value="Em andamento">Em andamento</option>
@@ -394,7 +402,7 @@ export default function RelatorioFotograficoPage() {
                                     id="mode"
                                     value={mode}
                                     onChange={(e) => setMode(e.target.value as ReportMode)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 >
                                     <option value="LEIGO">Linguagem Simples (Cliente Leigo)</option>
                                     <option value="TECNICO">Linguagem Técnica</option>
@@ -407,7 +415,7 @@ export default function RelatorioFotograficoPage() {
                                     type="date"
                                     value={inspectionDate}
                                     onChange={(e) => setInspectionDate(e.target.value)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 />
                             </div>
                         </div>
@@ -425,7 +433,7 @@ export default function RelatorioFotograficoPage() {
                                             value={technicalResponsible}
                                             onChange={(e) => setTechnicalResponsible(e.target.value)}
                                             placeholder="Ex: Eng. Maria Santos"
-                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                         />
                                     </div>
                                     <div>
@@ -436,7 +444,7 @@ export default function RelatorioFotograficoPage() {
                                             value={creaCAU}
                                             onChange={(e) => setCreaCau(e.target.value)}
                                             placeholder="Ex: CREA-SP 123456"
-                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                         />
                                     </div>
                                     <div>
@@ -447,7 +455,7 @@ export default function RelatorioFotograficoPage() {
                                             value={builtArea}
                                             onChange={(e) => setBuiltArea(e.target.value)}
                                             placeholder="Ex: 150.00"
-                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                         />
                                     </div>
                                 </div>
@@ -463,7 +471,7 @@ export default function RelatorioFotograficoPage() {
                                 onChange={(e) => setUserObservations(e.target.value)}
                                 placeholder="Adicione observações técnicas relevantes sobre a obra..."
                                 rows={3}
-                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                             />
                         </div>
                     </div>
@@ -475,8 +483,8 @@ export default function RelatorioFotograficoPage() {
                             disabled={images.length === 0 || !clientName || !projectAddress || isLoading}
                             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white shadow-md transition-all
                                 ${images.length === 0 || !clientName || !projectAddress ? 'bg-gray-400 cursor-not-allowed' :
-                                    isLoading ? 'bg-[#00704A]/80 cursor-wait' :
-                                        'bg-[#00704A] hover:bg-[#005c3c] hover:shadow-lg active:scale-95'}`}
+                                    isLoading ? 'bg-[#6366F1]/80 cursor-wait' :
+                                        'bg-[#6366F1] hover:bg-[#4338CA] hover:shadow-lg active:scale-95'}`}
                         >
                             {isLoading ? (
                                 <>

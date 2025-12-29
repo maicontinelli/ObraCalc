@@ -122,16 +122,24 @@ export default function MemorialPage() {
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
             {/* Hero Section */}
-            <div className="bg-white border-b border-gray-200 pt-16 pb-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl font-extrabold text-[#00704A] sm:text-5xl mb-4">
-                        Memorial Descritivo de Topografia para Lotes Urbanos
-                    </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Envie o arquivo KMZ do Google Earth e a IA cria automaticamente o memorial descritivo técnico + planilha em Excel pronta para prefeitura e cartório.
-                    </p>
+            {/* Hero Section */}
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#C2410C]/5 via-white to-[#C2410C]/5 border-b border-gray-200 pt-16 pb-12">
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#C2410C]/10 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#C2410C]/10 rounded-full blur-3xl"></div>
                 </div>
-            </div>
+
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                            Memorial Descritivo de <span className="text-[#C2410C]">Topografia</span>
+                        </h1>
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                            Envie o arquivo KMZ do Google Earth e a IA cria automaticamente o memorial descritivo técnico + planilha em Excel pronta para prefeitura e cartório.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
 
@@ -149,7 +157,7 @@ export default function MemorialPage() {
                     {/* Upload Section */}
                     <div className="p-8">
                         <div
-                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${file ? 'border-[#00704A]/50 bg-[#00704A]/5' : 'border-gray-300 hover:border-[#00704A] hover:bg-gray-50'}`}
+                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${file ? 'border-[#C2410C]/50 bg-[#C2410C]/5' : 'border-gray-300 hover:border-[#C2410C] hover:bg-gray-50'}`}
                             onClick={() => fileInputRef.current?.click()}
                         >
                             <input
@@ -162,11 +170,11 @@ export default function MemorialPage() {
 
                             {file ? (
                                 <div className="flex flex-col items-center">
-                                    <CheckCircle className="h-12 w-12 text-[#00704A] mb-4" />
+                                    <CheckCircle className="h-12 w-12 text-[#C2410C] mb-4" />
                                     <h3 className="text-lg font-medium text-gray-900">{file.name}</h3>
                                     <p className="text-sm text-gray-500 mt-1">Pronto para processar</p>
                                     <button
-                                        className="mt-4 text-sm text-[#00704A] font-medium hover:underline"
+                                        className="mt-4 text-sm text-[#C2410C] font-medium hover:underline"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setFile(null);
@@ -199,7 +207,7 @@ export default function MemorialPage() {
                                     value={city}
                                     onChange={(e) => setCity(e.target.value)}
                                     placeholder="Ex: São Paulo"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C]"
                                 />
                             </div>
                             <div>
@@ -209,7 +217,7 @@ export default function MemorialPage() {
                                     value={state}
                                     onChange={(e) => setState(e.target.value)}
                                     placeholder="Ex: SP"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C]"
                                 />
                             </div>
                             <div>
@@ -223,7 +231,7 @@ export default function MemorialPage() {
                                 <select
                                     value={isClockwise ? 'horario' : 'anti'}
                                     onChange={(e) => setIsClockwise(e.target.value === 'horario')}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#00704A] focus:ring-[#00704A]"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C]"
                                 >
                                     <option value="horario">Horário (Padrão)</option>
                                     <option value="anti">Anti-horário</option>
@@ -239,8 +247,8 @@ export default function MemorialPage() {
                             disabled={!file || isLoading}
                             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white shadow-md transition-all
                                 ${!file ? 'bg-gray-400 cursor-not-allowed' :
-                                    isLoading ? 'bg-[#00704A]/80 cursor-wait' :
-                                        'bg-[#00704A] hover:bg-[#005c3c] hover:shadow-lg active:scale-95'}`}
+                                    isLoading ? 'bg-[#C2410C]/80 cursor-wait' :
+                                        'bg-[#C2410C] hover:bg-[#9A3412] hover:shadow-lg active:scale-95'}`}
                         >
                             {isLoading ? (
                                 <>
@@ -265,12 +273,12 @@ export default function MemorialPage() {
                         <div className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <FileText className="h-6 w-6 text-[#00704A]" />
+                                    <FileText className="h-6 w-6 text-[#C2410C]" />
                                     Memorial Descritivo
                                 </h2>
                                 <button
                                     onClick={() => navigator.clipboard.writeText(generateMemorialText())}
-                                    className="text-sm font-medium text-[#00704A] hover:bg-[#00704A]/10 px-3 py-1.5 rounded-md transition-colors"
+                                    className="text-sm font-medium text-[#C2410C] hover:bg-[#C2410C]/10 px-3 py-1.5 rounded-md transition-colors"
                                 >
                                     Copiar Texto
                                 </button>
@@ -285,12 +293,12 @@ export default function MemorialPage() {
                         <div className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <Download className="h-6 w-6 text-[#00704A]" />
+                                    <Download className="h-6 w-6 text-[#C2410C]" />
                                     Tabela Técnica
                                 </h2>
                                 <button
                                     onClick={downloadExcel}
-                                    className="flex items-center gap-2 px-4 py-2 bg-[#00704A] text-white text-sm font-bold rounded-lg hover:bg-[#005c3c] transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 bg-[#C2410C] text-white text-sm font-bold rounded-lg hover:bg-[#9A3412] transition-colors"
                                 >
                                     <Download className="h-4 w-4" />
                                     Baixar Excel (.xlsx)

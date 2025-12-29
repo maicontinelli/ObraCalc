@@ -1,11 +1,16 @@
-import { Calculator, FileText, Zap, Camera } from "lucide-react";
+'use client';
+
+import { Calculator, FileText, Zap, Camera, Map } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const features = [
     {
         icon: <Calculator className="h-6 w-6 text-primary dark:text-blue-400" />,
         title: "Orçamentos Inteligentes",
-        description: "Cálculos precisos baseados na tabela SINAPI atualizada e preços médios de mercado por região."
+        description: "Cálculos precisos baseados na tabela SINAPI atualizada e preços médios de mercado por região.",
+        action: 'new',
+        linkText: "Novo Orçamento"
     },
     {
         icon: <Zap className="h-6 w-6 text-primary dark:text-blue-400" />,
@@ -13,22 +18,31 @@ const features = [
         description: "Descreva sua obra e nossa IA gera automaticamente a lista completa de materiais e serviços."
     },
     {
-        icon: <FileText className="h-6 w-6 text-primary dark:text-blue-400" />,
+        icon: <Map className="h-6 w-6 text-[#C2410C]" />,
         title: "Memorial de Topografia",
         description: "Gere memorial descritivo técnico + planilha Excel pronta para prefeitura e cartório.",
         link: "/topografia",
         linkText: "Acessar Topografia"
     },
     {
-        icon: <Camera className="h-6 w-6 text-primary dark:text-blue-400" />,
+        icon: <Camera className="h-6 w-6 text-[#6366F1]" />,
         title: "Relatório Fotográfico",
         description: "IA analisa fotos da obra e gera relatório técnico profissional automaticamente.",
         link: "/relatorio-fotografico",
-        linkText: "Novo: Relatório com IA"
+        linkText: "Acessar Relatório"
     }
 ];
 
 export function Features() {
+    const router = useRouter();
+
+    const handleAction = (action: string) => {
+        if (action === 'new') {
+            const newId = crypto.randomUUID();
+            router.push(`/editor/${newId}?type=obra_nova`);
+        }
+    };
+
     return (
         <section className="py-24 bg-white dark:bg-[#191919]">
             <div className="container mx-auto px-4">
@@ -54,16 +68,32 @@ export function Features() {
                                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed flex-grow">
                                     {feature.description}
                                 </p>
+                                {(feature as any).linkText && (
+                                    <span className="mt-4 text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
+                                        {(feature as any).linkText}
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </span>
+                                )}
                             </>
                         );
 
-                        const className = "p-6 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-indigo-50 dark:hover:bg-gray-800 transition-colors border border-gray-100 dark:border-gray-700/50 flex flex-col h-full";
+                        const className = "p-6 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-indigo-50 dark:hover:bg-gray-800 transition-colors border border-gray-100 dark:border-gray-700/50 flex flex-col h-full cursor-pointer";
 
                         if ((feature as any).link) {
                             return (
                                 <Link key={index} href={(feature as any).link} className={className}>
                                     {content}
                                 </Link>
+                            );
+                        }
+
+                        if ((feature as any).action) {
+                            return (
+                                <div key={index} onClick={() => handleAction((feature as any).action)} className={className}>
+                                    {content}
+                                </div>
                             );
                         }
 

@@ -628,11 +628,7 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                 <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex flex-col items-center gap-3">
                         <div className="flex items-center gap-3">
-                            <img
-                                src="/logo-custom.png"
-                                alt="ObraCalc"
-                                className="h-8 w-auto opacity-60"
-                            />
+                            <img src="/logo-toucan-v2.png" alt="Logo" className="h-12 w-auto" />
                             <div className="text-center">
                                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">ObraCalc</p>
                                 <p className="text-[10px] text-gray-500 dark:text-gray-400 max-w-md">

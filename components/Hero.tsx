@@ -4,11 +4,16 @@ import Image from 'next/image';
 
 export function Hero() {
     return (
-        <section className="relative pt-12 pb-32 overflow-hidden">
+        <section className="relative pt-12 pb-32 overflow-hidden bg-gradient-to-br from-[#00BCD4]/5 via-white to-[#00BCD4]/5 dark:from-[#00BCD4]/10 dark:via-gray-900 dark:to-[#00BCD4]/10 border-b border-gray-100 dark:border-gray-800">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#00BCD4]/10 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#00BCD4]/10 rounded-full blur-3xl"></div>
+            </div>
+
             <div className="container mx-auto px-4 relative z-10">
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12">
                     <Image
-                        src="/logo-custom.png"
+                        src="/logo-toucan-v2.png"
                         alt="ObraCalc Logo"
                         width={100}
                         height={100}
@@ -29,15 +34,6 @@ export function Hero() {
                 <div className="max-w-3xl mx-auto relative z-20 mb-8">
                     <MathParticles />
                     <AiAssistant />
-                </div>
-
-
-
-                {/* Background Elements */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
-                    <div className="absolute top-20 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl mix-blend-multiply animate-blob" />
-                    <div className="absolute top-20 right-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-2000" />
-                    <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-4000" />
                 </div>
             </div>
         </section>

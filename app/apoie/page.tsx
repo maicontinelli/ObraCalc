@@ -7,21 +7,28 @@ import { Heart, BrickWall, Handshake, Rocket, Star, Building2, Trophy } from 'lu
 export default function SupportPage() {
     return (
         <div className="min-h-screen flex flex-col bg-white dark:bg-[#191919]">
-            <main className="flex-grow pt-20 pb-24">
+            <main className="flex-grow pb-24">
                 {/* Hero Section */}
-                <div className="container mx-auto px-4 mb-20">
-                    <div className="text-center max-w-4xl mx-auto">
-                        <div className="inline-flex items-center justify-center p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full mb-6">
-                            <Heart className="w-8 h-8 text-yellow-500 fill-yellow-500" />
-                        </div>
-                        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
-                            Torne-se um Membro Ativo da Construção
-                        </h1>
-                        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
-                            Sua contribuição não é só um apoio — é uma assinatura no futuro da ferramenta.
-                        </p>
+                <section className="relative overflow-hidden bg-gradient-to-br from-[#EC4899]/5 via-white to-[#EC4899]/5 dark:from-[#EC4899]/10 dark:via-gray-900 dark:to-[#EC4899]/10 py-20 border-b border-gray-100 dark:border-gray-800 mb-20">
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#EC4899]/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#EC4899]/10 rounded-full blur-3xl"></div>
                     </div>
-                </div>
+
+                    <div className="container mx-auto px-4 relative z-10">
+                        <div className="text-center max-w-4xl mx-auto">
+                            <div className="inline-flex items-center justify-center p-3 bg-[#EC4899]/10 dark:bg-[#EC4899]/20 rounded-full mb-6">
+                                <Heart className="w-8 h-8 text-[#EC4899] fill-[#EC4899]" />
+                            </div>
+                            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
+                                Torne-se um Membro Ativo da Construção
+                            </h1>
+                            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
+                                Sua contribuição não é só um apoio — é uma assinatura no futuro da ferramenta.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
                 {/* Manifesto Section */}
                 <div className="container mx-auto px-4 mb-24">
@@ -95,18 +102,18 @@ export default function SupportPage() {
                     </h2>
 
                     <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-colors">
-                            <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center mb-6">
-                                <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#EC4899]/50 transition-colors">
+                            <div className="w-12 h-12 bg-[#EC4899]/10 dark:bg-[#EC4899]/20 rounded-xl flex items-center justify-center mb-6">
+                                <Star className="w-6 h-6 text-[#EC4899] dark:text-[#EC4899]" />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Apoio Individual</h3>
                             <p className="text-gray-600 dark:text-gray-300 flex-grow">
                                 Para pessoas que acreditam na ideia e querem participar da evolução do app.
                             </p>
-                            <Button className="mt-8 w-full bg-yellow-500 hover:bg-yellow-600 text-white border-0">Quero Apoiar</Button>
+                            <Button className="mt-8 w-full bg-[#EC4899] hover:bg-[#EC4899]/90 text-white border-0">Quero Apoiar</Button>
                         </div>
 
-                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-colors">
+                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#EC4899]/50 transition-colors">
                             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6">
                                 <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                             </div>
@@ -117,7 +124,7 @@ export default function SupportPage() {
                             <Button className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white border-0">Apoiar como Empresa</Button>
                         </div>
 
-                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-colors">
+                        <div className="flex flex-col h-full bg-white dark:bg-[#191919] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#EC4899]/50 transition-colors">
                             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6">
                                 <Trophy className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                             </div>

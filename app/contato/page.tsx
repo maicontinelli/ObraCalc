@@ -53,22 +53,22 @@ export default function ContatoPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-white to-primary/5 dark:from-primary/10 dark:via-gray-900 dark:to-primary/10 py-20 border-b border-gray-100 dark:border-gray-800">
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#F97316]/5 via-white to-[#F97316]/5 dark:from-[#F97316]/10 dark:via-gray-900 dark:to-[#F97316]/10 py-20 border-b border-gray-100 dark:border-gray-800">
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"></div>
-                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl"></div>
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#F97316]/10 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#F97316]/10 rounded-full blur-3xl"></div>
                 </div>
 
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
-                        <div className="inline-flex items-center gap-2 bg-primary/10 dark:bg-primary/20 text-primary px-4 py-2 rounded-full mb-6">
+                        <div className="inline-flex items-center gap-2 bg-[#F97316]/10 dark:bg-[#F97316]/20 text-[#F97316] px-4 py-2 rounded-full mb-6">
                             <Award className="w-4 h-4" />
                             <span className="text-sm font-semibold">Engenheiro Civil • CREA-BA</span>
                         </div>
 
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
                             Transformando Complexidade em{' '}
-                            <span className="text-primary">Clareza</span>
+                            <span className="text-[#F97316]">Clareza</span>
                         </h1>
 
                         <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
@@ -79,14 +79,14 @@ export default function ContatoPage() {
                         <div className="flex flex-wrap gap-4 justify-center">
                             <Link
                                 href="#formulario"
-                                className="btn btn-primary px-8 py-3 text-lg flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+                                className="btn bg-[#F97316] hover:bg-[#F97316]/90 text-white px-8 py-3 text-lg flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
                             >
                                 <MessageSquare className="w-5 h-5" />
                                 Entrar em Contato
                             </Link>
                             <Link
                                 href="/sobre"
-                                className="btn bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-8 py-3 text-lg hover:border-primary dark:hover:border-primary transition-all"
+                                className="btn bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-8 py-3 text-lg hover:border-[#F97316] dark:hover:border-[#F97316] transition-all"
                             >
                                 Conhecer o ObraCalc
                             </Link>
@@ -111,10 +111,10 @@ export default function ContatoPage() {
                         {expertise.map((item, idx) => (
                             <div
                                 key={idx}
-                                className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-all hover:shadow-lg group"
+                                className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-[#F97316] dark:hover:border-[#F97316] transition-all hover:shadow-lg group"
                             >
-                                <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all">
-                                    <item.icon className="w-6 h-6 text-primary group-hover:text-white transition-colors" />
+                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#F97316] group-hover:scale-110 transition-all">
+                                    <item.icon className="w-6 h-6 text-[#F97316] group-hover:text-white transition-colors" />
                                 </div>
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{item.title}</h3>
                                 <p className="text-gray-600 dark:text-gray-300">{item.description}</p>
@@ -125,13 +125,13 @@ export default function ContatoPage() {
             </section>
 
             {/* Mission Statement */}
-            <section className="py-20 bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/10 dark:to-accent/10">
+            <section className="py-20 bg-gradient-to-br from-[#F97316]/5 to-[#F97316]/5 dark:from-[#F97316]/10 dark:to-[#F97316]/10">
                 <div className="container mx-auto px-4">
                     <div className="max-w-4xl mx-auto">
                         <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 md:p-12 border border-gray-200 dark:border-gray-700 shadow-xl">
                             <div className="flex items-start gap-4 mb-6">
-                                <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <MessageSquare className="w-6 h-6 text-primary" />
+                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <MessageSquare className="w-6 h-6 text-[#F97316]" />
                                 </div>
                                 <div>
                                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
@@ -148,7 +148,7 @@ export default function ContatoPage() {
                                             desde uma reforma residencial até grandes empreendimentos.
                                         </p>
                                         <p>
-                                            Meu compromisso é com a <strong className="text-primary">transparência, precisão e democratização do conhecimento</strong> técnico
+                                            Meu compromisso é com a <strong className="text-[#F97316]">transparência, precisão e democratização do conhecimento</strong> técnico
                                             na construção civil. Cada orçamento gerado reflete padrões profissionais rigorosos, normas técnicas atualizadas e
                                             preços de mercado reais.
                                         </p>
@@ -229,7 +229,7 @@ export default function ContatoPage() {
                                             required
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all"
                                             placeholder="Seu nome"
                                         />
                                     </div>
@@ -243,7 +243,7 @@ export default function ContatoPage() {
                                             required
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all"
                                             placeholder="seu@email.com"
                                         />
                                     </div>
@@ -256,7 +256,7 @@ export default function ContatoPage() {
                                             type="tel"
                                             value={formData.phone}
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all"
                                             placeholder="(00) 00000-0000"
                                         />
                                     </div>
@@ -270,14 +270,14 @@ export default function ContatoPage() {
                                             rows={5}
                                             value={formData.message}
                                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all resize-none"
                                             placeholder="Como podemos ajudar?"
                                         ></textarea>
                                     </div>
 
                                     <button
                                         type="submit"
-                                        className="w-full btn btn-primary py-4 text-lg font-semibold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
+                                        className="w-full btn bg-[#F97316] hover:bg-[#F97316]/90 text-white py-4 text-lg font-semibold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
                                     >
                                         <Mail className="w-5 h-5" />
                                         Enviar Mensagem
@@ -289,8 +289,8 @@ export default function ContatoPage() {
                         {/* Direct Contact Info */}
                         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-                                <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center">
-                                    <Mail className="w-6 h-6 text-primary" />
+                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center">
+                                    <Mail className="w-6 h-6 text-[#F97316]" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
@@ -299,8 +299,8 @@ export default function ContatoPage() {
                             </div>
 
                             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-                                <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center">
-                                    <Phone className="w-6 h-6 text-primary" />
+                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center">
+                                    <Phone className="w-6 h-6 text-[#F97316]" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500 dark:text-gray-400">Telefone</p>
