@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Initialize Stripe with the secret key
-// IMPORTANT: This key should be in your .env.local file
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2024-12-18.acacia' as any, // Use the latest API version you have, or omit to check type
-});
+// Helper to initialize Stripe lazily
+const getStripe = () => {
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
+        throw new Error('STRIPE_SECRET_KEY is not defined');
+    }
+    return new Stripe(secretKey, {
+        apiVersion: '2024-12-18.acacia' as any,
+    });
+};
 
 export async function POST(request: Request) {
     try {
@@ -19,6 +24,7 @@ export async function POST(request: Request) {
         }
 
         // Create Checkout Session
+        const stripe = getStripe();
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card', 'boleto'], // Pix will be available if enabled in dashboard
             line_items: [
