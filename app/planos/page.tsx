@@ -42,17 +42,17 @@ export default function PlansPage() {
             name: 'Grátis',
             price: 'R$ 0',
             period: '/mês',
-            description: 'Para quem quer testar e criar orçamentos simples.',
+            description: 'Ideal para conhecer a ferramenta e criar orçamentos rápidos.',
             features: [
-                'Acesso básico a recursos',
-                'Criação de orçamentos',
-                'Exportação em PDF simples',
-                'Exportação em HTML',
+                'Criação de orçamentos (Lim. 20 itens)',
+                'Salva até 3 orçamentos na nuvem',
+                'Exportação em PDF e HTML',
+                'Acesso à IA de Orçamentos',
             ],
             limitations: [
-                'Não salva orçamentos permanentemente',
-                'Sem painel de gerenciamento',
-                'Apenas 1 usuário',
+                'Relatórios com marca d\'água',
+                'Limite de itens e salvamentos',
+                'Sem histórico ilimitado',
             ],
             cta: 'Começar Grátis',
             href: '/login', // Mantém link interno para login
@@ -63,15 +63,14 @@ export default function PlansPage() {
             name: 'Profissional',
             price: 'R$ 18,30',
             period: '/mês',
-            description: 'Organização e histórico profissional. 30 dias grátis.',
+            description: 'Uso profissional ilimitado. Teste 30 dias grátis.',
             features: [
-                'Tudo do plano Grátis',
-                'Salva todos os orçamentos',
-                'Gerenciamento por cliente e serviço',
-                'Funções extras de cálculo',
-                'Acesso para até 2 usuários',
+                'Itens ilimitados por orçamento',
+                'Histórico de orçamentos ilimitado',
+                'Relatórios limpos (Sem marca d\'água)',
+                'Gerenciamento de clientes e serviços',
                 'Base de dados ampliada',
-                'Rentabilize com indicação de serviços',
+                'Acesso para até 2 usuários',
             ],
             limitations: [],
             cta: 'Assinar',
@@ -165,9 +164,9 @@ export default function PlansPage() {
                                             </li>
                                         ))}
                                         {plan.limitations.map((limitation) => (
-                                            <li key={limitation} className="flex items-start gap-3 opacity-60">
-                                                <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                                                <span className="text-gray-500 dark:text-gray-400 text-sm">
+                                            <li key={limitation} className="flex items-start gap-3">
+                                                <X className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                                <span className="text-gray-900 dark:text-gray-400 text-sm line-through">
                                                     {limitation}
                                                 </span>
                                             </li>
