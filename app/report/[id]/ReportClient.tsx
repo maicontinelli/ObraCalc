@@ -157,6 +157,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
 
         const htmlContent = `
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -165,162 +166,172 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #f9fafb;
-            padding: 40px 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f3f4f6;
+            padding: 40px;
             color: #374151;
             line-height: 1.5;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         .container { 
-            max-width: 1600px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
-            padding: 48px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        h1 { 
-            font-size: 24px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 24px;
-        }
-        .header-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 64px;
-            margin-bottom: 32px;
-            font-size: 14px;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 24px;
-        }
-        .info-column { 
+        
+        /* Invoice Header - Compact */
+        .invoice-header {
+            background: #374151;
+            color: white;
+            padding: 24px 30px;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
             gap: 12px;
         }
-        .info-block {
+        .brand-logo {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+        .brand-subtitle {
+            font-size: 10px;
+            color: #9ca3af;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .invoice-title {
+            text-align: right;
+        }
+        .invoice-title h1 {
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 0;
+            color: white;
+            opacity: 1;
+        }
+        .invoice-id {
+            color: #d1d5db;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Info Grid - Compact */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-col {
+            padding: 20px 30px;
+        }
+        .info-col.left {
+            background: #f9fafb;
+            border-right: 1px solid #e5e7eb;
+        }
+        .col-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 8px;
         }
-        .info-icon {
-            width: 16px;
-            height: 16px;
-            color: #4b5563;
-            flex-shrink: 0;
-            margin-top: 2px;
+        .info-row {
+            margin-bottom: 8px;
         }
-        .info-content {
-            flex: 1;
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .info-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: #4b5563;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .info-value {
-            color: #111827;
-            font-weight: 500;
-        }
-        .ddd-info {
-            font-size: 10px;
+        .info-key {
+            font-size: 9px;
             color: #6b7280;
-            margin-top: 2px;
-            width: 100%;
+            font-weight: 500;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 1px;
         }
-        .ddd-state {
-            font-weight: 600;
-            color: #00704A;
+        .info-val {
+            font-size: 13px;
+            color: #111827;
+            font-weight: 400;
+            line-height: 1.2;
         }
-        .category-section {
-            margin-bottom: 24px;
-        }
+
+        /* Tables & Lists */
+        .category-section { margin-top: 40px; padding: 0 40px; }
         .category-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 16px;
-            background: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 10px 0;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 20px;
         }
         .category-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #374151;
+            font-size: 16px;
+            font-weight: 800;
+            color: #111827;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
         .category-total {
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 800;
             color: #111827;
         }
+
         .items-header {
             display: grid;
-            grid-template-columns: 5fr 1fr 2fr 2fr 2fr;
+            grid-template-columns: 4fr 1fr 1fr 1.5fr 1.5fr;
             gap: 16px;
-            padding: 8px 16px;
-            background: white;
-            border-bottom: 1px solid #f3f4f6;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            margin-top: 20px;
         }
         .items-header div {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 700;
-            color: #4b5563;
+            color: #6b7280;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.5px;
         }
+        
         .item-row {
             display: grid;
-            grid-template-columns: 5fr 1fr 2fr 2fr 2fr;
+            grid-template-columns: 4fr 1fr 1fr 1.5fr 1.5fr;
             gap: 16px;
-            padding: 8px 16px;
-            border-bottom: 1px solid #f9fafb;
-            font-size: 11px;
-        }
-        .item-row:hover {
-            background: #f9fafb;
-        }
-        .item-name {
-            color: #374151;
-            font-weight: 500;
-        }
-        .item-unit {
-            text-align: center;
-            color: #6b7280;
-            font-size: 10px;
-            text-transform: uppercase;
-        }
-        .item-qty {
-            text-align: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 12px;
             color: #374151;
         }
-        .item-price {
-            text-align: right;
-            color: #374151;
-        }
-        .item-total {
-            text-align: right;
-            color: #111827;
-            font-weight: 600;
-        }
+        .item-name { font-weight: 500; }
+        .item-row div { align-self: center; }
+        
+        /* Totals */
         .totals-section {
-            margin-top: 32px;
+            margin: 40px;
             display: flex;
             justify-content: flex-end;
         }
         .totals-box {
-            width: 320px;
-            background: white;
+            width: 350px;
+            background: #f9fafb;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 24px;
@@ -328,92 +339,77 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         .total-row {
             display: flex;
             justify-content: space-between;
-            
-            font-size: 12px;
-        }
-        .total-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: #374151;
-            text-transform: uppercase;
-        }
-        .total-value {
-            font-weight: 600;
-            color: #111827;
-            font-size: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
         }
         .total-final {
             display: flex;
             justify-content: space-between;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 12px;
-            margin-top: 12px;
+            border-top: 2px solid #e5e7eb;
+            padding-top: 15px;
+            margin-top: 15px;
         }
-        .total-final .total-label {
-            font-size: 10px;
-            color: #111827;
-        }
-        .total-final .total-value {
-            font-size: 16px;
-            font-weight: 700;
+        .total-final .total-val {
+            font-size: 18px;
+            font-weight: 800;
             color: #059669;
         }
+
         @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; }
+            body { padding: 0; background: white; }
+            .container { box-shadow: none; border: none; border-radius: 0; max-width: 1000px; }
+            .invoice-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .info-col.left { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #f9fafb !important; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 style="text-align: center;">Orçamento</h1>
-        
-        <div class="header-grid">
-            <div class="info-column">
-                <div class="info-block">
-                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <div class="info-content">
-                        <span class="info-label">PRESTADOR:</span>
-                        <span class="info-value">${data.providerName || '-'}</span>
-                    </div>
-                </div>
-                <div class="info-block">
-                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    <div class="info-content">
-                        <span class="info-label">TELEFONE:</span>
-                        <span class="info-value">${data.providerPhone || '-'}</span>
-                    </div>
-                </div>
-                <div class="info-block">
-                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
-                    <div class="info-content">
-                        <span class="info-label">TIPO DE OBRA:</span>
-                        <span class="info-value">${data.projectType || '-'}</span>
-                    </div>
+        <!-- Invoice Header -->
+        <div class="invoice-header">
+            <div class="brand">
+                <img src="${window.location.origin}/logo-toucan-v2.png" alt="Logo" style="height: 32px; width: auto;">
+                <div style="display: flex; flex-direction: column;">
+                    <span class="brand-logo">ObraCalc</span>
+                    <span class="brand-subtitle">Tecnologia Especialista em Construção Civil</span>
                 </div>
             </div>
-            
-            <div class="info-column">
-                <div class="info-block">
-                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <div class="info-content">
-                        <span class="info-label">CLIENTE:</span>
-                        <span class="info-value">${data.clientName || '-'}</span>
-                    </div>
+            <div class="invoice-title">
+                <h1>Orçamento</h1>
+                <div class="invoice-id">#${data?.id?.slice(0, 8).toUpperCase() || 'REF-001'}</div>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+            <div class="info-col left">
+                <div class="col-label">Prestador de Serviços</div>
+                <div class="info-row">
+                    <span class="info-key">Nome / Empresa</span>
+                    <div class="info-val">${data.providerName || '-'}</div>
                 </div>
-                <div class="info-block">
-                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    <div class="info-content">
-                        <span class="info-label">TELEFONE:</span>
-                        <span class="info-value">${data.clientPhone || '-'}</span>
-                    </div>
+                <div class="info-row">
+                    <span class="info-key">Telefone</span>
+                    <div class="info-val">${data.providerPhone || '-'}</div>
                 </div>
-                <div class="info-block">
-                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                    <div class="info-content">
-                        <span class="info-label">PRAZO:</span>
-                        <span class="info-value">${data.deadline || '-'}</span>
-                    </div>
+                <div class="info-row">
+                    <span class="info-key">Tipo de Obra</span>
+                    <div class="info-val">${data.projectType || '-'}</div>
+                </div>
+            </div>
+            <div class="info-col">
+                <div class="col-label">Dados do Cliente</div>
+                 <div class="info-row">
+                    <span class="info-key">Cliente</span>
+                    <div class="info-val">${data.clientName || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Telefone</span>
+                    <div class="info-val">${data.clientPhone || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Prazo Estimado</span>
+                    <div class="info-val">${data.deadline || '-'}</div>
                 </div>
             </div>
         </div>
@@ -423,16 +419,16 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         <div class="totals-section">
             <div class="totals-box">
                 <div class="total-row">
-                    <div class="total-label">Subtotal</div>
-                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</div>
+                    <span style="color: #6b7280; font-weight: 600;">SUBTOTAL</span>
+                    <span style="font-weight: 600;">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</span>
                 </div>
                 <div class="total-row">
-                    <div class="total-label">BDI (${data.bdi || 20}%)</div>
-                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}</div>
+                    <span style="color: #6b7280; font-weight: 600;">BDI (${data.bdi || 20}%)</span>
+                    <span style="font-weight: 600;">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}</span>
                 </div>
                 <div class="total-final">
-                    <div class="total-label">Total Geral</div>
-                    <div class="total-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</div>
+                    <span style="font-weight: 700; color: #111827;">TOTAL GERAL</span>
+                    <span class="total-val">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</span>
                 </div>
             </div>
         </div>
@@ -511,7 +507,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             <style jsx global>{`
                 @media print {
                     @page { 
-                        margin: 15mm;
+                        margin: 7mm;
                         size: A4;
                     }
                     body { 
@@ -525,17 +521,24 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     }
                     .print-content { 
                         box-shadow: none !important; 
-                        background: white !important; 
+                        background: white !important;
+                        max-width: 100% !important;
+                        width: 100% !important;
                     }
                     
                     /* Balanced colors for print */
-                    div, span, p, h1, h2, h3, h4, h5, h6 {
+                    div, span, p, h2, h3, h4, h5, h6 {
                         color: #374151 !important; /* Dark Grey base */
                     }
                     
                     /* Highlights - Black */
-                    .font-bold, .font-semibold, h1, h2, .item-total, .total-value {
+                    .font-bold, .font-semibold, h2, .item-total, .total-value {
                         color: #000000 !important;
+                    }
+
+                    /* Header Override - Force White on Dark BG */
+                    .bg-\[\#374151\] *, .invoice-header *, .brand-logo, .invoice-title h1 {
+                        color: white !important;
                     }
 
                     /* Secondary - Discreet Grey */
@@ -600,65 +603,74 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             </div>
 
             {/* Report Content */}
-            <div id="report-content" className="max-w-[1600px] mx-auto p-6 lg:p-8 print-content">
-                {/* Header - Condensed */}
-                <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6" style={{ breakInside: 'avoid' }}>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-                        Orçamento
-                    </h1>
+            <div id="report-content" className="max-w-none mx-auto p-4 lg:p-8 print-content print:p-0 print:max-w-full">
+                {/* Header - Premium Invoice Style (Compact 40%) */}
+                <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden break-inside-avoid print:border print:shadow-none print:rounded-xl">
+                    {/* Top Bar - Brand & Title */}
+                    <div className="bg-[#374151] text-white px-6 py-4 flex justify-between items-center print:bg-[#374151] print:text-white">
+                        <div className="flex items-center gap-3">
+                            <img
+                                src="/logo-toucan-v2.png"
+                                alt="Logo ObraCalc"
+                                className="h-8 w-auto"
+                            />
+                            <div>
+                                <div className="text-xl font-semibold tracking-tight leading-none text-white">ObraCalc</div>
+                                <div className="text-[10px] text-gray-400 font-medium tracking-wide uppercase mt-0.5 leading-none">Tecnologia Especialista em Construção Civil</div>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <h1 className="text-2xl font-medium tracking-wide uppercase opacity-100 mb-0.5 text-white">Orçamento</h1>
+                            <p className="text-xs text-gray-300 font-mono tracking-wide uppercase">#{estimateId.slice(0, 8)}</p>
+                        </div>
+                    </div>
 
-                    {/* Info Grid - Two columns with inline icons */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-x-16 gap-y-0 text-sm">
-                        {/* Prestador Column */}
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <UserIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">PRESTADOR:</span>
-                                    <span className="text-gray-900 dark:text-white font-medium">{data.providerName || '-'}</span>
-                                </div>
+                    {/* Info Grid - Split Panel */}
+                    <div className="grid grid-cols-1 md:grid-cols-2">
+                        {/* Prestador (Left) */}
+                        <div className="p-5 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-800/50 print:bg-gray-50">
+                            <div className="mb-3 pb-1 border-b border-gray-200 dark:border-gray-700">
+                                <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest leading-none">Prestador de Serviços</h3>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">TELEFONE:</span>
-                                    <span className="text-gray-900 dark:text-white">{data.providerPhone || '-'}</span>
+                            <div className="space-y-2">
+                                <div>
+                                    <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Nome / Empresa</div>
+                                    <div className="text-gray-900 dark:text-white font-normal text-sm leading-tight">{data.providerName || '-'}</div>
                                 </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <Building2 className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">TIPO DE OBRA:</span>
-                                    <span className="text-gray-900 dark:text-white">{data.projectType || '-'}</span>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Telefone</div>
+                                        <div className="text-gray-800 dark:text-gray-200 font-normal text-sm leading-none">{data.providerPhone || '-'}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Tipo de Obra</div>
+                                        <div className="text-gray-800 dark:text-gray-200 font-normal text-sm leading-none">{data.projectType || '-'}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Cliente Column */}
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <UserIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">CLIENTE:</span>
-                                    <span className="text-gray-900 dark:text-white font-medium">{data.clientName || '-'}</span>
-                                </div>
+                        {/* Cliente (Right) */}
+                        <div className="p-5 bg-white dark:bg-gray-800 print:bg-white">
+                            <div className="mb-3 pb-1 border-b border-gray-100 dark:border-gray-700">
+                                <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest leading-none">Dados do Cliente</h3>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">TELEFONE:</span>
-                                    <span className="text-gray-900 dark:text-white">{data.clientPhone || '-'}</span>
+                            <div className="space-y-2">
+                                <div>
+                                    <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Cliente</div>
+                                    <div className="text-gray-900 dark:text-white font-normal text-sm leading-tight">{data.clientName || '-'}</div>
                                 </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">PRAZO:</span>
-                                    <span className="text-gray-900 dark:text-white">{data.deadline || '-'}</span>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Telefone</div>
+                                        <div className="text-gray-800 dark:text-gray-200 font-normal text-sm leading-none">{data.clientPhone || '-'}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Prazo</div>
+                                        <div className="text-gray-800 dark:text-gray-200 font-normal text-sm leading-none">{data.deadline || '-'}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
