@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         // Initialize Gemini AI
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
         // Get the generative model
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
         const analysisPrompt = mode === 'TECNICO'
             ? `Você é um engenheiro civil sênior analisando fotos de uma obra ${projectType} na etapa ${projectStage}.

@@ -410,7 +410,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         <!-- Invoice Header -->
         <div class="invoice-header">
             <div class="brand">
-                <img src="${window.location.origin}/logo-toucan-v2.png" alt="Logo" style="height: 32px; width: auto;">
+                <img src="${window.location.origin}/logo-v4.png" alt="Logo" style="height: 32px; width: auto;">
                 <div style="display: flex; flex-direction: column;">
                     <span class="brand-logo">ObraCalc</span>
                     <span class="brand-subtitle">Tecnologia Especialista em Construção Civil</span>
@@ -708,7 +708,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     <div className="bg-[#374151] text-white px-6 py-4 flex justify-between items-center print:bg-[#374151] print:text-white">
                         <div className="flex items-center gap-3">
                             <img
-                                src="/logo-toucan-v2.png"
+                                src="/logo-v4.png"
                                 alt="Logo ObraCalc"
                                 className="h-8 w-auto"
                             />

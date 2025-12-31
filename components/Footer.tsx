@@ -10,7 +10,7 @@ export function Footer() {
                     <div className="col-span-2 md:col-span-1">
                         <Link href="/" className="mb-4 block">
                             <Image
-                                src="/logo-toucan-v2.png"
+                                src="/logo-v4.png"
                                 alt="ObraCalc Logo"
                                 width={120}
                                 height={40}

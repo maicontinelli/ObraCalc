@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Gem, Info, Mail, Heart, LogIn, User, LogOut, LayoutDashboard, Map, Camera, MoreHorizontal } from 'lucide-react';
+import { Gem, Info, Mail, Heart, LogIn, User, LogOut, LayoutDashboard, Map, Camera, MoreHorizontal, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
@@ -43,14 +43,13 @@ export default function SimpleNav() {
                     <div className="flex items-center">
                         <Link href="/" className="flex-shrink-0 flex items-center gap-2">
                             <Image
-                                src="/logo-toucan-v2.png"
+                                src="/logo-v4.png"
                                 alt="ObraCalc Logo"
                                 width={32}
                                 height={32}
                                 className="h-8 w-auto"
                                 priority
                             />
-                            <span className="font-heading font-bold text-xl text-black dark:text-white tracking-tight">ObraCalc</span>
                         </Link>
                     </div>
 
@@ -70,6 +69,8 @@ export default function SimpleNav() {
                             />
                             <span className="sr-only">Topografia</span>
                         </Link>
+
+
 
                         <Link
                             href="/relatorio-fotografico"
@@ -174,7 +175,7 @@ export default function SimpleNav() {
                         ) : (
                             <Link
                                 href="/login"
-                                className="flex items-center gap-2 bg-[#E89E37] hover:bg-[#E89E37]/90 text-white px-4 py-2 rounded-full font-medium text-sm transition-all shadow-sm hover:shadow-md"
+                                className="flex items-center gap-2 bg-[#E89129] hover:bg-[#E89129]/90 text-white px-4 py-2 rounded-full font-medium text-sm transition-all shadow-sm hover:shadow-md"
                             >
                                 <LogIn size={16} />
                                 <span>Entrar</span>

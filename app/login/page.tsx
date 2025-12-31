@@ -59,9 +59,9 @@ export default function LoginPage() {
             <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 p-8">
 
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Bem-vindo de volta!</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acesse ou Crie sua Conta</h1>
                     <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        Acesse seus orçamentos salvos.
+                        Use seu e-mail ou Google para entrar. Se ainda não tem cadastro, sua conta será criada automaticamente.
                     </p>
                 </div>
 
@@ -108,7 +108,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-[#E89E37] hover:bg-[#E89E37]/90 text-white font-semibold p-3 rounded-xl transition-all shadow-lg hover:shadow-[#E89E37]/20 h-12 flex items-center justify-center"
+                            className="w-full bg-[#E89129] hover:bg-[#E89129]/90 text-white font-semibold p-3 rounded-xl transition-all shadow-lg hover:shadow-[#E89129]/20 h-12 flex items-center justify-center"
                         >
                             {loading ? <Loader2 className="animate-spin" /> : 'Entrar com Link Mágico'}
                         </button>

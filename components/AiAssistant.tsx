@@ -142,18 +142,17 @@ export default function AiAssistant() {
 
     return (
         <div className="w-full max-w-2xl mx-auto mt-0 mb-8">
-            <div className="bg-transparent border border-white/20 dark:border-gray-700/30 rounded-2xl p-6 relative overflow-hidden transition-colors">
+            <div className="bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-[2rem] p-6 relative overflow-hidden transition-colors shadow-[0_8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15)]">
                 {/* Decorative background element removed */}
 
                 <div className="relative z-10">
                     <form onSubmit={handleSearch} className="relative group z-20">
-                        <div className="relative flex items-center w-full rounded-full transition-all duration-300
-                            bg-white/70 dark:bg-gray-900/60 
-                            backdrop-blur-xl 
+                        <div className="relative flex items-center w-full rounded-[1.5rem] transition-all duration-300
+                            bg-[#F8F9FA]/90 dark:bg-[#1A1A1A]/90 
+                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]
                             border border-white/50 dark:border-gray-700/50
-                            shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]
-                            hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90 dark:hover:bg-gray-900/80
-                            focus-within:ring-4 focus-within:ring-[#FF6600]/10 focus-within:border-[#FF6600]/50"
+                            hover:bg-white dark:hover:bg-black
+                            focus-within:ring-4 focus-within:ring-orange-500/20 focus-within:border-orange-500/50"
                         >
                             <div className="pl-6 text-gray-400 dark:text-gray-500">
                                 <Sparkles size={20} className="animate-pulse text-[#FF6600]" />
@@ -162,9 +161,18 @@ export default function AiAssistant() {
                                 type="text"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="O que vamos orçar hoje? (ex: Pintura de parede 20m2)"
-                                className="w-full pl-4 pr-14 py-5 rounded-full border-none outline-none bg-transparent text-lg text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+                                placeholder="O que vamos orçar hoje?"
+                                className="w-full pl-4 pr-14 py-5 rounded-full border-none outline-none bg-transparent text-lg text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 font-medium"
                             />
+
+                            <button
+                                type="button"
+                                onClick={() => router.push('/novo-diagnostico')}
+                                className="absolute right-14 top-1/2 -translate-y-1/2 p-3 text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600] rounded-full transition-all duration-300"
+                                title="Analisar Imagem"
+                            >
+                                <Camera size={20} />
+                            </button>
 
                             <button
                                 type="submit"

@@ -315,7 +315,7 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
 
         <div style="margin-top: 64px; padding-top: 32px; border-top: 1px solid #e5e7eb; text-align: center;">
             <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
-                <img src="/logo-custom.png" alt="ObraCalc" style="height: 32px; opacity: 0.6;" />
+                <img src="/logo-v4.png" alt="ObraCalc" style="height: 32px; opacity: 0.6;" />
                 <div>
                     <p style="font-size: 14px; font-weight: 600; color: #374151; margin: 0;">ObraCalc</p>
                     <p style="font-size: 10px; color: #6b7280; margin: 0; max-width: 400px;">
@@ -459,7 +459,7 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
             {/* Report Content */}
             <div id="report-content" className="max-w-[1600px] mx-auto p-6 lg:p-8 print-content">
                 {/* Header - Matching Budget Report Style */}
-                <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6" style={{ breakInside: 'avoid' }}>
+                <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 break-inside-avoid">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
                         Relatório Fotográfico de Obra
                     </h1>
@@ -557,7 +557,7 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {data.images.map((img, index) => (
-                            <div key={index} className="photo-card bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ breakInside: 'avoid' }}>
+                            <div key={index} className="photo-card bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden break-inside-avoid">
                                 <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-900">
                                     <img
                                         src={img.base64}
@@ -628,7 +628,7 @@ export default function PhotoReportClient({ reportId }: { reportId: string }) {
                 <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex flex-col items-center gap-3">
                         <div className="flex items-center gap-3">
-                            <img src="/logo-toucan-v2.png" alt="Logo" className="h-12 w-auto" />
+                            <img src="/logo-v4.png" alt="Logo" className="h-12 w-auto" />
                             <div className="text-center">
                                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">ObraCalc</p>
                                 <p className="text-[10px] text-gray-500 dark:text-gray-400 max-w-md">
