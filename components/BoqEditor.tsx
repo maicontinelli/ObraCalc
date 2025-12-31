@@ -35,6 +35,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const [budgetCount, setBudgetCount] = useState(0); // Track budget count for limits
 
     const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+    const [isManualCatalogExpanded, setIsManualCatalogExpanded] = useState(false);
 
     // FULL Default Items Template generated from shared constants
     const DEFAULT_ITEMS: BoqItem[] = useMemo(() => {
@@ -66,6 +67,14 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             }
         };
         checkUser();
+    }, []);
+
+    // Force Dark Mode for Editor Page
+    useEffect(() => {
+        document.documentElement.classList.add('dark');
+        return () => {
+            document.documentElement.classList.remove('dark');
+        };
     }, []);
 
     // Load Data
@@ -524,7 +533,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     }, [providerName, clientName, providerPhone, clientPhone, projectType, deadline]);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+        <div className="min-h-screen bg-[#262423] font-sans">
             <div className="max-w-[1600px] mx-auto p-6 lg:p-8">
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -566,6 +575,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             <CommandSearch
                                 items={items}
                                 onSelect={(item) => {
+                                    // Check if this is a standard category that lives inside the collapsed "Manual" section
+                                    const isStandardCategory = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === item.category);
+                                    if (isStandardCategory) {
+                                        setIsManualCatalogExpanded(true);
+                                    }
+
                                     // Expand the category where the item is located
                                     setExpandedCategories(prev => ({
                                         ...prev,
@@ -619,15 +634,16 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                         {/* Main List Container */}
                         <div className="">
-                            <div className="mb-3 px-1">
-                                <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">
-                                    ✏️ Adicionar manualmente
-                                </span>
-                            </div>
-                            {/* Items List Content - Removed divide-y, using space-y for cleaner separation */}
-                            <div className="space-y-2">
-                                {categories.map((category) => {
+
+                            {/* AI / Custom Items Loop (Always Visible at Top) */}
+                            <div className="space-y-2 mb-6">
+                                {categories.filter(cat => {
+                                    const isStandard = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === cat);
+                                    return !isStandard && cat !== 'ITENS ADICIONAIS' && cat !== 'MANUAL'; // Show custom categories here
+                                }).concat(categories.filter(c => c === 'ITENS ADICIONAIS')).map((category) => {
+                                    /* Standard Categories are filtered OUT here */
                                     const categoryItems = groupedItems[category];
+                                    if (!categoryItems) return null;
                                     const categoryIncluded = categoryItems.filter(i => i.included).length;
                                     const isExpanded = expandedCategories[category];
 
@@ -641,30 +657,30 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     return (
                                         <div key={category} className="rounded-lg">
                                             {/* Group Header */}
-                                            <div className="flex items-center justify-between px-4 py-3 group cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => toggleCategoryExpansion(category)}>
+                                            <div className="flex items-center justify-between px-4 py-3 group cursor-pointer hover:bg-white/5 transition-colors" onClick={() => toggleCategoryExpansion(category)}>
                                                 <div className="flex items-center gap-3">
                                                     <ChevronDown
-                                                        className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${!isExpanded ? '-rotate-90' : ''}`}
+                                                        className={`w-3.5 h-3.5 text-[#B5B5B5] transition-transform duration-200 ${!isExpanded ? '-rotate-90' : ''}`}
                                                     />
                                                     <div className="flex items-baseline gap-2">
-                                                        <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wide">
-                                                            {category}
+                                                        <h3 className="text-xs font-bold text-[#F5E6D3] uppercase tracking-wide">
+                                                            ✨ {category}
                                                         </h3>
-                                                        <span className="text-[10px] text-gray-400 font-normal">
+                                                        <span className="text-[10px] text-[#B5B5B5] font-normal">
                                                             ({categoryItems.length})
                                                         </span>
                                                     </div>
                                                 </div>
 
                                                 <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-                                                    <span className="text-xs font-bold text-gray-700 tabular-nums">
+                                                    <span className="text-xs font-bold text-[#E8E8E6] tabular-nums">
                                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}
                                                     </span>
                                                     <button
                                                         onClick={() => toggleCategoryItems(category, categoryIncluded < categoryItems.length)}
-                                                        className={`w-4 h-4 border rounded transition-colors flex items-center justify-center ${categoryIncluded > 0 // Show check if ANY item is included
+                                                        className={`w-4 h-4 border rounded transition-colors flex items-center justify-center ${categoryIncluded > 0
                                                             ? 'bg-blue-600 border-blue-600 text-white'
-                                                            : 'border-gray-300 bg-white hover:border-gray-400'
+                                                            : 'border-white/10 bg-[#222120] hover:border-white/20'
                                                             }`}
                                                     >
                                                         {categoryIncluded > 0 && <span className="text-[8px] font-bold">✓</span>}
@@ -674,9 +690,9 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                                             {/* Items List (Accordion Body) */}
                                             {isExpanded && (
-                                                <div className="pb-4 pt-1 bg-white border-t border-gray-50">
+                                                <div className="pb-4 pt-1 bg-[#2C2A29] border-t border-white/5">
                                                     {/* Column Headers */}
-                                                    <div className="grid grid-cols-12 gap-4 mb-2 px-4 text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+                                                    <div className="grid grid-cols-12 gap-4 mb-2 px-4 text-[9px] font-bold text-[#8a8886] uppercase tracking-wider">
                                                         <div className="col-span-1"></div>
                                                         <div className="col-span-4">Descrição</div>
                                                         <div className="col-span-1 text-center">Un.</div>
@@ -686,7 +702,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                     </div>
                                                     <div className="space-y-0 text-[11px]">
                                                         {(() => {
-                                                            // Sort: Services/Compositions first, then Materials
                                                             const getType = (i: BoqItem) => i.type || 'composition';
                                                             const sorted = [...categoryItems].sort((a, b) => {
                                                                 const typeA = getType(a);
@@ -704,30 +719,26 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                 return (
                                                                     <React.Fragment key={item.id}>
                                                                         {showDivider && (
-                                                                            <div className="px-4 py-1.5 bg-orange-50/50 border-y border-orange-100/50 text-[10px] font-bold text-orange-600/70 uppercase tracking-widest mt-1 mb-1 flex items-center gap-2">
+                                                                            <div className="px-4 py-1.5 bg-[#E89E37]/10 border-y border-[#E89E37]/20 text-[10px] font-bold text-[#E89E37] uppercase tracking-widest mt-1 mb-1 flex items-center gap-2">
                                                                                 <span className="text-[10px]">🧱</span> Materiais / Insumos
                                                                             </div>
                                                                         )}
                                                                         <div
                                                                             id={`item-${item.id}`}
-                                                                            onClick={() => toggleInclude(item.id, true)} // Select on row click
-                                                                            className={`grid grid-cols-12 gap-4 px-4 py-1 items-center hover:bg-gray-50 transition-colors group/item cursor-pointer ${!item.included ? 'opacity-50' : ''}`}
+                                                                            onClick={() => toggleInclude(item.id, true)}
+                                                                            className={`grid grid-cols-12 gap-4 px-4 py-1 items-center hover:bg-white/5 transition-colors group/item cursor-pointer ${!item.included ? 'opacity-50' : ''}`}
                                                                         >
-                                                                            {/* Checkbox */}
                                                                             <div className="col-span-1 flex justify-center -ml-4" onClick={(e) => e.stopPropagation()}>
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     checked={item.included}
-                                                                                    onChange={() => toggleInclude(item.id)} // Specific toggle logic
+                                                                                    onChange={() => toggleInclude(item.id)}
                                                                                     className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                                                                 />
                                                                             </div>
-
-                                                                            {/* Name & Icon */}
                                                                             <div className="col-span-4 flex items-center gap-2">
-                                                                                {/* Type Icon */}
                                                                                 <span
-                                                                                    title={currentType === 'service' ? 'Serviço (Mão de Obra)' : currentType === 'material' ? 'Material' : 'Composição (Serviço + Material)'}
+                                                                                    title={currentType === 'service' ? 'Serviço' : currentType === 'material' ? 'Material' : 'Composição'}
                                                                                     className="text-[10px] shrink-0 opacity-50 cursor-help select-none"
                                                                                 >
                                                                                     {currentType === 'service' ? '🔨' : currentType === 'material' ? '🧱' : '🛠️'}
@@ -736,49 +747,41 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                     type="text"
                                                                                     value={item.name}
                                                                                     onChange={(e) => handleNameChange(item.id, e.target.value)}
-                                                                                    className="w-full bg-transparent border-none p-0 text-[11px] font-medium text-gray-600 focus:text-gray-900 focus:ring-0 placeholder-gray-300 leading-tight"
+                                                                                    className="w-full bg-transparent border-none p-0 text-[11px] font-medium text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-0 placeholder-[#B5B5B5] leading-tight"
                                                                                     placeholder="Nome do item"
                                                                                 />
                                                                             </div>
-
-                                                                            {/* Unit */}
                                                                             <div className="col-span-1 text-center">
                                                                                 <input
                                                                                     type="text"
                                                                                     value={item.unit}
                                                                                     onChange={(e) => handleUnitChange(item.id, e.target.value)}
-                                                                                    className="w-full text-center bg-transparent border-none p-0 text-[10px] text-gray-400 uppercase focus:ring-0"
+                                                                                    className="w-full text-center bg-transparent border-none p-0 text-[10px] text-[#B5B5B5] uppercase focus:ring-0"
                                                                                 />
                                                                             </div>
-
-                                                                            {/* Qty */}
                                                                             <div className="col-span-2 px-2">
                                                                                 <input
                                                                                     type="number"
                                                                                     value={item.quantity}
                                                                                     onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                                                                     data-item-id={item.id}
-                                                                                    className="w-full text-center bg-gray-50 border-none rounded py-1 text-[11px] text-gray-600 focus:text-gray-900 focus:ring-1 focus:ring-blue-500 hover:bg-gray-100 tabular-nums"
+                                                                                    className="w-full text-center bg-[#222120] border-none rounded py-1 text-[11px] text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 hover:bg-white/10 tabular-nums"
                                                                                     min="0"
                                                                                     step="1"
                                                                                 />
                                                                             </div>
-
-                                                                            {/* Unit Price */}
                                                                             <div className="col-span-2 text-right">
                                                                                 <input
                                                                                     type="number"
                                                                                     value={item.manualPrice ?? item.price}
                                                                                     onChange={(e) => handlePriceChange(item.id, e.target.value)}
-                                                                                    className="w-full text-right bg-transparent border-none p-0 text-[11px] text-gray-500 focus:text-gray-900 focus:ring-0 tabular-nums"
+                                                                                    className="w-full text-right bg-transparent border-none p-0 text-[11px] text-[#B5B5B5] focus:text-[#E8E8E6] focus:ring-0 tabular-nums"
                                                                                     min="0"
                                                                                     step="0.01"
                                                                                 />
                                                                             </div>
-
-                                                                            {/* Total & Trash */}
                                                                             <div className="col-span-2 text-right flex items-center justify-end gap-2 group/actions relative">
-                                                                                <span className="text-[11px] font-bold text-gray-500 tabular-nums">
+                                                                                <span className="text-[11px] font-bold text-[#B5B5B5] tabular-nums">
                                                                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
                                                                                         (item.manualPrice ?? item.price) * item.quantity
                                                                                     )}
@@ -796,18 +799,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                         </div>
                                                                     </React.Fragment>
                                                                 );
-                                                            });
+                                                            })
                                                         })()}
-                                                    </div>
-
-                                                    {/* Add Button */}
-                                                    <div className="mt-4 flex justify-center border-t border-dashed border-gray-100 pt-4 mx-6">
-                                                        <button
-                                                            onClick={() => handleAddCustomItem(category)}
-                                                            className="flex items-center gap-1 text-[11px] font-bold text-gray-400 hover:text-blue-600 uppercase tracking-widest transition-colors py-2 px-4 rounded hover:bg-blue-50"
-                                                        >
-                                                            <Plus size={12} /> Adicionar
-                                                        </button>
                                                     </div>
                                                 </div>
                                             )}
@@ -815,50 +808,257 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     );
                                 })}
                             </div>
+
+                            {/* Manual Catalog Collapsible Header */}
+                            <div
+                                className="mb-3 px-1 flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => setIsManualCatalogExpanded(!isManualCatalogExpanded)}
+                            >
+                                <ChevronDown
+                                    size={14}
+                                    className={`text-gray-400 transition-transform duration-200 ${!isManualCatalogExpanded ? '-rotate-90' : ''}`}
+                                />
+                                <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">
+                                    ✏️ Adicionar manualmente
+                                </span>
+                            </div>
+
+                            {/* Manual Categories List (Collapsible) */}
+                            {isManualCatalogExpanded && (
+                                <div className="space-y-2 animate-in slide-in-from-top-2 duration-200 fade-in box-border">
+                                    {categories.filter(cat => {
+                                        // ONLY Standard Categories here
+                                        return BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === cat);
+                                    }).map((category) => {
+                                        const categoryItems = groupedItems[category];
+                                        const categoryIncluded = categoryItems.filter(i => i.included).length;
+                                        const isExpanded = expandedCategories[category];
+
+                                        // Calculate Category Total
+                                        const categoryTotal = categoryItems.reduce((sum, item) => {
+                                            if (!item.included) return sum;
+                                            const price = item.manualPrice ?? item.price;
+                                            return sum + (price * item.quantity);
+                                        }, 0);
+
+                                        return (
+                                            <div key={category} className="rounded-lg">
+                                                {/* Group Header */}
+                                                <div className="flex items-center justify-between px-4 py-3 group cursor-pointer hover:bg-white/5 transition-colors" onClick={() => toggleCategoryExpansion(category)}>
+                                                    <div className="flex items-center gap-3">
+                                                        <ChevronDown
+                                                            className={`w-3.5 h-3.5 text-[#B5B5B5] transition-transform duration-200 ${!isExpanded ? '-rotate-90' : ''}`}
+                                                        />
+                                                        <div className="flex items-baseline gap-2">
+                                                            <h3 className="text-xs font-bold text-[#E8E8E6] uppercase tracking-wide">
+                                                                {category}
+                                                            </h3>
+                                                            <span className="text-[10px] text-[#B5B5B5] font-normal">
+                                                                ({categoryItems.length})
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                                                        <span className="text-xs font-bold text-[#E8E8E6] tabular-nums">
+                                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}
+                                                        </span>
+                                                        <button
+                                                            onClick={() => toggleCategoryItems(category, categoryIncluded < categoryItems.length)}
+                                                            className={`w-4 h-4 border rounded transition-colors flex items-center justify-center ${categoryIncluded > 0 // Show check if ANY item is included
+                                                                ? 'bg-blue-600 border-blue-600 text-white'
+                                                                : 'border-white/10 bg-[#222120] hover:border-white/20'
+                                                                }`}
+                                                        >
+                                                            {categoryIncluded > 0 && <span className="text-[8px] font-bold">✓</span>}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {/* Items List (Accordion Body) */}
+                                                {isExpanded && (
+                                                    <div className="pb-4 pt-1 bg-[#2C2A29] border-t border-white/5">
+                                                        {/* Column Headers */}
+                                                        <div className="grid grid-cols-12 gap-4 mb-2 px-4 text-[9px] font-bold text-[#8a8886] uppercase tracking-wider">
+                                                            <div className="col-span-1"></div>
+                                                            <div className="col-span-4">Descrição</div>
+                                                            <div className="col-span-1 text-center">Un.</div>
+                                                            <div className="col-span-2 text-center">Qtd</div>
+                                                            <div className="col-span-2 text-right">Unit</div>
+                                                            <div className="col-span-2 text-right">Total</div>
+                                                        </div>
+                                                        <div className="space-y-0 text-[11px]">
+                                                            {(() => {
+                                                                // Sort: Services/Compositions first, then Materials
+                                                                const getType = (i: BoqItem) => i.type || 'composition';
+                                                                const sorted = [...categoryItems].sort((a, b) => {
+                                                                    const typeA = getType(a);
+                                                                    const typeB = getType(b);
+                                                                    if (typeA === 'material' && typeB !== 'material') return 1;
+                                                                    if (typeA !== 'material' && typeB === 'material') return -1;
+                                                                    return 0;
+                                                                });
+
+                                                                return sorted.map((item, index) => {
+                                                                    const currentType = getType(item);
+                                                                    const prevType = index > 0 ? getType(sorted[index - 1]) : null;
+                                                                    const showDivider = currentType === 'material' && prevType !== 'material' && index > 0;
+
+                                                                    return (
+                                                                        <React.Fragment key={item.id}>
+                                                                            {showDivider && (
+                                                                                <div className="px-4 py-1.5 bg-[#E89E37]/10 border-y border-[#E89E37]/20 text-[10px] font-bold text-[#E89E37] uppercase tracking-widest mt-1 mb-1 flex items-center gap-2">
+                                                                                    <span className="text-[10px]">🧱</span> Materiais / Insumos
+                                                                                </div>
+                                                                            )}
+                                                                            <div
+                                                                                id={`item-${item.id}`}
+                                                                                onClick={() => toggleInclude(item.id, true)} // Select on row click
+                                                                                className={`grid grid-cols-12 gap-4 px-4 py-1 items-center hover:bg-white/5 transition-colors group/item cursor-pointer ${!item.included ? 'opacity-50' : ''}`}
+                                                                            >
+                                                                                {/* Checkbox */}
+                                                                                <div className="col-span-1 flex justify-center -ml-4" onClick={(e) => e.stopPropagation()}>
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        checked={item.included}
+                                                                                        onChange={() => toggleInclude(item.id)} // Specific toggle logic
+                                                                                        className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                                                                    />
+                                                                                </div>
+
+                                                                                {/* Name & Icon */}
+                                                                                <div className="col-span-4 flex items-center gap-2">
+                                                                                    {/* Type Icon */}
+                                                                                    <span
+                                                                                        title={currentType === 'service' ? 'Serviço (Mão de Obra)' : currentType === 'material' ? 'Material' : 'Composição (Serviço + Material)'}
+                                                                                        className="text-[10px] shrink-0 opacity-50 cursor-help select-none"
+                                                                                    >
+                                                                                        {currentType === 'service' ? '🔨' : currentType === 'material' ? '🧱' : '🛠️'}
+                                                                                    </span>
+                                                                                    <input
+                                                                                        type="text"
+                                                                                        value={item.name}
+                                                                                        onChange={(e) => handleNameChange(item.id, e.target.value)}
+                                                                                        className="w-full bg-transparent border-none p-0 text-[11px] font-medium text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-0 placeholder-[#B5B5B5] leading-tight"
+                                                                                        placeholder="Nome do item"
+                                                                                    />
+                                                                                </div>
+
+                                                                                {/* Unit */}
+                                                                                <div className="col-span-1 text-center">
+                                                                                    <input
+                                                                                        type="text"
+                                                                                        value={item.unit}
+                                                                                        onChange={(e) => handleUnitChange(item.id, e.target.value)}
+                                                                                        className="w-full text-center bg-transparent border-none p-0 text-[10px] text-[#B5B5B5] uppercase focus:ring-0"
+                                                                                    />
+                                                                                </div>
+
+                                                                                {/* Qty */}
+                                                                                <div className="col-span-2 px-2">
+                                                                                    <input
+                                                                                        type="number"
+                                                                                        value={item.quantity}
+                                                                                        onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                                                                                        data-item-id={item.id}
+                                                                                        className="w-full text-center bg-[#222120] border-none rounded py-1 text-[11px] text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 hover:bg-white/10 tabular-nums"
+                                                                                        min="0"
+                                                                                        step="1"
+                                                                                    />
+                                                                                </div>
+
+                                                                                {/* Unit Price */}
+                                                                                <div className="col-span-2 text-right">
+                                                                                    <input
+                                                                                        type="number"
+                                                                                        value={item.manualPrice ?? item.price}
+                                                                                        onChange={(e) => handlePriceChange(item.id, e.target.value)}
+                                                                                        className="w-full text-right bg-transparent border-none p-0 text-[11px] text-[#B5B5B5] focus:text-[#E8E8E6] focus:ring-0 tabular-nums"
+                                                                                        min="0"
+                                                                                        step="0.01"
+                                                                                    />
+                                                                                </div>
+
+                                                                                {/* Total & Trash */}
+                                                                                <div className="col-span-2 text-right flex items-center justify-end gap-2 group/actions relative">
+                                                                                    <span className="text-[11px] font-bold text-[#B5B5B5] tabular-nums">
+                                                                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                                                                                            (item.manualPrice ?? item.price) * item.quantity
+                                                                                        )}
+                                                                                    </span>
+                                                                                    {item.isCustom && (
+                                                                                        <button
+                                                                                            onClick={() => handleDelete(item.id)}
+                                                                                            className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-600 p-1 absolute -right-6 md:static transition-all"
+                                                                                            title="Excluir"
+                                                                                        >
+                                                                                            <Trash2 size={14} />
+                                                                                        </button>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                });
+                                                            })()}
+                                                        </div>
+
+                                                        {/* Add Button */}
+                                                        <div className="mt-4 flex justify-center border-t border-dashed border-white/10 pt-4 mx-6">
+                                                            <button
+                                                                onClick={() => handleAddCustomItem(category)}
+                                                                className="flex items-center gap-1 text-[11px] font-bold text-[#B5B5B5] hover:text-blue-600 uppercase tracking-widest transition-colors py-2 px-4 rounded hover:bg-blue-50"
+                                                            >
+                                                                <Plus size={12} /> Adicionar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
 
                     </div>
 
+
                     {/* RIGHT COLUMN: Sidebar (1/3) */}
                     <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6">
 
-                        {/* Legend Card */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Legenda</h3>
-                            <div className="space-y-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🛠️</span>
-                                    <span>Composição (Serviço + Material)</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🔨</span>
-                                    <span>Mão de Obra (Apenas Execução)</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🧱</span>
-                                    <span>Material (Insumo Isolado)</span>
-                                </div>
-                            </div>
+                        {/* Actions Card */}
+                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-4 space-y-3">
+                            <button
+                                onClick={() => handleAddCustomItem('ITENS ADICIONAIS')}
+                                className="w-full flex items-center justify-center gap-2 p-3 bg-[#E89E37]/10 hover:bg-[#E89E37]/20 text-[#E89E37] rounded-lg transition-colors font-medium text-sm group"
+                            >
+                                <Plus size={16} className="group-hover:scale-110 transition-transform" />
+                                Adicionar Item Manual
+                            </button>
                         </div>
 
-                        {/* Totals Summary Card */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-6">
-                                Resumo do Orçamento
-                            </h3>
+                        {/* Totals Card */}
+                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-6">
+                            <h2 className="text-lg font-bold text-[#E8E8E6] mb-4 flex items-center gap-2">
+                                <div className="p-1.5 bg-[#E89E37]/10 rounded-md">
+                                    <Settings size={16} className="text-[#E89E37]" />
+                                </div>
+                                Resumo Financeiro
+                            </h2>
 
                             <div className="space-y-4">
-                                <div className="flex justify-between items-center text-sm font-bold text-gray-600">
+                                <div className="flex justify-between items-center text-sm font-bold text-[#E8E8E6]">
                                     <span>SUBTOTAL</span>
                                     <span>
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
                                     </span>
                                 </div>
 
-                                <div className="flex justify-between items-center text-sm font-bold text-gray-600">
+                                <div className="flex justify-between items-center text-sm font-bold text-[#E8E8E6]">
                                     <div className="flex items-center gap-2">
                                         <span>BDI</span>
-                                        <div className="bg-gray-100 rounded px-2 py-0.5 text-xs text-gray-500 font-mono">
+                                        <div className="bg-[#222120] rounded px-2 py-0.5 text-xs text-[#B5B5B5] font-mono">
                                             <input
                                                 type="number"
                                                 value={bdi}
@@ -875,7 +1075,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     </span>
                                 </div>
 
-                                <div className="pt-4 mt-2 border-t border-gray-100 flex justify-between items-center">
+                                <div className="pt-4 mt-2 border-t border-white/10 flex justify-between items-center">
                                     <span className="text-sm font-bold text-green-600 uppercase">Total Geral</span>
                                     <span className="text-xl font-bold text-green-600 tabular-nums">
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
@@ -885,14 +1085,14 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                         </div>
 
                         {/* Information Card */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-6">
+                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-6 mb-6">
+                            <h3 className="text-xs font-bold text-[#8a8886] uppercase tracking-wider mb-6">
                                 Informações do Relatório
                             </h3>
 
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                    <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                         Prestador *
                                     </label>
                                     <input
@@ -900,12 +1100,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                         value={providerName}
                                         onChange={(e) => setProviderName(e.target.value)}
                                         placeholder="Nome ou empresa"
-                                        className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                        className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
                                     />
                                 </div>
                                 <div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                             Telefone Prestador *
                                         </label>
                                         <input
@@ -914,10 +1114,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                             onChange={handlePhoneChange(setProviderPhone)}
                                             placeholder="(00) 00000-0000"
                                             maxLength={15}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                            className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
                                         />
                                         {providerDddInfo && (
-                                            <div className="mt-1.5 text-[10px] text-gray-500 flex items-center gap-1.5">
+                                            <div className="mt-1.5 text-[10px] text-[#B5B5B5] flex items-center gap-1.5">
                                                 <span className="font-semibold text-blue-600">{providerDddInfo.state}</span>
                                                 <span>•</span>
                                                 <span>{providerDddInfo.region}</span>
@@ -925,7 +1125,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                         )}
                                     </div>
                                     <div className="pt-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                             Cliente *
                                         </label>
                                         <input
@@ -933,11 +1133,11 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                             value={clientName}
                                             onChange={(e) => setClientName(e.target.value)}
                                             placeholder="Nome completo"
-                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                            className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
                                         />
                                     </div>
                                     <div className="pt-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                             Telefone Cliente *
                                         </label>
                                         <input
@@ -946,10 +1146,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                             onChange={handlePhoneChange(setClientPhone)}
                                             placeholder="(00) 00000-0000"
                                             maxLength={15}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                            className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
                                         />
                                         {clientDddInfo && (
-                                            <div className="mt-1.5 text-[10px] text-gray-500 flex items-center gap-1.5">
+                                            <div className="mt-1.5 text-[10px] text-[#B5B5B5] flex items-center gap-1.5">
                                                 <span className="font-semibold text-blue-600">{clientDddInfo.state}</span>
                                                 <span>•</span>
                                                 <span>{clientDddInfo.region}</span>
@@ -958,7 +1158,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     </div>
                                     <div className="grid grid-cols-3 gap-3 pt-2">
                                         <div className="col-span-2">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                            <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                                 Cidade da Obra
                                             </label>
                                             <input
@@ -966,11 +1166,11 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                 value={workCity}
                                                 onChange={(e) => setWorkCity(e.target.value)}
                                                 placeholder="Ex: São Paulo"
-                                                className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400"
+                                                className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                            <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                                 UF
                                             </label>
                                             <input
@@ -979,48 +1179,56 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                 onChange={(e) => setWorkState(e.target.value.toUpperCase().slice(0, 2))}
                                                 placeholder="UF"
                                                 maxLength={2}
-                                                className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400 uppercase"
+                                                className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5] uppercase"
                                             />
                                         </div>
                                     </div>
                                     <div className="pt-6">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                             Tipo de Obra *
                                         </label>
-                                        <select
-                                            value={projectType}
-                                            onChange={(e) => setProjectType(e.target.value)}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-500"
-                                        >
-                                            <option value="">Selecione...</option>
-                                            <option value="Construção Nova">Construção Nova</option>
-                                            <option value="Reforma">Reforma</option>
-                                            <option value="Ampliação">Ampliação</option>
-                                        </select>
+                                        <div className="relative">
+                                            <select
+                                                value={projectType}
+                                                onChange={(e) => setProjectType(e.target.value)}
+                                                className="w-full bg-[#222120] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer"
+                                            >
+                                                <option value="" className="text-[#B5B5B5]">Selecione...</option>
+                                                <option value="Construção Nova">Construção Nova</option>
+                                                <option value="Reforma">Reforma</option>
+                                                <option value="Ampliação">Ampliação</option>
+                                            </select>
+                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#E89E37]">
+                                                <ChevronDown size={14} />
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="pt-6">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5 block">
+                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
                                             Prazo Estimado *
                                         </label>
-                                        <select
-                                            value={deadline}
-                                            onChange={(e) => setDeadline(e.target.value)}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm text-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-500"
-                                        >
-                                            <option value="">Selecione...</option>
-                                            <option value="imediato">Imediato (até 30 dias)</option>
-                                            <option value="curto">Curto prazo (30 a 90 dias)</option>
-                                            <option value="medio">Médio prazo (3 a 6 meses)</option>
-                                            <option value="longo">Longo prazo (+6 meses)</option>
-                                        </select>
+                                        <div className="relative">
+                                            <select
+                                                value={deadline}
+                                                onChange={(e) => setDeadline(e.target.value)}
+                                                className="w-full bg-[#222120] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer"
+                                            >
+                                                <option value="" className="text-[#B5B5B5]">Selecione...</option>
+                                                <option value="imediato">Imediato (até 30 dias)</option>
+                                                <option value="curto">Curto prazo (30 a 90 dias)</option>
+                                                <option value="medio">Médio prazo (3 a 6 meses)</option>
+                                                <option value="longo">Longo prazo (+6 meses)</option>
+                                            </select>
+                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#E89E37]">
+                                                <ChevronDown size={14} />
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
-
-                        {/* Generate Report Button - Relocated & Restyled */}
+                        {/* Generate Report Button */}
                         <button
                             onClick={handleGenerateReport}
                             disabled={isSaving || !isFormValid}
@@ -1043,6 +1251,25 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                 </>
                             )}
                         </button>
+
+                        {/* Legend Card */}
+                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-4">
+                            <h3 className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wider mb-3">Legenda</h3>
+                            <div className="space-y-2 text-[10px] text-[#B5B5B5] uppercase tracking-wide font-medium">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">🛠️</span>
+                                    <span>Composição (Serviço + Material)</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">🔨</span>
+                                    <span>Mão de Obra (Apenas Execução)</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">🧱</span>
+                                    <span>Material (Insumo Isolado)</span>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 

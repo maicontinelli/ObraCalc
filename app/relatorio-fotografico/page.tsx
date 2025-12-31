@@ -231,10 +231,10 @@ export default function RelatorioFotograficoPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
+        <div className="min-h-screen bg-[#262423] text-[#E8E8E6] pb-20">
             {/* Hero Section */}
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-[#6366F1]/5 via-white to-[#6366F1]/5 border-b border-gray-200 pt-16 pb-12">
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#6366F1]/5 via-[#262423] to-[#6366F1]/5 border-b border-white/5 pt-16 pb-12">
                 <div className="absolute inset-0 overflow-hidden">
                     <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#6366F1]/10 rounded-full blur-3xl"></div>
                     <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#6366F1]/10 rounded-full blur-3xl"></div>
@@ -242,10 +242,10 @@ export default function RelatorioFotograficoPage() {
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
                             Relatório Fotográfico de Obra com <span className="text-[#6366F1]">IA</span>
                         </h1>
-                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                        <p className="text-xl text-[#B5B5B5] max-w-2xl mx-auto">
                             Envie fotos da obra e a IA gera automaticamente um relatório fotográfico técnico profissional, pronto para entrega ao cliente.
                         </p>
                     </div>
@@ -263,12 +263,12 @@ export default function RelatorioFotograficoPage() {
                 )}
 
                 {/* Main Card */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                <div className="bg-[#2C2A29] rounded-xl shadow-lg border border-white/5 overflow-hidden">
 
                     {/* Upload Section */}
                     <div className="p-8">
                         <div
-                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${images.length > 0 ? 'border-[#6366F1]/50 bg-[#6366F1]/5' : 'border-gray-300 hover:border-[#6366F1] hover:bg-gray-50'
+                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${images.length > 0 ? 'border-[#6366F1]/50 bg-[#6366F1]/5' : 'border-white/10 hover:border-[#6366F1] hover:bg-[#6366F1]/5'
                                 }`}
                             onClick={() => fileInputRef.current?.click()}
                         >
@@ -284,14 +284,14 @@ export default function RelatorioFotograficoPage() {
                             {isCompressing ? (
                                 <div className="flex flex-col items-center">
                                     <RefreshCw className="h-12 w-12 text-[#6366F1] mb-4 animate-spin" />
-                                    <h3 className="text-lg font-medium text-gray-900">Otimizando imagens...</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Reduzindo tamanho para melhor performance</p>
+                                    <h3 className="text-lg font-medium text-[#E8E8E6]">Otimizando imagens...</h3>
+                                    <p className="text-sm text-[#B5B5B5] mt-1">Reduzindo tamanho para melhor performance</p>
                                 </div>
                             ) : images.length > 0 ? (
                                 <div className="flex flex-col items-center">
                                     <CheckCircle className="h-12 w-12 text-[#6366F1] mb-4" />
-                                    <h3 className="text-lg font-medium text-gray-900">{images.length} imagem(ns) selecionada(s)</h3>
-                                    <p className="text-sm text-gray-500 mt-1">
+                                    <h3 className="text-lg font-medium text-[#E8E8E6]">{images.length} imagem(ns) selecionada(s)</h3>
+                                    <p className="text-sm text-[#B5B5B5] mt-1">
                                         {images.length >= 10 ? (
                                             <span className="text-orange-600 font-medium">Limite máximo atingido (10 imagens)</span>
                                         ) : (
@@ -301,12 +301,12 @@ export default function RelatorioFotograficoPage() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center">
-                                    <Upload className="h-12 w-12 text-gray-400 mb-4" />
-                                    <h3 className="text-lg font-medium text-gray-900">Upload de imagens da obra</h3>
-                                    <p className="text-sm text-gray-500 mt-1 max-w-sm">
+                                    <Upload className="h-12 w-12 text-[#8a8886] mb-4" />
+                                    <h3 className="text-lg font-medium text-[#E8E8E6]">Upload de imagens da obra</h3>
+                                    <p className="text-sm text-[#B5B5B5] mt-1 max-w-sm">
                                         Arraste ou clique para selecionar fotos da obra (JPG, PNG, etc.)
                                     </p>
-                                    <p className="text-xs text-gray-400 mt-2">
+                                    <p className="text-xs text-[#8a8886] mt-2">
                                         As imagens serão automaticamente otimizadas
                                     </p>
                                 </div>
@@ -321,7 +321,7 @@ export default function RelatorioFotograficoPage() {
                                         <img
                                             src={img.preview}
                                             alt={`Preview ${index + 1}`}
-                                            className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                                            className="w-full h-32 object-cover rounded-lg border border-white/10"
                                         />
                                         <button
                                             onClick={(e) => {
@@ -345,38 +345,38 @@ export default function RelatorioFotograficoPage() {
                     </div>
 
                     {/* Form Fields */}
-                    <div className="bg-gray-50 px-8 py-6 border-t border-gray-100">
-                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Dados da Obra</h3>
+                    <div className="bg-[#222120] px-8 py-6 border-t border-white/5">
+                        <h3 className="text-sm font-bold text-[#8a8886] uppercase tracking-wider mb-4">Dados da Obra</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-1">Nome do Cliente *</label>
+                                <label htmlFor="clientName" className="block text-sm font-medium text-[#B5B5B5] mb-1">Nome do Cliente *</label>
                                 <input
                                     id="clientName"
                                     type="text"
                                     value={clientName}
                                     onChange={(e) => setClientName(e.target.value)}
                                     placeholder="Ex: João Silva"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-[#8a8886]"
                                 />
                             </div>
                             <div>
-                                <label htmlFor="projectAddress" className="block text-sm font-medium text-gray-700 mb-1">Endereço da Obra *</label>
+                                <label htmlFor="projectAddress" className="block text-sm font-medium text-[#B5B5B5] mb-1">Endereço da Obra *</label>
                                 <input
                                     id="projectAddress"
                                     type="text"
                                     value={projectAddress}
                                     onChange={(e) => setProjectAddress(e.target.value)}
                                     placeholder="Ex: Rua das Flores, 123 - São Paulo/SP"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-[#8a8886]"
                                 />
                             </div>
                             <div>
-                                <label htmlFor="projectType" className="block text-sm font-medium text-gray-700 mb-1">Tipo de Obra</label>
+                                <label htmlFor="projectType" className="block text-sm font-medium text-[#B5B5B5] mb-1">Tipo de Obra</label>
                                 <select
                                     id="projectType"
                                     value={projectType}
                                     onChange={(e) => setProjectType(e.target.value as ProjectType)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 >
                                     <option value="Residencial">Residencial</option>
                                     <option value="Comercial">Comercial</option>
@@ -384,12 +384,12 @@ export default function RelatorioFotograficoPage() {
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="projectStage" className="block text-sm font-medium text-gray-700 mb-1">Etapa da Obra</label>
+                                <label htmlFor="projectStage" className="block text-sm font-medium text-[#B5B5B5] mb-1">Etapa da Obra</label>
                                 <select
                                     id="projectStage"
                                     value={projectStage}
                                     onChange={(e) => setProjectStage(e.target.value as ProjectStage)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 >
                                     <option value="Inicial">Inicial</option>
                                     <option value="Em andamento">Em andamento</option>
@@ -397,65 +397,65 @@ export default function RelatorioFotograficoPage() {
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="mode" className="block text-sm font-medium text-gray-700 mb-1">Modo do Relatório</label>
+                                <label htmlFor="mode" className="block text-sm font-medium text-[#B5B5B5] mb-1">Modo do Relatório</label>
                                 <select
                                     id="mode"
                                     value={mode}
                                     onChange={(e) => setMode(e.target.value as ReportMode)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 >
                                     <option value="LEIGO">Linguagem Simples (Cliente Leigo)</option>
                                     <option value="TECNICO">Linguagem Técnica</option>
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="inspectionDate" className="block text-sm font-medium text-gray-700 mb-1">Data da Vistoria</label>
+                                <label htmlFor="inspectionDate" className="block text-sm font-medium text-[#B5B5B5] mb-1">Data da Vistoria</label>
                                 <input
                                     id="inspectionDate"
                                     type="date"
                                     value={inspectionDate}
                                     onChange={(e) => setInspectionDate(e.target.value)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
                                 />
                             </div>
                         </div>
 
                         {/* Optional Technical Fields */}
                         {mode === 'TECNICO' && (
-                            <div className="mt-6 pt-6 border-t border-gray-200">
-                                <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Dados Técnicos (Opcional)</h4>
+                            <div className="mt-6 pt-6 border-t border-white/10">
+                                <h4 className="text-sm font-bold text-[#8a8886] uppercase tracking-wider mb-4">Dados Técnicos (Opcional)</h4>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div>
-                                        <label htmlFor="technicalResponsible" className="block text-sm font-medium text-gray-700 mb-1">Responsável Técnico</label>
+                                        <label htmlFor="technicalResponsible" className="block text-sm font-medium text-[#B5B5B5] mb-1">Responsável Técnico</label>
                                         <input
                                             id="technicalResponsible"
                                             type="text"
                                             value={technicalResponsible}
                                             onChange={(e) => setTechnicalResponsible(e.target.value)}
                                             placeholder="Ex: Eng. Maria Santos"
-                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                            className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-[#8a8886]"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="creaCAU" className="block text-sm font-medium text-gray-700 mb-1">CREA/CAU</label>
+                                        <label htmlFor="creaCAU" className="block text-sm font-medium text-[#B5B5B5] mb-1">CREA/CAU</label>
                                         <input
                                             id="creaCAU"
                                             type="text"
                                             value={creaCAU}
                                             onChange={(e) => setCreaCau(e.target.value)}
                                             placeholder="Ex: CREA-SP 123456"
-                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                            className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-[#8a8886]"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="builtArea" className="block text-sm font-medium text-gray-700 mb-1">Área Construída (m²)</label>
+                                        <label htmlFor="builtArea" className="block text-sm font-medium text-[#B5B5B5] mb-1">Área Construída (m²)</label>
                                         <input
                                             id="builtArea"
                                             type="text"
                                             value={builtArea}
                                             onChange={(e) => setBuiltArea(e.target.value)}
                                             placeholder="Ex: 150.00"
-                                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                            className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-[#8a8886]"
                                         />
                                     </div>
                                 </div>
@@ -464,20 +464,20 @@ export default function RelatorioFotograficoPage() {
 
                         {/* Observations */}
                         <div className="mt-6">
-                            <label htmlFor="userObservations" className="block text-sm font-medium text-gray-700 mb-1">Observações Adicionais (Opcional)</label>
+                            <label htmlFor="userObservations" className="block text-sm font-medium text-[#B5B5B5] mb-1">Observações Adicionais (Opcional)</label>
                             <textarea
                                 id="userObservations"
                                 value={userObservations}
                                 onChange={(e) => setUserObservations(e.target.value)}
                                 placeholder="Adicione observações técnicas relevantes sobre a obra..."
                                 rows={3}
-                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1]"
+                                className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-[#8a8886]"
                             />
                         </div>
                     </div>
 
                     {/* Action Button */}
-                    <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-end">
+                    <div className="p-8 bg-[#222120] border-t border-white/5 flex justify-end">
                         <button
                             onClick={handleGenerateReport}
                             disabled={images.length === 0 || !clientName || !projectAddress || isLoading}

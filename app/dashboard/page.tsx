@@ -227,37 +227,37 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+            <div className="min-h-screen flex items-center justify-center bg-[#262423]">
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans p-6 lg:p-12">
+        <div className="min-h-screen bg-[#262423] font-sans p-6 lg:p-12">
             <div className="max-w-7xl mx-auto space-y-8">
 
                 {/* Welcome Header Section */}
-                <div className="relative bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden group">
+                <div className="relative bg-[#2C2A29] rounded-3xl p-8 shadow-sm border border-white/5 overflow-hidden group">
                     {/* Decorative Background */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-orange-50 dark:bg-orange-900/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-orange-900/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
 
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div className="flex-1 max-w-lg">
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                                <h1 className="text-4xl font-extrabold text-white tracking-tight">
                                     Olá, {profileData.full_name?.split(' ')[0] || 'Parceiro'}!
                                 </h1>
                                 <span className="text-3xl animate-wave origin-bottom-right inline-block">👋</span>
                             </div>
-                            <p className="text-lg text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+                            <p className="text-lg text-[#B5B5B5] font-medium leading-relaxed">
                                 É bom te ver aqui novamente. Preparei um resumo dos seus orçamentos para hoje.
                             </p>
 
                             <div className="mt-6">
                                 <button
                                     onClick={handleNewBudget}
-                                    className="inline-flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-xl"
+                                    className="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-xl"
                                 >
                                     <Plus size={20} />
                                     Novo Orçamento
@@ -315,65 +315,65 @@ export default function DashboardPage() {
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
                                 <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-lg w-fit mb-3">
                                     <FileText size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalBudgets}</p>
-                                <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">Orçamentos</span>
+                                <p className="text-2xl font-bold text-white">{stats.totalBudgets}</p>
+                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Orçamentos</span>
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
                                 <div className="p-2 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-lg w-fit mb-3">
                                     <DollarSign size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                <p className="text-2xl font-bold text-white">
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(stats.totalValue)}
                                 </p>
-                                <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">Total</span>
+                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Total</span>
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
                                 <div className="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-lg w-fit mb-3">
                                     <TrendingUp size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                <p className="text-2xl font-bold text-white">
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(stats.avgTicket)}
                                 </p>
-                                <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">Médio</span>
+                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Médio</span>
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
                                 <div className="p-2 bg-orange-50 dark:bg-orange-900/20 text-orange-600 rounded-lg w-fit mb-3">
                                     <Calendar size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.thisMonth}</p>
-                                <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">Mês</span>
+                                <p className="text-2xl font-bold text-white">{stats.thisMonth}</p>
+                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Mês</span>
                             </div>
                         </div>
 
                         {/* Recent Budgets List */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between px-1">
-                                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Orçamentos Recentes</h2>
+                                <h2 className="text-lg font-bold text-white">Orçamentos Recentes</h2>
                                 {/* Search bar placeholder - visual only for now */}
                                 <div className="relative hidden sm:block w-64">
                                     <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
                                     <input
                                         type="text"
                                         placeholder="Buscar..."
-                                        className="w-full pl-9 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-xs outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        className="w-full pl-9 pr-4 py-2 bg-[#1A1918] border border-white/10 rounded-full text-xs outline-none focus:ring-2 focus:ring-primary/20 transition-all text-[#E8E8E6] placeholder-[#8a8886]"
                                     />
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                            <div className="bg-[#2C2A29] rounded-2xl shadow-sm border border-white/5 overflow-hidden">
                                 {budgets.length === 0 ? (
                                     <div className="p-12 text-center text-gray-500">
-                                        <div className="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                                        <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
                                             <FileText size={32} />
                                         </div>
-                                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Nenhum orçamento encontrado</h3>
+                                        <h3 className="text-lg font-medium text-white mb-2">Nenhum orçamento encontrado</h3>
                                         <p className="mb-6">Crie seu primeiro orçamento profissional agora mesmo.</p>
                                         <button
                                             onClick={handleNewBudget}
@@ -384,9 +384,9 @@ export default function DashboardPage() {
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                    <div className="divide-y divide-white/5">
                                         {/* Table Header (Desktop) */}
-                                        <div className="hidden md:grid grid-cols-12 gap-4 p-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider bg-gray-50/50 dark:bg-gray-900/50">
+                                        <div className="hidden md:grid grid-cols-12 gap-4 p-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider bg-[#222120]">
                                             <div className="col-span-6">Cliente / Obra</div>
                                             <div className="col-span-3">Valor Total</div>
                                             <div className="col-span-3 text-right">Ações</div>
@@ -398,12 +398,12 @@ export default function DashboardPage() {
                                             }, 0) * (1 + (budget.content?.bdi || 0) / 100) || 0;
 
                                             return (
-                                                <div key={budget.id} className="p-4 md:grid md:grid-cols-12 md:gap-4 md:items-center hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors group">
+                                                <div key={budget.id} className="p-4 md:grid md:grid-cols-12 md:gap-4 md:items-center hover:bg-[#222120] transition-colors group">
 
                                                     {/* Mobile: Top Row with Title & Value */}
                                                     <div className="flex justify-between items-start md:hidden mb-2">
                                                         <div>
-                                                            <h3 className="font-bold text-gray-900 dark:text-white text-sm">{budget.title || 'Sem título'}</h3>
+                                                            <h3 className="font-bold text-white text-sm">{budget.title || 'Sem título'}</h3>
                                                             <span className="text-xs text-gray-500">{new Date(budget.updated_at).toLocaleDateString('pt-BR')}</span>
                                                         </div>
                                                         <span className="font-bold text-green-600 text-sm">
@@ -418,7 +418,7 @@ export default function DashboardPage() {
                                                                 <FileText size={14} />
                                                             </div>
                                                             <div>
-                                                                <h3 className="font-bold text-gray-900 dark:text-white text-sm truncate">{budget.title || 'Sem título'}</h3>
+                                                                <h3 className="font-bold text-white text-sm truncate">{budget.title || 'Sem título'}</h3>
                                                                 <p className="text-[10px] text-gray-400 uppercase tracking-wide">
                                                                     {new Date(budget.updated_at).toLocaleDateString('pt-BR')} • {budget.content?.projectType || 'Projeto'}
                                                                 </p>
@@ -427,7 +427,7 @@ export default function DashboardPage() {
                                                     </div>
 
                                                     <div className="col-span-3 hidden md:block">
-                                                        <span className="font-bold text-gray-700 dark:text-gray-300 text-sm">
+                                                        <span className="font-bold text-[#E8E8E6] text-sm">
                                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
                                                         </span>
                                                     </div>
@@ -467,22 +467,22 @@ export default function DashboardPage() {
 
                     {/* RIGHT COLUMN: Profile Sidebar */}
                     <div className="lg:col-span-1 lg:sticky lg:top-6">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300">
+                        <div className="bg-[#2C2A29] rounded-2xl shadow-sm border border-white/5 overflow-hidden transition-all duration-300">
                             <div
-                                className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
+                                className="p-4 border-b border-white/5 flex justify-between items-center cursor-pointer hover:bg-[#222120] transition-colors"
                                 onClick={() => setIsProfileExpanded(!isProfileExpanded)}
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center text-orange-600">
                                         <UserIcon size={16} />
                                     </div>
-                                    <h3 className="font-bold text-gray-900 dark:text-white text-sm">Seus Dados</h3>
+                                    <h3 className="font-bold text-white text-sm">Seus Dados</h3>
                                 </div>
                                 {isProfileExpanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
                             </div>
 
                             {isProfileExpanded && (
-                                <div className="bg-white dark:bg-gray-800">
+                                <div className="bg-[#2C2A29]">
                                     {showOnboardingMessage && (
                                         <div className="mx-4 mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-2 animate-in fade-in slide-in-from-top-2">
                                             <TrendingUp size={14} className="text-blue-600 shrink-0 mt-0.5" />
@@ -495,59 +495,59 @@ export default function DashboardPage() {
                                     )}
 
                                     {/* List Style Inputs */}
-                                    <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
+                                    <div className="divide-y divide-white/10">
                                         {/* Name */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-gray-50 transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
                                             <UserIcon size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1">
-                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Nome Completo</label>
+                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Nome Completo</label>
                                                 <input
                                                     type="text"
                                                     value={profileData.full_name}
                                                     onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder-gray-300"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
                                                     placeholder="Digite seu nome..."
                                                 />
                                             </div>
                                         </div>
 
                                         {/* Phone */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-gray-50 transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
                                             <Phone size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1">
-                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Telefone / WhatsApp</label>
+                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Telefone / WhatsApp</label>
                                                 <input
                                                     type="text"
                                                     value={profileData.phone}
                                                     onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder-gray-300"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
                                                     placeholder="(00) 00000-0000"
                                                 />
                                             </div>
                                         </div>
 
                                         {/* City/State Row */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-gray-50 transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
                                             <MapPin size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex gap-4 w-full">
                                                 <div className="flex-1">
-                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Cidade</label>
+                                                    <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Cidade</label>
                                                     <input
                                                         type="text"
                                                         value={profileData.city}
                                                         onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
-                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder-gray-300"
+                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
                                                         placeholder="Cidade..."
                                                     />
                                                 </div>
                                                 <div className="w-16">
-                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">UF</label>
+                                                    <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">UF</label>
                                                     <input
                                                         type="text"
                                                         maxLength={2}
                                                         value={profileData.state}
                                                         onChange={(e) => setProfileData({ ...profileData, state: e.target.value.toUpperCase() })}
-                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder-gray-300 uppercase"
+                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967] uppercase"
                                                         placeholder="UF"
                                                     />
                                                 </div>
@@ -555,14 +555,14 @@ export default function DashboardPage() {
                                         </div>
 
                                         {/* Profession */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-gray-50 transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
                                             <FileText size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1 relative">
-                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Profissão</label>
+                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Profissão</label>
                                                 <select
                                                     value={profileData.profession}
                                                     onChange={(e) => setProfileData({ ...profileData, profession: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 appearance-none cursor-pointer"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 appearance-none cursor-pointer"
                                                 >
                                                     <option value="">Selecione...</option>
                                                     <option value="Engenheiro">Engenheiro</option>
@@ -575,26 +575,26 @@ export default function DashboardPage() {
                                         </div>
 
                                         {/* Company */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-gray-50 transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
                                             <Building2 size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1">
-                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Empresa</label>
+                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Empresa</label>
                                                 <input
                                                     type="text"
                                                     value={profileData.company_name}
                                                     onChange={(e) => setProfileData({ ...profileData, company_name: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder-gray-300"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
                                                     placeholder="Nome da empresa..."
                                                 />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="p-4 bg-gray-50/50">
+                                    <div className="p-4 bg-[#1A1918]">
                                         <button
                                             onClick={handleSaveProfile}
                                             disabled={isSavingProfile}
-                                            className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-all shadow-sm active:scale-[0.98]"
+                                            className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-gray-100 transition-all shadow-sm active:scale-[0.98]"
                                         >
                                             {isSavingProfile ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                                             Salvar Dados
@@ -605,11 +605,11 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Tip Widget */}
-                        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-100 dark:from-orange-900/10 dark:to-orange-900/5 dark:border-orange-800/30">
-                            <h4 className="flex items-center gap-2 text-xs font-bold text-orange-800 dark:text-orange-300 uppercase tracking-wider mb-2">
+                        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-orange-900/10 to-orange-900/5 border border-orange-800/30">
+                            <h4 className="flex items-center gap-2 text-xs font-bold text-orange-300 uppercase tracking-wider mb-2">
                                 <Sparkles size={12} /> Dica Pro
                             </h4>
-                            <p className="text-xs text-orange-700 dark:text-orange-400 leading-relaxed">
+                            <p className="text-xs text-orange-400 leading-relaxed">
                                 Use a busca com IA para adicionar pacotes completos de serviços, como "Reforma de Banheiro" ou "Construção de Muro".
                             </p>
                         </div>

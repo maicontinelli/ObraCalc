@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
@@ -12,6 +12,14 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const router = useRouter();
+
+    useEffect(() => {
+        // Force Dark Mode for Login Page to match Home theme
+        document.documentElement.classList.add('dark');
+        return () => {
+            document.documentElement.classList.remove('dark');
+        };
+    }, []);
 
     const supabase = createClient();
 
@@ -54,13 +62,13 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-950 flex flex-col justify-center items-center p-4">
+        <div className="min-h-[calc(100vh-64px)] bg-[#262423] flex flex-col justify-center items-center p-4">
 
-            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 p-8">
+            <div className="w-full max-w-md bg-[#2C2A29] rounded-2xl shadow-xl border border-white/5 p-8">
 
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acesse ou Crie sua Conta</h1>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    <h1 className="text-2xl font-bold text-[#E8E8E6] mb-2">Acesse ou Crie sua Conta</h1>
+                    <p className="text-[#B5B5B5] text-sm">
                         Use seu e-mail ou Google para entrar. Se ainda não tem cadastro, sua conta será criada automaticamente.
                     </p>
                 </div>
@@ -69,7 +77,7 @@ export default function LoginPage() {
                     <button
                         onClick={handleGoogleLogin}
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 p-3 rounded-xl transition-all shadow-sm font-medium h-12"
+                        className="w-full flex items-center justify-center gap-3 bg-[#222120] text-[#E8E8E6] border border-white/10 hover:bg-[#333130] p-3 rounded-xl transition-all shadow-sm font-medium h-12"
                     >
                         {loading ? (
                             <Loader2 className="animate-spin" />
@@ -83,10 +91,10 @@ export default function LoginPage() {
 
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-gray-200 dark:border-gray-800" />
+                            <span className="w-full border-t border-white/10" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-white dark:bg-gray-900 px-2 text-gray-400">ou entre com email</span>
+                            <span className="bg-[#2C2A29] px-2 text-[#8a8886]">ou entre com email</span>
                         </div>
                     </div>
 
@@ -102,7 +110,7 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="seu@email.com"
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-[#222120] text-[#E8E8E6] placeholder-[#6b6967] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                             />
                         </div>
                         <button
@@ -126,8 +134,8 @@ export default function LoginPage() {
                 )}
             </div>
 
-            <p className="mt-8 text-center text-xs text-gray-500 max-w-xs mx-auto">
-                Ao continuar, você concorda com nossos <Link href="#" className="underline hover:text-gray-900">Termos de Serviço</Link> e <Link href="#" className="underline hover:text-gray-900">Política de Privacidade</Link>.
+            <p className="mt-8 text-center text-xs text-[#6b6967] max-w-xs mx-auto">
+                Ao continuar, você concorda com nossos <Link href="#" className="underline hover:text-[#E8E8E6]">Termos de Serviço</Link> e <Link href="#" className="underline hover:text-[#E8E8E6]">Política de Privacidade</Link>.
             </p>
         </div>
     );

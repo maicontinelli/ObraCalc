@@ -137,7 +137,8 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
             quantity: item.quantity,
             category: item.category,
             manualPrice: item.price,
-            included: item.included !== undefined ? item.included : true // Pass this through
+            included: item.included !== undefined ? item.included : true, // Pass this through
+            type: item.type // Pass type (material/service/composition)
         }));
 
         onAddCustom(itemsToAdd, {
@@ -157,11 +158,11 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                 <form onSubmit={handleAiSearch} className="relative">
                     {/* Glassmorphism Search Bar - Neon Orange Style */}
                     <div className="relative flex items-center w-full rounded-full transition-all duration-300
-                            bg-white/70 dark:bg-gray-900/60 
+                            bg-white/70 dark:bg-[#2C2A29]/60 
                             backdrop-blur-xl 
-                            border border-white/50 dark:border-gray-700/50
+                            border border-white/50 dark:border-white/10
                             shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]
-                            hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90 dark:hover:bg-gray-900/80
+                            hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90 dark:hover:bg-[#2C2A29]/80
                             focus-within:ring-4 focus-within:ring-[#FF6600]/10 focus-within:border-[#FF6600]/50"
                     >
                         <div className="pl-6 text-gray-400 dark:text-gray-500">
@@ -176,13 +177,13 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                             }}
                             onFocus={() => query && !aiResponse && setIsOpen(true)}
                             placeholder="Adicionar mais serviços ao orçamento..."
-                            className="w-full pl-4 pr-14 py-4 rounded-full border-none outline-none bg-transparent text-lg text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+                            className="w-full pl-4 pr-14 py-4 rounded-full border-none outline-none bg-transparent text-lg text-gray-800 dark:text-[#E8E8E6] placeholder-gray-400 dark:placeholder-[#B5B5B5] font-medium"
                         />
 
                         <button
                             type="submit"
                             disabled={isAiLoading || !query.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-gray-100/50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-300"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-gray-100/50 dark:bg-[#333130]/50 text-gray-400 dark:text-[#B5B5B5] hover:text-[#FF6600] dark:hover:text-[#FF6600] hover:bg-gray-100 dark:hover:bg-[#333130] rounded-full transition-all duration-300"
                         >
                             {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={18} />}
                         </button>
@@ -192,15 +193,15 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
 
             {/* Local Search Results Dropdown - Linear Style */}
             {isOpen && filteredItems.length > 0 && !aiResponse && (
-                <div className="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden animate-in fade-in duration-100">
+                <div className="absolute z-50 mt-1 w-full bg-white dark:bg-[#2C2A29] rounded border border-gray-200 dark:border-white/10 shadow-lg overflow-hidden animate-in fade-in duration-100">
                     <ul className="max-h-[60vh] overflow-auto py-1">
-                        <li className="px-3 py-1 text-[9px] font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-wider">
+                        <li className="px-3 py-1 text-[9px] font-semibold text-gray-500 dark:text-[#B5B5B5] uppercase tracking-wider">
                             Encontrados
                         </li>
                         {filteredItems.map((item) => (
                             <li
                                 key={item.id}
-                                className="group flex items-center justify-between px-3 py-1.5 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors border-b border-gray-50 dark:border-gray-800/50 last:border-0"
+                                className="group flex items-center justify-between px-3 py-1.5 hover:bg-gray-50/50 dark:hover:bg-[#333130]/50 cursor-pointer transition-colors border-b border-gray-50 dark:border-white/5 last:border-0"
                                 onClick={() => {
                                     onSelect(item);
                                     setQuery('');
@@ -213,15 +214,15 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                                         {item.included ? <Check size={10} /> : <Plus size={10} />}
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <p className="font-medium text-gray-700 dark:text-gray-300 text-[11px] truncate">{item.name}</p>
-                                        <p className="text-[9px] text-gray-500 dark:text-gray-500 truncate">{item.category}</p>
+                                        <p className="font-medium text-gray-700 dark:text-[#E8E8E6] text-[11px] truncate">{item.name}</p>
+                                        <p className="text-[9px] text-gray-500 dark:text-[#B5B5B5] truncate">{item.category}</p>
                                     </div>
                                 </div>
                                 <div className="text-right flex-shrink-0 ml-2">
-                                    <p className="text-[11px] font-semibold text-gray-700 dark:text-gray-300 tabular-nums">
+                                    <p className="text-[11px] font-semibold text-gray-700 dark:text-[#E8E8E6] tabular-nums">
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.manualPrice ?? item.price)}
                                     </p>
-                                    <p className="text-[9px] text-gray-500 dark:text-gray-500 uppercase font-mono">{item.unit}</p>
+                                    <p className="text-[9px] text-gray-500 dark:text-[#B5B5B5] uppercase font-mono">{item.unit}</p>
                                 </div>
                             </li>
                         ))}
@@ -245,13 +246,13 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
 
             {/* AI Response Preview - Linear Style */}
             {aiResponse && (
-                <div className="mt-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-3 shadow-md animate-in fade-in duration-100 relative z-40">
+                <div className="mt-2 bg-white dark:bg-[#2C2A29] rounded border border-gray-200 dark:border-white/10 p-3 shadow-md animate-in fade-in duration-100 relative z-40">
                     <div className="flex gap-2">
                         <div className="mt-0.5 bg-orange-100 dark:bg-orange-900/30 p-1 rounded h-fit text-orange-600 dark:text-orange-400 shrink-0">
                             <Bot size={12} />
                         </div>
                         <div className="space-y-3 w-full">
-                            <div className="text-[11px] text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
+                            <div className="text-[11px] text-gray-700 dark:text-[#E8E8E6] whitespace-pre-line leading-relaxed">
                                 {aiResponse.text}
                             </div>
 
@@ -268,7 +269,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                                         {aiResponse.suggestedBudget.items
                                             .sort((a, b) => (a.type === 'service' ? -1 : 1))
                                             .map((item, idx) => (
-                                                <li key={idx} className={`text-[11px] flex justify-between items-center border-b border-orange-100 dark:border-orange-800/30 last:border-0 pb-1 last:pb-0 ${item.included === false ? 'opacity-60 grayscale' : 'text-gray-700 dark:text-gray-300'}`}>
+                                                <li key={idx} className={`text-[11px] flex justify-between items-center border-b border-orange-100 dark:border-white/5 last:border-0 pb-1 last:pb-0 ${item.included === false ? 'opacity-60 grayscale' : 'text-gray-700 dark:text-[#E8E8E6]'}`}>
                                                     <div className="flex items-center gap-2 flex-1 min-w-0">
                                                         {/* Show visual indicator if item is optional/unchecked */}
                                                         <div className={`w-1.5 h-1.5 shrink-0 rounded-full ${item.included === false ? 'bg-gray-300 dark:bg-gray-600' : 'bg-orange-500'}`}></div>

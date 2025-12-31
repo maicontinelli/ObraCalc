@@ -51,9 +51,9 @@ export default function ContatoPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="min-h-screen bg-[#262423] text-[#E8E8E6]">
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-[#F97316]/5 via-white to-[#F97316]/5 dark:from-[#F97316]/10 dark:via-gray-900 dark:to-[#F97316]/10 py-20 border-b border-gray-100 dark:border-gray-800">
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#F97316]/5 via-[#262423] to-[#F97316]/5 py-20 border-b border-white/5">
                 <div className="absolute inset-0 overflow-hidden">
                     <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#F97316]/10 rounded-full blur-3xl"></div>
                     <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#F97316]/10 rounded-full blur-3xl"></div>
@@ -61,17 +61,17 @@ export default function ContatoPage() {
 
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
-                        <div className="inline-flex items-center gap-2 bg-[#F97316]/10 dark:bg-[#F97316]/20 text-[#F97316] px-4 py-2 rounded-full mb-6">
+                        <div className="inline-flex items-center gap-2 bg-[#F97316]/10 text-[#F97316] px-4 py-2 rounded-full mb-6">
                             <Award className="w-4 h-4" />
                             <span className="text-sm font-semibold">Engenheiro Civil • CREA-BA</span>
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
                             Transformando Complexidade em{' '}
                             <span className="text-[#F97316]">Clareza</span>
                         </h1>
 
-                        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-lg md:text-xl text-[#B5B5B5] mb-8 max-w-3xl mx-auto leading-relaxed">
                             Com mais de 25 anos dedicados à engenharia de custos e orçamentação, desenvolvi o <strong>ObraCalc</strong> para democratizar
                             o acesso a orçamentos profissionais. Minha missão é simplificar processos complexos e tornar a construção civil mais acessível e transparente.
                         </p>
@@ -86,7 +86,7 @@ export default function ContatoPage() {
                             </Link>
                             <Link
                                 href="/sobre"
-                                className="btn bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-8 py-3 text-lg hover:border-[#F97316] dark:hover:border-[#F97316] transition-all"
+                                className="btn bg-[#2C2A29] border border-white/5 text-white px-8 py-3 text-lg hover:border-[#F97316] transition-all"
                             >
                                 Conhecer o ObraCalc
                             </Link>
@@ -99,10 +99,10 @@ export default function ContatoPage() {
             <section className="py-20">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                             Experiência e Especialização
                         </h2>
-                        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        <p className="text-lg text-[#B5B5B5] max-w-2xl mx-auto">
                             Décadas de atuação resultaram em metodologias consolidadas e resultados comprovados
                         </p>
                     </div>
@@ -111,13 +111,13 @@ export default function ContatoPage() {
                         {expertise.map((item, idx) => (
                             <div
                                 key={idx}
-                                className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-[#F97316] dark:hover:border-[#F97316] transition-all hover:shadow-lg group"
+                                className="bg-[#2C2A29] rounded-xl p-6 border border-white/5 hover:border-[#F97316] transition-all hover:shadow-lg group"
                             >
-                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#F97316] group-hover:scale-110 transition-all">
+                                <div className="w-12 h-12 bg-[#F97316]/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#F97316] group-hover:scale-110 transition-all">
                                     <item.icon className="w-6 h-6 text-[#F97316] group-hover:text-white transition-colors" />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{item.title}</h3>
-                                <p className="text-gray-600 dark:text-gray-300">{item.description}</p>
+                                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                                <p className="text-[#B5B5B5]">{item.description}</p>
                             </div>
                         ))}
                     </div>
@@ -125,25 +125,25 @@ export default function ContatoPage() {
             </section>
 
             {/* Mission Statement */}
-            <section className="py-20 bg-gradient-to-br from-[#F97316]/5 to-[#F97316]/5 dark:from-[#F97316]/10 dark:to-[#F97316]/10">
+            <section className="py-20 bg-[#262423]">
                 <div className="container mx-auto px-4">
                     <div className="max-w-4xl mx-auto">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 md:p-12 border border-gray-200 dark:border-gray-700 shadow-xl">
+                        <div className="bg-[#2C2A29] rounded-2xl p-8 md:p-12 border border-white/5 shadow-xl">
                             <div className="flex items-start gap-4 mb-6">
-                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <div className="w-12 h-12 bg-[#F97316]/10 rounded-lg flex items-center justify-center flex-shrink-0">
                                     <MessageSquare className="w-6 h-6 text-[#F97316]" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
                                         Por que criei o ObraCalc?
                                     </h2>
-                                    <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+                                    <div className="space-y-4 text-[#B5B5B5] leading-relaxed">
                                         <p>
                                             Ao longo da minha carreira, vi inúmeros projetos fracassarem por falta de planejamento orçamentário adequado.
                                             Pequenos construtores, arquitetos autônomos e proprietários muitas vezes não têm acesso a ferramentas profissionais de orçamentação.
                                         </p>
                                         <p>
-                                            <strong className="text-gray-900 dark:text-white">O ObraCalc nasceu dessa necessidade.</strong> Uma plataforma que combina
+                                            <strong className="text-white">O ObraCalc nasceu dessa necessidade.</strong> Uma plataforma que combina
                                             inteligência artificial com décadas de conhecimento técnico, tornando orçamentos precisos acessíveis a todos –
                                             desde uma reforma residencial até grandes empreendimentos.
                                         </p>
@@ -164,10 +164,10 @@ export default function ContatoPage() {
             <section className="py-20">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                             Reconhecimento Profissional
                         </h2>
-                        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        <p className="text-lg text-[#B5B5B5] max-w-2xl mx-auto">
                             O que parceiros e clientes dizem sobre nosso trabalho
                         </p>
                     </div>
@@ -176,19 +176,19 @@ export default function ContatoPage() {
                         {testimonials.map((testimonial, idx) => (
                             <div
                                 key={idx}
-                                className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all"
+                                className="bg-[#2C2A29] rounded-xl p-6 border border-white/5 hover:shadow-lg transition-all"
                             >
                                 <div className="flex gap-1 mb-4">
                                     {[...Array(testimonial.rating)].map((_, i) => (
                                         <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                                     ))}
                                 </div>
-                                <p className="text-gray-600 dark:text-gray-300 mb-6 italic">
+                                <p className="text-[#B5B5B5] mb-6 italic">
                                     "{testimonial.text}"
                                 </p>
-                                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <p className="font-bold text-gray-900 dark:text-white">{testimonial.name}</p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                                <div className="border-t border-white/5 pt-4">
+                                    <p className="font-bold text-white">{testimonial.name}</p>
+                                    <p className="text-sm text-[#8a8886]">{testimonial.role}</p>
                                 </div>
                             </div>
                         ))}
@@ -197,31 +197,31 @@ export default function ContatoPage() {
             </section>
 
             {/* Contact Form */}
-            <section id="formulario" className="py-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+            <section id="formulario" className="py-20 bg-[#262423]">
                 <div className="container mx-auto px-4">
                     <div className="max-w-2xl mx-auto">
                         <div className="text-center mb-12">
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                                 Vamos Conversar?
                             </h2>
-                            <p className="text-lg text-gray-600 dark:text-gray-300">
+                            <p className="text-lg text-[#B5B5B5]">
                                 Entre em contato para dúvidas, parcerias ou suporte técnico
                             </p>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-xl">
+                        <div className="bg-[#2C2A29] rounded-2xl p-8 border border-white/5 shadow-xl">
                             {isSubmitted ? (
                                 <div className="text-center py-8">
-                                    <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
+                                    <div className="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <CheckCircle2 className="w-8 h-8 text-green-400" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Mensagem Enviada!</h3>
-                                    <p className="text-gray-600 dark:text-gray-300">Retornaremos em breve.</p>
+                                    <h3 className="text-xl font-bold text-white mb-2">Mensagem Enviada!</h3>
+                                    <p className="text-[#B5B5B5]">Retornaremos em breve.</p>
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label className="block text-sm font-medium text-[#B5B5B5] mb-2">
                                             Nome Completo *
                                         </label>
                                         <input
@@ -229,13 +229,13 @@ export default function ContatoPage() {
                                             required
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-white/10 bg-[#1A1918] text-[#E8E8E6] focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all placeholder-[#8a8886]"
                                             placeholder="Seu nome"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label className="block text-sm font-medium text-[#B5B5B5] mb-2">
                                             Email *
                                         </label>
                                         <input
@@ -243,26 +243,26 @@ export default function ContatoPage() {
                                             required
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-white/10 bg-[#1A1918] text-[#E8E8E6] focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all placeholder-[#8a8886]"
                                             placeholder="seu@email.com"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label className="block text-sm font-medium text-[#B5B5B5] mb-2">
                                             Telefone
                                         </label>
                                         <input
                                             type="tel"
                                             value={formData.phone}
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-white/10 bg-[#1A1918] text-[#E8E8E6] focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all placeholder-[#8a8886]"
                                             placeholder="(00) 00000-0000"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label className="block text-sm font-medium text-[#B5B5B5] mb-2">
                                             Mensagem *
                                         </label>
                                         <textarea
@@ -270,7 +270,7 @@ export default function ContatoPage() {
                                             rows={5}
                                             value={formData.message}
                                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all resize-none"
+                                            className="w-full px-4 py-3 rounded-lg border border-white/10 bg-[#1A1918] text-[#E8E8E6] focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all resize-none placeholder-[#8a8886]"
                                             placeholder="Como podemos ajudar?"
                                         ></textarea>
                                     </div>
@@ -288,23 +288,23 @@ export default function ContatoPage() {
 
                         {/* Direct Contact Info */}
                         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center">
+                            <div className="bg-[#2C2A29] rounded-lg p-6 border border-white/5 flex items-center gap-4">
+                                <div className="w-12 h-12 bg-[#F97316]/10 rounded-lg flex items-center justify-center">
                                     <Mail className="w-6 h-6 text-[#F97316]" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
-                                    <p className="font-semibold text-gray-900 dark:text-white">maicontinelli@gmail.com</p>
+                                    <p className="text-sm text-[#8a8886]">Email</p>
+                                    <p className="font-semibold text-white">maicontinelli@gmail.com</p>
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-                                <div className="w-12 h-12 bg-[#F97316]/10 dark:bg-[#F97316]/20 rounded-lg flex items-center justify-center">
+                            <div className="bg-[#2C2A29] rounded-lg p-6 border border-white/5 flex items-center gap-4">
+                                <div className="w-12 h-12 bg-[#F97316]/10 rounded-lg flex items-center justify-center">
                                     <Phone className="w-6 h-6 text-[#F97316]" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Telefone</p>
-                                    <p className="font-semibold text-gray-900 dark:text-white">(73) 99950-3554</p>
+                                    <p className="text-sm text-[#8a8886]">Telefone</p>
+                                    <p className="font-semibold text-white">(73) 99950-3554</p>
                                 </div>
                             </div>
                         </div>

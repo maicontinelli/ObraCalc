@@ -120,10 +120,10 @@ export default function MemorialPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
+        <div className="min-h-screen bg-[#262423] text-[#E8E8E6] pb-20">
             {/* Hero Section */}
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-[#C2410C]/5 via-white to-[#C2410C]/5 border-b border-gray-200 pt-16 pb-12">
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#C2410C]/5 via-[#262423] to-[#C2410C]/5 border-b border-white/5 pt-16 pb-12">
                 <div className="absolute inset-0 overflow-hidden">
                     <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#C2410C]/10 rounded-full blur-3xl"></div>
                     <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#C2410C]/10 rounded-full blur-3xl"></div>
@@ -131,10 +131,10 @@ export default function MemorialPage() {
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
                             Memorial Descritivo de <span className="text-[#C2410C]">Topografia</span>
                         </h1>
-                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                        <p className="text-xl text-[#B5B5B5] max-w-2xl mx-auto">
                             Envie o arquivo KMZ do Google Earth e a IA cria automaticamente o memorial descritivo técnico + planilha em Excel pronta para prefeitura e cartório.
                         </p>
                     </div>
@@ -152,12 +152,12 @@ export default function MemorialPage() {
                 )}
 
                 {/* Main Card */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                <div className="bg-[#2C2A29] rounded-xl shadow-lg border border-white/5 overflow-hidden">
 
                     {/* Upload Section */}
                     <div className="p-8">
                         <div
-                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${file ? 'border-[#C2410C]/50 bg-[#C2410C]/5' : 'border-gray-300 hover:border-[#C2410C] hover:bg-gray-50'}`}
+                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer ${file ? 'border-[#C2410C]/50 bg-[#C2410C]/5' : 'border-white/10 hover:border-[#C2410C] hover:bg-[#C2410C]/5'}`}
                             onClick={() => fileInputRef.current?.click()}
                         >
                             <input
@@ -171,8 +171,8 @@ export default function MemorialPage() {
                             {file ? (
                                 <div className="flex flex-col items-center">
                                     <CheckCircle className="h-12 w-12 text-[#C2410C] mb-4" />
-                                    <h3 className="text-lg font-medium text-gray-900">{file.name}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Pronto para processar</p>
+                                    <h3 className="text-lg font-medium text-[#E8E8E6]">{file.name}</h3>
+                                    <p className="text-sm text-[#B5B5B5] mt-1">Pronto para processar</p>
                                     <button
                                         className="mt-4 text-sm text-[#C2410C] font-medium hover:underline"
                                         onClick={(e) => {
@@ -186,9 +186,9 @@ export default function MemorialPage() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center">
-                                    <Upload className="h-12 w-12 text-gray-400 mb-4" />
-                                    <h3 className="text-lg font-medium text-gray-900">Upload de arquivo KMZ</h3>
-                                    <p className="text-sm text-gray-500 mt-1 max-w-sm">
+                                    <Upload className="h-12 w-12 text-[#8a8886] mb-4" />
+                                    <h3 className="text-lg font-medium text-[#E8E8E6]">Upload de arquivo KMZ</h3>
+                                    <p className="text-sm text-[#B5B5B5] mt-1 max-w-sm">
                                         Exporte seu terreno do Google Earth como KMZ e arraste ou clique aqui.
                                     </p>
                                 </div>
@@ -197,41 +197,41 @@ export default function MemorialPage() {
                     </div>
 
                     {/* Options */}
-                    <div className="bg-gray-50 px-8 py-6 border-t border-gray-100">
-                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Configurações do Documento</h3>
+                    <div className="bg-[#222120] px-8 py-6 border-t border-white/5">
+                        <h3 className="text-sm font-bold text-[#8a8886] uppercase tracking-wider mb-4">Configurações do Documento</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Município</label>
+                                <label className="block text-sm font-medium text-[#B5B5B5] mb-1">Município</label>
                                 <input
                                     type="text"
                                     value={city}
                                     onChange={(e) => setCity(e.target.value)}
                                     placeholder="Ex: São Paulo"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C] placeholder-[#8a8886]"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                                <label className="block text-sm font-medium text-[#B5B5B5] mb-1">Estado</label>
                                 <input
                                     type="text"
                                     value={state}
                                     onChange={(e) => setState(e.target.value)}
                                     placeholder="Ex: SP"
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C] placeholder-[#8a8886]"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Sistema de Coordenadas</label>
-                                <select disabled className="w-full rounded-md border-gray-300 bg-gray-100 text-gray-500 shadow-sm cursor-not-allowed">
+                                <label className="block text-sm font-medium text-[#B5B5B5] mb-1">Sistema de Coordenadas</label>
+                                <select disabled className="w-full rounded-md border-white/10 bg-[#1A1918]/50 text-[#8a8886] shadow-sm cursor-not-allowed">
                                     <option>SIRGAS 2000 / UTM (Automático)</option>
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Sentido do Perímetro</label>
+                                <label className="block text-sm font-medium text-[#B5B5B5] mb-1">Sentido do Perímetro</label>
                                 <select
                                     value={isClockwise ? 'horario' : 'anti'}
                                     onChange={(e) => setIsClockwise(e.target.value === 'horario')}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C]"
+                                    className="w-full rounded-md border-white/10 bg-[#1A1918] text-[#E8E8E6] shadow-sm focus:border-[#C2410C] focus:ring-[#C2410C]"
                                 >
                                     <option value="horario">Horário (Padrão)</option>
                                     <option value="anti">Anti-horário</option>
@@ -241,12 +241,12 @@ export default function MemorialPage() {
                     </div>
 
                     {/* Action Button */}
-                    <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-end">
+                    <div className="p-8 bg-[#222120] border-t border-white/5 flex justify-end">
                         <button
                             onClick={handleProcess}
                             disabled={!file || isLoading}
                             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white shadow-md transition-all
-                                ${!file ? 'bg-gray-400 cursor-not-allowed' :
+                                ${!file ? 'bg-gray-600 cursor-not-allowed' :
                                     isLoading ? 'bg-[#C2410C]/80 cursor-wait' :
                                         'bg-[#C2410C] hover:bg-[#9A3412] hover:shadow-lg active:scale-95'}`}
                         >

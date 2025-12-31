@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -13,13 +14,21 @@ import { Button } from '@/components/Button';
 export default function Home() {
   const router = useRouter();
 
+  useEffect(() => {
+    // Force Dark Mode for Home Page
+    document.documentElement.classList.add('dark');
+    return () => {
+      document.documentElement.classList.remove('dark');
+    };
+  }, []);
+
   const handleStart = (type: 'obra_nova') => {
     const newId = crypto.randomUUID();
     router.push(`/editor/${newId}?type=${type}`);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-[#191919]">
+    <div className="min-h-screen flex flex-col bg-[#262423] text-gray-100">
       <main className="flex-grow">
         <Hero />
         <TrustBar />
@@ -28,7 +37,7 @@ export default function Home() {
 
         {/* CTA Section */}
         {/* CTA Section */}
-        <section className="py-24 bg-[#E89E37] text-white text-center relative overflow-hidden">
+        <section className="py-24 bg-[#2C2A29] border-t border-white/5 text-white text-center relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-10">
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>

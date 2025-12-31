@@ -36,8 +36,21 @@ export default function SimpleNav() {
         setUser(null);
     };
 
+    const isReportPage = pathname?.startsWith('/report/');
+    const isDarkPage = pathname?.startsWith('/report/') ||
+        pathname === '/topografia' ||
+        pathname === '/relatorio-fotografico' ||
+        pathname === '/apoie' ||
+        pathname === '/sobre' ||
+        pathname === '/contato' ||
+        pathname === '/dashboard' ||
+        pathname === '/planos';
+
     return (
-        <nav className="bg-gray-100/40 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-200/50 dark:bg-gray-900/80 dark:border-gray-700/50">
+        <nav className={`sticky top-0 z-50 border-b ${isDarkPage
+            ? 'bg-[#262423] border-white/5'
+            : 'bg-gray-100/40 backdrop-blur-sm border-gray-200/50 dark:bg-[#262423]/80 dark:border-white/5'
+            }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
@@ -57,9 +70,9 @@ export default function SimpleNav() {
                         <Link
                             href="/topografia"
                             title="Topografia"
-                            className={`transition-all p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 ${pathname === '/topografia'
-                                ? 'text-[#C2410C] bg-gray-50 dark:bg-gray-800/50'
-                                : 'text-gray-500 dark:text-gray-400'
+                            className={`transition-all p-2 rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} ${pathname === '/topografia'
+                                ? `text-[#C2410C] ${isDarkPage ? 'bg-gray-800/50' : 'bg-gray-50 dark:bg-gray-800/50'}`
+                                : isDarkPage ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
                                 } hover:text-[#C2410C] group`}
                         >
                             <Map
@@ -75,9 +88,9 @@ export default function SimpleNav() {
                         <Link
                             href="/relatorio-fotografico"
                             title="Relatório Fotográfico"
-                            className={`transition-all p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 ${pathname === '/relatorio-fotografico'
-                                ? 'text-[#6366F1] bg-gray-50 dark:bg-gray-800/50'
-                                : 'text-gray-500 dark:text-gray-400'
+                            className={`transition-all p-2 rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} ${pathname === '/relatorio-fotografico'
+                                ? `text-[#6366F1] ${isDarkPage ? 'bg-gray-800/50' : 'bg-gray-50 dark:bg-gray-800/50'}`
+                                : isDarkPage ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
                                 } hover:text-[#6366F1] group`}
                         >
                             <Camera
@@ -90,52 +103,59 @@ export default function SimpleNav() {
 
 
 
-                        {/* Dropdown for More Items */}
-                        <div className="relative group">
-                            <button
-                                className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
-                                title="Mais Opções"
-                                onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-                            >
-                                <MoreHorizontal size={20} />
-                            </button>
+                        <Link
+                            href="/sobre"
+                            title="Sobre"
+                            className={`transition-all p-2 rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} ${pathname === '/sobre'
+                                ? `text-[#3B82F6] ${isDarkPage ? 'bg-gray-800/50' : 'bg-gray-50 dark:bg-gray-800/50'}`
+                                : isDarkPage ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
+                                } hover:text-[#3B82F6] group`}
+                        >
+                            <Info
+                                size={20}
+                                className={`transition-all duration-300 group-hover:drop-shadow-[0_0_5px_rgba(59,130,246,0.6)] ${pathname === '/sobre' ? 'fill-[#3B82F6]' : 'fill-transparent'}`}
+                            />
+                            <span className="sr-only">Sobre</span>
+                        </Link>
 
-                            <div className={`absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 p-2 transition-all duration-200 transform origin-top-right z-50 flex flex-col gap-1 ${isMoreMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'}`}>
-                                <Link
-                                    href="/sobre"
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#3B82F6] transition-colors group/item"
-                                    onClick={() => setIsMoreMenuOpen(false)}
-                                >
-                                    <Info size={16} className="text-gray-400 group-hover/item:text-[#3B82F6]" />
-                                    Sobre
-                                </Link>
-                                <Link
-                                    href="/contato"
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#F97316] transition-colors group/item"
-                                    onClick={() => setIsMoreMenuOpen(false)}
-                                >
-                                    <Mail size={16} className="text-gray-400 group-hover/item:text-[#F97316]" />
-                                    Contato
-                                </Link>
-                                <Link
-                                    href="/apoie"
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#EC4899] transition-colors group/item"
-                                    onClick={() => setIsMoreMenuOpen(false)}
-                                >
-                                    <Heart size={16} className="text-gray-400 group-hover/item:text-[#EC4899]" />
-                                    Apoie
-                                </Link>
-                            </div>
-                        </div>
+                        <Link
+                            href="/contato"
+                            title="Contato"
+                            className={`transition-all p-2 rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} ${pathname === '/contato'
+                                ? `text-[#F97316] ${isDarkPage ? 'bg-gray-800/50' : 'bg-gray-50 dark:bg-gray-800/50'}`
+                                : isDarkPage ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
+                                } hover:text-[#F97316] group`}
+                        >
+                            <Mail
+                                size={20}
+                                className={`transition-all duration-300 group-hover:drop-shadow-[0_0_5px_rgba(249,115,22,0.6)] ${pathname === '/contato' ? 'fill-[#F97316]' : 'fill-transparent'}`}
+                            />
+                            <span className="sr-only">Contato</span>
+                        </Link>
 
-                        <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2" />
+                        <Link
+                            href="/apoie"
+                            title="Apoie"
+                            className={`transition-all p-2 rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} ${pathname === '/apoie'
+                                ? `text-[#EC4899] ${isDarkPage ? 'bg-gray-800/50' : 'bg-gray-50 dark:bg-gray-800/50'}`
+                                : isDarkPage ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
+                                } hover:text-[#EC4899] group`}
+                        >
+                            <Heart
+                                size={20}
+                                className={`transition-all duration-300 group-hover:drop-shadow-[0_0_5px_rgba(236,72,153,0.6)] ${pathname === '/apoie' ? 'fill-[#EC4899]' : 'fill-transparent'}`}
+                            />
+                            <span className="sr-only">Apoie</span>
+                        </Link>
+
+                        <div className={`h-6 w-px mx-2 ${isDarkPage ? 'bg-gray-700' : 'bg-gray-200 dark:bg-gray-700'}`} />
 
                         <Link
                             href="/planos"
                             title="Planos"
-                            className={`transition-all p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 ${pathname === '/planos'
-                                ? 'text-[#74D2E7] bg-gray-50 dark:bg-gray-800/50'
-                                : 'text-gray-500 dark:text-gray-400'
+                            className={`transition-all p-2 rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} ${pathname === '/planos'
+                                ? `text-[#74D2E7] ${isDarkPage ? 'bg-gray-800/50' : 'bg-gray-50 dark:bg-gray-800/50'}`
+                                : isDarkPage ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
                                 } hover:text-[#74D2E7] group mr-1`}
                         >
                             <Gem
@@ -151,9 +171,9 @@ export default function SimpleNav() {
                                 <Link
                                     href="/dashboard"
                                     title="Painel"
-                                    className={`transition-all p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 ${pathname === '/dashboard'
-                                        ? 'text-[#E89E37] bg-gray-50 dark:bg-gray-800/50'
-                                        : 'text-gray-500 dark:text-gray-400'
+                                    className={`transition-all p-2 rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} ${pathname === '/dashboard'
+                                        ? `text-[#E89E37] ${isDarkPage ? 'bg-gray-800/50' : 'bg-gray-50 dark:bg-gray-800/50'}`
+                                        : isDarkPage ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
                                         } hover:text-[#E89E37] group`}
                                 >
                                     <User
@@ -166,7 +186,7 @@ export default function SimpleNav() {
 
                                 <button
                                     onClick={handleSignOut}
-                                    className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                                    className={`p-2 text-gray-400 hover:text-red-600 transition-colors rounded-full ${isDarkPage ? 'hover:bg-gray-800' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
                                     title="Sair"
                                 >
                                     <LogOut size={20} />

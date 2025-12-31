@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="pt-BR">
-            <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased font-sans`}>
+            <body className={`${inter.variable} ${spaceGrotesk.variable} bg-[#262423] antialiased font-sans`}>
                 <SimpleNav />
                 <main>{children}</main>
                 <Footer />
