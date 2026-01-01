@@ -2,12 +2,16 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Plus, Trash2, FileText, Settings, ChevronDown, Sparkles, Loader2, Cloud, CloudOff } from 'lucide-react';
+import Link from 'next/link';
+import { Plus, Trash2, FileText, Settings, ChevronDown, Sparkles, Loader2, Cloud, CloudOff, Check } from 'lucide-react';
 import CommandSearch, { BoqItem } from './CommandSearch';
 import { BOQ_TEMPLATES } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
+
 import { getDddInfo } from '@/lib/ddd-data';
+import { useProfile } from '@/hooks/useProfile';
+import { PLAN_LIMITS } from '@/lib/plan-limits';
 
 export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const router = useRouter();
@@ -15,12 +19,13 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const type = (searchParams?.get('type') as 'obra_nova') || 'obra_nova';
 
     const supabase = createClient();
+    const { profile, isLoading: isProfileLoading } = useProfile();
     const [user, setUser] = useState<User | null>(null);
     const [isCloudSynced, setIsCloudSynced] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
     const [items, setItems] = useState<BoqItem[]>([]);
-    const [bdi, setBdi] = useState(20);
+    const [bdi, setBdi] = useState(12);
     const [providerName, setProviderName] = useState('');
     const [clientName, setClientName] = useState('');
     const [projectType, setProjectType] = useState('');
@@ -36,20 +41,29 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
     const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
     const [isManualCatalogExpanded, setIsManualCatalogExpanded] = useState(false);
+    const [includeMaterials, setIncludeMaterials] = useState(true);
 
-    // FULL Default Items Template generated from shared constants
-    const DEFAULT_ITEMS: BoqItem[] = useMemo(() => {
-        return BOQ_TEMPLATES.obra_nova.flatMap(cat =>
-            cat.items.map(item => ({
+    const [defaultItems, setDefaultItems] = useState<BoqItem[]>([]);
+
+    useEffect(() => {
+        const fetchCatalog = async () => {
+            const { getCatalogItems } = await import('@/lib/catalog-service');
+            const catalog = await getCatalogItems();
+
+            const formattedItems = catalog.map(item => ({
                 id: item.id,
-                category: cat.name.toUpperCase(), // Normalize to Uppercase for consistency
+                category: item.category.toUpperCase(),
                 name: item.name,
                 unit: item.unit,
-                quantity: item.quantity || 0,
+                quantity: 0,
                 price: item.price,
+                materialPrice: item.materialPrice,
+                laborPrice: item.laborPrice,
                 included: false
-            }))
-        );
+            }));
+            setDefaultItems(formattedItems);
+        };
+        fetchCatalog();
     }, []);
 
     // Auth & Limit Check
@@ -69,13 +83,15 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         checkUser();
     }, []);
 
-    // Force Dark Mode for Editor Page
+    // Force Dark Mode for Editor Page - REMOVED to allow theme toggling
+    /* 
     useEffect(() => {
         document.documentElement.classList.add('dark');
         return () => {
             document.documentElement.classList.remove('dark');
         };
     }, []);
+    */
 
     // Load Data
     useEffect(() => {
@@ -121,7 +137,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     const hasStructure = loadedItems.some((i: BoqItem) => i.category?.includes('ESTRUTURA') || i.category?.includes('Estrutura'));
 
                     if (loadedItems.length < 10 && !hasStructure) {
-                        const mergedItems = [...DEFAULT_ITEMS];
+                        const mergedItems = [...defaultItems];
                         loadedItems.forEach((savedItem: BoqItem) => {
                             const index = mergedItems.findIndex(def => def.id === savedItem.id);
                             if (index !== -1) {
@@ -137,11 +153,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                     finalItems = loadedItems;
                     setItems(loadedItems);
-                    setBdi(parsed.bdi || 20);
+                    setBdi(parsed.bdi || 12);
                     setProviderName(parsed.providerName || '');
                     setClientName(parsed.clientName || '');
                     setProjectType(parsed.projectType || '');
                     setDeadline(parsed.deadline || '');
+                    setIncludeMaterials(parsed.includeMaterials !== undefined ? parsed.includeMaterials : true);
                     setProviderPhone(parsed.providerPhone || '');
                     setClientPhone(parsed.clientPhone || '');
                     setWorkCity(parsed.workCity || '');
@@ -149,12 +166,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                     setAiRequests(parsed.aiRequests || []);
                 } catch (e) {
                     console.error("Error parsing estimate:", e);
-                    finalItems = DEFAULT_ITEMS;
-                    setItems(DEFAULT_ITEMS);
+                    finalItems = defaultItems;
+                    setItems(defaultItems);
                 }
             } else {
-                finalItems = DEFAULT_ITEMS;
-                setItems(DEFAULT_ITEMS);
+                finalItems = defaultItems;
+                setItems(defaultItems);
             }
 
             // Auto-fill Provider Info from User Profile if empty (New Budget Strategy)
@@ -181,14 +198,50 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             });
             setExpandedCategories(prev => ({ ...prev, ...initialExpanded }));
 
+            // 5. Handle Focus Item (from Homepage Search)
+            if (dataToLoad?.focusItemId) {
+                const targetId = dataToLoad.focusItemId;
+                const targetItem = finalItems.find(i => i.id === targetId);
+
+                if (targetItem) {
+                    // Check if it's a standard cat in the manual section
+                    const isStandardCategory = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === targetItem.category);
+                    if (isStandardCategory) {
+                        setIsManualCatalogExpanded(true);
+                    }
+
+                    // Force Expand Category
+                    setExpandedCategories(prev => ({
+                        ...prev,
+                        [targetItem.category]: true
+                    }));
+
+                    // Delay Scroll & Focus
+                    setTimeout(() => {
+                        const element = document.getElementById(`item-${targetId}`);
+                        if (element) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            element.classList.add('bg-blue-50/10'); // Pulse effect
+                            setTimeout(() => element.classList.remove('bg-blue-50/10'), 2000);
+
+                            const quantityInput = element.querySelector('input[type="number"]') as HTMLInputElement;
+                            if (quantityInput) {
+                                quantityInput.focus();
+                                quantityInput.select();
+                            }
+                        }
+                    }, 800); // 800ms to allow rendering and animation
+                }
+            }
+
             setIsLoaded(true);
         };
 
-        if (!isLoaded || user) { // Reload if user changes (login)
+        if (defaultItems.length > 0 && (!isLoaded || user)) { // Reload if user changes (login) or if defaultItems become available
             loadData();
         }
 
-    }, [estimateId, user, DEFAULT_ITEMS]);
+    }, [estimateId, user, defaultItems]);
 
     // Save to localStorage ONLY (Cloud save will be manual)
     useEffect(() => {
@@ -207,6 +260,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             workCity,
             workState,
             updatedAt: new Date().toISOString(),
+            includeMaterials, // Always save this state
             aiRequests
         };
 
@@ -234,13 +288,9 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         // Will be triggered manually or on report generation.
         setIsCloudSynced(false);
 
-    }, [estimateId, items, bdi, providerName, clientName, projectType, deadline, providerPhone, clientPhone, workCity, workState, aiRequests, isLoaded]);
+    }, [estimateId, items, bdi, providerName, clientName, projectType, deadline, providerPhone, clientPhone, workCity, workState, includeMaterials, aiRequests, isLoaded]);
 
 
-    const MAX_FREE_ITEMS = 20;
-    // TODO: Connect this to real subscription state. For now, only Logged users are "Premium" enough to bypass the initial limit.
-    // Ideally, we should check user.subscription_status or similar.
-    const isPremium = !!user;
 
     // Handlers
     const toggleInclude = (id: string, forceState?: boolean) => {
@@ -252,9 +302,20 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         // Count currently included items
         const currentCount = items.filter(i => i.included).length;
 
-        // If we are turning it ON, and we are NOT premium, and we hit the limit
-        if (willBeIncluded && !item.included && !isPremium && currentCount >= MAX_FREE_ITEMS) {
-            alert(`Limpo do Plano Grátis atingido! \n\nVocê só pode adicionar até ${MAX_FREE_ITEMS} itens no plano gratuito.\n\nAssine o Plano Profissional para criar orçamentos ilimitados.`);
+        // Check Plan Limits
+        const tier = profile?.tier || 'free';
+        const limit = PLAN_LIMITS[tier].max_items_per_estimate;
+
+        // If turning ON, and hitting limit
+        if (willBeIncluded && !item.included && currentCount >= limit) {
+            const message = tier === 'free'
+                ? `Limite do Plano Grátis atingido! \n\nVocê só pode adicionar até ${limit} itens no plano gratuito.\n\nAssine o Plano Profissional para ilimitado.`
+                : `Limite de itens atingido (${limit}).`;
+            alert(message);
+            if (tier === 'free') {
+                // Open plans page in new tab or specific modal
+                window.open('/planos', '_blank');
+            }
             return;
         }
 
@@ -318,18 +379,13 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const handleSaveToCloud = async () => {
         if (!user) return;
 
-        // Restriction: Free Plan Limit (Max 3 Budgets)
-        // Ensure we are not blocking updates to existing (already saved) budgets.
-        // We assume 'lastSaved' is non-null if it's an existing cloud budget AND we are just updating.
-        // If lastSaved is null, it's a new insertion.
-        const MAX_FREE_BUDGETS = 3;
-        // Re-read isPremium from scope or define logic here. 
-        // We will strictly enforce limit for ALL users until "pro" plan bit is set in DB.
-        // Temporary: Treat everyone as Free for this test.
-        const isUserPremium = false;
+        const tier = profile?.tier || 'free';
+        const limit = PLAN_LIMITS[tier].max_estimates;
 
-        if (!isUserPremium && !lastSaved && budgetCount >= MAX_FREE_BUDGETS) {
-            alert(`Limite do Plano Grátis Atingido!\n\nVocê já possui ${budgetCount} orçamentos salvos.\nO plano gratuito permite salvar até ${MAX_FREE_BUDGETS} orçamentos.\n\nAssine o Plano Profissional para criar orçamentos ilimitados.`);
+        // Check only if limit is finite (free tier)
+        if (limit < Infinity && !lastSaved && budgetCount >= limit) {
+            alert(`Limite do Plano Grátis Atingido!\n\nVocê já possui ${budgetCount} orçamentos salvos.\nO plano gratuito permite salvar até ${limit} orçamentos.\n\nAssine o Plano Profissional.`);
+            window.open('/planos', '_blank');
             return;
         }
 
@@ -348,6 +404,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             workCity,
             workState,
             updatedAt: new Date().toISOString(),
+            includeMaterials,
             aiRequests
         };
 
@@ -392,6 +449,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             clientPhone,
             workCity,
             workState,
+            includeMaterials,
             updatedAt: new Date().toISOString(),
             aiRequests
         };
@@ -402,7 +460,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             await handleSaveToCloud();
         } else {
             // "Arapuca de Leads": Silent capture for anonymous users
-            // Fire-and-forget: we don't await this nor block the user flow
             supabase.from('anonymous_leads').insert({
                 provider_name: providerName,
                 provider_phone: providerPhone,
@@ -411,85 +468,75 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                 project_type: projectType,
                 work_city: workCity,
                 work_state: workState,
+                deadline: deadline,
                 origin: 'editor_guest'
             }).then(({ error }) => {
                 if (error) console.error('Lead Trap Error:', error);
             });
-
-            // Small delay locally only
-            await new Promise(resolve => setTimeout(resolve, 500));
         }
 
+        // Always redirect to report page logic locally
+        await new Promise(resolve => setTimeout(resolve, 500));
         router.push(`/report/${estimateId}`);
     };
 
-    // Calculations
-    const includedItems = items.filter(i => i.included);
+    // Recalculate Totals & Groups
+    const { subtotal, bdiValue, total, groupedItems, categories } = useMemo(() => {
+        let sub = 0;
+        const groupMap: Record<string, BoqItem[]> = {};
 
-    const subtotal = useMemo(() =>
-        includedItems.reduce((sum, item) => {
-            const price = item.manualPrice ?? item.price;
-            return sum + (Number(price) * Number(item.quantity));
-        }, 0),
-        [includedItems]);
+        // Ensure default categories exist even if empty
+        const defaultCats = BOQ_TEMPLATES.obra_nova.map((c: any) => c.name.toUpperCase());
+        defaultCats.forEach((c: string) => groupMap[c] = []);
 
-    const bdiValue = subtotal * (bdi / 100);
-    const total = subtotal + bdiValue;
+        const includedItems = items.filter((i: BoqItem) => i.included);
 
-    // Group items by category
-    const groupedItems = useMemo(() => {
-        const groups: Record<string, BoqItem[]> = {};
+        includedItems.forEach((item: BoqItem) => {
+            // Apply Sanitization Logic for Total Calculation
+            const baseP = Number(item.price);
+            const rawLabor = Number(item.laborPrice);
+            // Ignore corrupted labor price if it equals or exceeds base price
+            const safeLabor = (rawLabor > 0 && rawLabor < baseP) ? rawLabor : baseP * 0.4;
 
-        // Get standard categories from template
-        const templateCategories = BOQ_TEMPLATES.obra_nova.map(c => c.name.toUpperCase());
+            const calculatedPrice = item.manualPrice ?? (includeMaterials ? baseP : safeLabor);
 
-        // Initialize groups
-        templateCategories.forEach(cat => {
-            groups[cat] = [];
+            sub += (Number(calculatedPrice) * Number(item.quantity));
         });
 
-        // Populate items
-        items.forEach(item => {
-            // If category matches standard (case insensitive check just in case), use it. 
-            // Otherwise create new group if needed.
-            // But we already normalized to Uppercase in load/add.
+        items.forEach((item: BoqItem) => {
             const cat = item.category || 'ITENS ADICIONAIS';
-            if (!groups[cat]) groups[cat] = [];
-            groups[cat].push(item);
+            if (!groupMap[cat]) groupMap[cat] = [];
+            groupMap[cat].push(item);
         });
 
-        return groups;
-    }, [items]);
+        const sortedCategories = Object.keys(groupMap).sort((a: string, b: string) => {
+            const indexA = defaultCats.indexOf(a);
+            const indexB = defaultCats.indexOf(b);
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+            return a.localeCompare(b);
+        });
 
-    // Get categories maintaining the preferred order: Custom First, then Standard
-    const categories = useMemo(() => {
-        const defaultCats = BOQ_TEMPLATES.obra_nova.map(c => c.name.toUpperCase());
-        const activeCats = Object.keys(groupedItems).filter(cat => groupedItems[cat].length > 0);
+        return {
+            subtotal: sub,
+            bdiValue: sub * (bdi / 100),
+            total: sub * (1 + bdi / 100),
+            groupedItems: groupMap,
+            categories: sortedCategories
+        };
+    }, [items, bdi, includeMaterials]);
 
-        const standard = defaultCats.filter(c => activeCats.includes(c));
-        const custom = activeCats.filter(c => !defaultCats.includes(c) && c !== 'ITENS ADICIONAIS');
-        const others = activeCats.filter(c => c === 'ITENS ADICIONAIS');
-
-        // Custom (AI) -> Standard -> Others
-        return [...custom, ...standard, ...others];
-    }, [groupedItems]);
-
-    // Get DDD info for phone numbers
-    // Get DDD info for phone numbers
     const providerDddInfo = useMemo(() => getDddInfo(providerPhone), [providerPhone]);
     const clientDddInfo = useMemo(() => getDddInfo(clientPhone), [clientPhone]);
 
     // Auto-fill Work Location from Client Phone DDD
     useEffect(() => {
         if (clientDddInfo) {
-            // Only auto-fill if fields are empty to avoid overwriting user manual input
             if (!workState) {
                 setWorkState(clientDddInfo.state);
             }
             if (!workCity) {
-                // Use the first city or region as a suggestion
-                // Ideally we would put the 'region' string, but city field implies a specific city.
-                // Let's use the first city in the list as a best guess/suggestion.
                 if (clientDddInfo.cities.length > 0) {
                     setWorkCity(clientDddInfo.cities[0]);
                 }
@@ -497,7 +544,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         }
     }, [clientDddInfo, workState, workCity]);
 
-    // Phone formatting helper
     const formatPhoneNumber = (value: string) => {
         const numbers = value.replace(/\D/g, '');
         if (numbers.length <= 11) {
@@ -510,36 +556,34 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
     const handlePhoneChange = (setter: (val: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = e.target.value;
         const numeric = rawValue.replace(/\D/g, '');
-
-        // Limit to 11 digits
         if (numeric.length > 11) return;
-
         let formatted = numeric;
         if (numeric.length > 2) formatted = `(${numeric.slice(0, 2)}) ${numeric.slice(2)}`;
         if (numeric.length > 7) formatted = `(${numeric.slice(0, 2)}) ${numeric.slice(2, 7)}-${numeric.slice(7)}`;
-
         setter(formatted);
     };
 
+
+
     const isFormValid = useMemo(() => {
         return (
-            providerName.trim() !== '' &&
             clientName.trim() !== '' &&
-            providerPhone.replace(/\D/g, '').length >= 10 &&
             clientPhone.replace(/\D/g, '').length >= 10 &&
             projectType !== '' &&
             deadline !== ''
         );
-    }, [providerName, clientName, providerPhone, clientPhone, projectType, deadline]);
+    }, [clientName, clientPhone, projectType, deadline]);
 
     return (
-        <div className="min-h-screen bg-[#262423] font-sans">
+        <div className="min-h-screen bg-background font-sans">
             <div className="max-w-[1600px] mx-auto p-6 lg:p-8">
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
                     {/* LEFT COLUMN: Main Content (2/3) */}
                     <div className="lg:col-span-2 space-y-6">
+
+
 
                         {/* Labels for AI vs Manual */}
                         <div className="flex items-center justify-between px-1 mb-2">
@@ -549,24 +593,38 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                             {/* Cloud Save Button */}
                             {user && (
-                                <button
-                                    onClick={handleSaveToCloud}
-                                    disabled={isCloudSynced}
-                                    className={`flex items-center gap-1.5 transition-all duration-300 px-2 py-1 rounded-md group ${isCloudSynced ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50 hover:bg-blue-100 cursor-pointer'}`}
-                                    title={isCloudSynced ? "Sincronizado com a nuvem" : "Clique para salvar na nuvem"}
-                                >
-                                    {isCloudSynced ? (
-                                        <>
-                                            <Cloud className="w-3 h-3 text-green-500" />
-                                            <span className="text-[10px] font-medium">Salvo {lastSaved ? `às ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <CloudOff className="w-3 h-3 text-blue-500 group-hover:scale-110 transition-transform" />
-                                            <span className="text-[10px] font-medium">Salvar na Nuvem</span>
-                                        </>
-                                    )}
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={handleSaveToCloud}
+                                        disabled={isCloudSynced}
+                                        className={`flex items-center gap-1.5 transition-all duration-300 px-2 py-1 rounded-md group ${isCloudSynced ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50 hover:bg-blue-100 cursor-pointer'}`}
+                                        title={isCloudSynced ? "Sincronizado com a nuvem" : "Clique para salvar na nuvem"}
+                                    >
+                                        {isCloudSynced ? (
+                                            <>
+                                                <Cloud className="w-3 h-3 text-green-500" />
+                                                <span className="text-[10px] font-medium">Salvo {lastSaved ? `às ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CloudOff className="w-3 h-3 text-blue-500 group-hover:scale-110 transition-transform" />
+                                                <span className="text-[10px] font-medium">Salvar na Nuvem</span>
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        onClick={async () => {
+                                            await supabase.auth.signOut();
+                                            setUser(null);
+                                            window.location.reload();
+                                        }}
+                                        className="text-[10px] text-red-500 hover:text-red-400 underline"
+                                        title="Sair da conta (Debug)"
+                                    >
+                                        Sair
+                                    </button>
+                                </div>
                             )}
                         </div>
 
@@ -575,28 +633,23 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             <CommandSearch
                                 items={items}
                                 onSelect={(item) => {
-                                    // Check if this is a standard category that lives inside the collapsed "Manual" section
                                     const isStandardCategory = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === item.category);
                                     if (isStandardCategory) {
                                         setIsManualCatalogExpanded(true);
                                     }
 
-                                    // Expand the category where the item is located
                                     setExpandedCategories(prev => ({
                                         ...prev,
                                         [item.category]: true
                                     }));
 
-                                    // Scroll to item after a short delay to allow expansion animation
                                     setTimeout(() => {
                                         const element = document.getElementById(`item-${item.id}`);
                                         if (element) {
                                             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                            // Optional: Add a temporary highlight effect
                                             element.classList.add('bg-blue-50');
                                             setTimeout(() => element.classList.remove('bg-blue-50'), 2000);
 
-                                            // Focus quantity input if possible
                                             const quantityInput = element.querySelector('input[type="number"]') as HTMLInputElement;
                                             if (quantityInput) {
                                                 quantityInput.focus();
@@ -607,7 +660,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                 }}
                                 onAddCustom={(newItems, request) => {
                                     const requestId = crypto.randomUUID();
-                                    // FORCE Single Group: Use title/query as category for ALL items, ignoring internal categories
                                     const targetCategory = (request?.suggestedTitle || request?.query || 'ITENS ADICIONAIS').toUpperCase();
 
                                     const itemsWithIds = newItems.map(item => ({
@@ -621,7 +673,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     if (request) {
                                         setAiRequests(prev => [...prev, { ...request, id: requestId, timestamp: new Date().toISOString() }]);
                                     }
-                                    // Auto-expand the target category
                                     setExpandedCategories(prev => ({
                                         ...prev,
                                         [targetCategory]: true
@@ -630,8 +681,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             />
                         </div>
 
-
-
                         {/* Main List Container */}
                         <div className="">
 
@@ -639,18 +688,21 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             <div className="space-y-2 mb-6">
                                 {categories.filter(cat => {
                                     const isStandard = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === cat);
-                                    return !isStandard && cat !== 'ITENS ADICIONAIS' && cat !== 'MANUAL'; // Show custom categories here
+                                    return !isStandard && cat !== 'ITENS ADICIONAIS' && cat !== 'MANUAL';
                                 }).concat(categories.filter(c => c === 'ITENS ADICIONAIS')).map((category) => {
-                                    /* Standard Categories are filtered OUT here */
                                     const categoryItems = groupedItems[category];
                                     if (!categoryItems) return null;
                                     const categoryIncluded = categoryItems.filter(i => i.included).length;
                                     const isExpanded = expandedCategories[category];
 
-                                    // Calculate Category Total
                                     const categoryTotal = categoryItems.reduce((sum, item) => {
                                         if (!item.included) return sum;
-                                        const price = item.manualPrice ?? item.price;
+                                        // Apply Same Sanitization Logic for Category Total
+                                        const baseP = Number(item.price);
+                                        const rawLabor = Number(item.laborPrice);
+                                        const safeLabor = (rawLabor > 0 && rawLabor < baseP) ? rawLabor : baseP * 0.4;
+
+                                        const price = item.manualPrice ?? (includeMaterials ? baseP : safeLabor);
                                         return sum + (price * item.quantity);
                                     }, 0);
 
@@ -660,27 +712,27 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                             <div className="flex items-center justify-between px-4 py-3 group cursor-pointer hover:bg-white/5 transition-colors" onClick={() => toggleCategoryExpansion(category)}>
                                                 <div className="flex items-center gap-3">
                                                     <ChevronDown
-                                                        className={`w-3.5 h-3.5 text-[#B5B5B5] transition-transform duration-200 ${!isExpanded ? '-rotate-90' : ''}`}
+                                                        className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${!isExpanded ? '-rotate-90' : ''}`}
                                                     />
                                                     <div className="flex items-baseline gap-2">
-                                                        <h3 className="text-xs font-bold text-[#F5E6D3] uppercase tracking-wide">
-                                                            ✨ {category}
+                                                        <h3 className="text-xs font-bold text-foreground/80 dark:text-[#F5E6D3] uppercase tracking-wide">
+                                                            {category}
                                                         </h3>
-                                                        <span className="text-[10px] text-[#B5B5B5] font-normal">
+                                                        <span className="text-[10px] text-muted-foreground font-normal">
                                                             ({categoryItems.length})
                                                         </span>
                                                     </div>
                                                 </div>
 
                                                 <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-                                                    <span className="text-xs font-bold text-[#E8E8E6] tabular-nums">
+                                                    <span className="text-xs font-bold text-foreground tabular-nums">
                                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}
                                                     </span>
                                                     <button
                                                         onClick={() => toggleCategoryItems(category, categoryIncluded < categoryItems.length)}
                                                         className={`w-4 h-4 border rounded transition-colors flex items-center justify-center ${categoryIncluded > 0
                                                             ? 'bg-blue-600 border-blue-600 text-white'
-                                                            : 'border-white/10 bg-[#222120] hover:border-white/20'
+                                                            : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-[#222120] hover:border-black/20 dark:hover:border-white/20'
                                                             }`}
                                                     >
                                                         {categoryIncluded > 0 && <span className="text-[8px] font-bold">✓</span>}
@@ -690,7 +742,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                                             {/* Items List (Accordion Body) */}
                                             {isExpanded && (
-                                                <div className="pb-4 pt-1 bg-[#2C2A29] border-t border-white/5">
+                                                <div className="pb-4 pt-1 bg-card border-t border-white/5">
                                                     {/* Column Headers */}
                                                     <div className="grid grid-cols-12 gap-4 mb-2 px-4 text-[9px] font-bold text-[#8a8886] uppercase tracking-wider">
                                                         <div className="col-span-1"></div>
@@ -716,6 +768,17 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                 const prevType = index > 0 ? getType(sorted[index - 1]) : null;
                                                                 const showDivider = currentType === 'material' && prevType !== 'material' && index > 0;
 
+                                                                // EXPLICIT DISPLAY CALCULATION (Fix for DB items & Dirty Data)
+                                                                const basePrice = Number(item.price);
+                                                                // Safety: If laborPrice is >= basePrice, it's invalid (dirty data), so force fallback logic
+                                                                const rawLabor = Number(item.laborPrice);
+                                                                const safeLabor = (rawLabor > 0 && rawLabor < basePrice) ? rawLabor : basePrice * 0.4;
+
+                                                                const hasManual = item.manualPrice !== undefined && item.manualPrice !== null;
+                                                                const displayValue = hasManual
+                                                                    ? Number(item.manualPrice)
+                                                                    : (includeMaterials ? basePrice : safeLabor);
+
                                                                 return (
                                                                     <React.Fragment key={item.id}>
                                                                         {showDivider && (
@@ -738,16 +801,16 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                             </div>
                                                                             <div className="col-span-4 flex items-center gap-2">
                                                                                 <span
-                                                                                    title={currentType === 'service' ? 'Serviço' : currentType === 'material' ? 'Material' : 'Composição'}
-                                                                                    className="text-[10px] shrink-0 opacity-50 cursor-help select-none"
+                                                                                    title={currentType === 'service' ? 'Serviço/Mão de Obra' : currentType === 'material' ? 'Material' : 'Composição'}
+                                                                                    className="text-[10px] shrink-0 opacity-50 cursor-help select-none grayscale hover:grayscale-0 transition-all"
                                                                                 >
-                                                                                    {currentType === 'service' ? '🔨' : currentType === 'material' ? '🧱' : '🛠️'}
+                                                                                    {currentType === 'service' ? '👷' : currentType === 'material' ? '🧱' : '🛠️'}
                                                                                 </span>
                                                                                 <input
                                                                                     type="text"
                                                                                     value={item.name}
                                                                                     onChange={(e) => handleNameChange(item.id, e.target.value)}
-                                                                                    className="w-full bg-transparent border-none p-0 text-[11px] font-medium text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-0 placeholder-[#B5B5B5] leading-tight"
+                                                                                    className="w-full bg-transparent border-none p-0 text-[11px] font-medium text-foreground focus:text-foreground focus:ring-0 placeholder-[#B5B5B5] leading-tight"
                                                                                     placeholder="Nome do item"
                                                                                 />
                                                                             </div>
@@ -756,7 +819,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                     type="text"
                                                                                     value={item.unit}
                                                                                     onChange={(e) => handleUnitChange(item.id, e.target.value)}
-                                                                                    className="w-full text-center bg-transparent border-none p-0 text-[10px] text-[#B5B5B5] uppercase focus:ring-0"
+                                                                                    className="w-full text-center bg-transparent border-none p-0 text-[10px] text-muted-foreground uppercase focus:ring-0"
                                                                                 />
                                                                             </div>
                                                                             <div className="col-span-2 px-2">
@@ -765,7 +828,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                     value={item.quantity}
                                                                                     onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                                                                     data-item-id={item.id}
-                                                                                    className="w-full text-center bg-[#222120] border-none rounded py-1 text-[11px] text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 hover:bg-white/10 tabular-nums"
+                                                                                    className="w-full text-center bg-black/5 dark:bg-[#222120] border-none rounded py-1 text-[11px] text-foreground focus:text-foreground focus:ring-1 focus:ring-blue-500 hover:bg-black/10 dark:hover:bg-white/10 tabular-nums"
                                                                                     min="0"
                                                                                     step="1"
                                                                                 />
@@ -773,17 +836,17 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                             <div className="col-span-2 text-right">
                                                                                 <input
                                                                                     type="number"
-                                                                                    value={item.manualPrice ?? item.price}
+                                                                                    value={displayValue.toFixed(2)}
                                                                                     onChange={(e) => handlePriceChange(item.id, e.target.value)}
-                                                                                    className="w-full text-right bg-transparent border-none p-0 text-[11px] text-[#B5B5B5] focus:text-[#E8E8E6] focus:ring-0 tabular-nums"
+                                                                                    className="w-full text-right bg-transparent border-none p-0 text-[11px] text-muted-foreground focus:text-foreground focus:ring-0 tabular-nums"
                                                                                     min="0"
                                                                                     step="0.01"
                                                                                 />
                                                                             </div>
                                                                             <div className="col-span-2 text-right flex items-center justify-end gap-2 group/actions relative">
-                                                                                <span className="text-[11px] font-bold text-[#B5B5B5] tabular-nums">
+                                                                                <span className="text-[11px] font-bold text-muted-foreground tabular-nums">
                                                                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                                                                                        (item.manualPrice ?? item.price) * item.quantity
+                                                                                        displayValue * item.quantity
                                                                                     )}
                                                                                 </span>
                                                                                 {item.isCustom && (
@@ -809,35 +872,41 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                 })}
                             </div>
 
-                            {/* Manual Catalog Collapsible Header */}
-                            <div
-                                className="mb-3 px-1 flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-                                onClick={() => setIsManualCatalogExpanded(!isManualCatalogExpanded)}
-                            >
-                                <ChevronDown
-                                    size={14}
-                                    className={`text-gray-400 transition-transform duration-200 ${!isManualCatalogExpanded ? '-rotate-90' : ''}`}
-                                />
-                                <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">
-                                    ✏️ Adicionar manualmente
-                                </span>
+                            {/* Separator - MANUAL CATALOG STARTS HERE */}
+                            <div className="flex items-center gap-4 my-8">
+                                <div className="h-px bg-white/10 flex-1"></div>
+                                <button
+                                    onClick={() => setIsManualCatalogExpanded(!isManualCatalogExpanded)}
+                                    className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                                >
+                                    {isManualCatalogExpanded ? 'Ocultar Catálogo Manual' : 'Mostrar Catálogo Manual'}
+                                    <ChevronDown className={`w-3 h-3 transition-transform ${isManualCatalogExpanded ? 'rotate-180' : ''}`} />
+                                </button>
+                                <div className="h-px bg-white/10 flex-1"></div>
                             </div>
 
-                            {/* Manual Categories List (Collapsible) */}
+                            {/* Standard / Manual Items Loop (Collapsible Section) */}
                             {isManualCatalogExpanded && (
-                                <div className="space-y-2 animate-in slide-in-from-top-2 duration-200 fade-in box-border">
+                                <div className="space-y-2 opacity-80 hover:opacity-100 transition-opacity">
                                     {categories.filter(cat => {
-                                        // ONLY Standard Categories here
-                                        return BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === cat);
+                                        const isStandard = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === cat);
+                                        return isStandard; // Show ONLY standard categories here
                                     }).map((category) => {
                                         const categoryItems = groupedItems[category];
+                                        if (!categoryItems) return null;
                                         const categoryIncluded = categoryItems.filter(i => i.included).length;
                                         const isExpanded = expandedCategories[category];
 
-                                        // Calculate Category Total
                                         const categoryTotal = categoryItems.reduce((sum, item) => {
                                             if (!item.included) return sum;
-                                            const price = item.manualPrice ?? item.price;
+
+                                            // Apply Same Sanitization Logic for Category Total
+                                            const baseP = Number(item.price);
+                                            const rawLabor = Number(item.laborPrice);
+                                            const safeLabor = (rawLabor > 0 && rawLabor < baseP) ? rawLabor : baseP * 0.4;
+
+                                            const price = item.manualPrice ?? (includeMaterials ? baseP : safeLabor);
+
                                             return sum + (price * item.quantity);
                                         }, 0);
 
@@ -847,27 +916,27 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                 <div className="flex items-center justify-between px-4 py-3 group cursor-pointer hover:bg-white/5 transition-colors" onClick={() => toggleCategoryExpansion(category)}>
                                                     <div className="flex items-center gap-3">
                                                         <ChevronDown
-                                                            className={`w-3.5 h-3.5 text-[#B5B5B5] transition-transform duration-200 ${!isExpanded ? '-rotate-90' : ''}`}
+                                                            className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${!isExpanded ? '-rotate-90' : ''}`}
                                                         />
                                                         <div className="flex items-baseline gap-2">
-                                                            <h3 className="text-xs font-bold text-[#E8E8E6] uppercase tracking-wide">
+                                                            <h3 className="text-xs font-bold text-foreground/80 dark:text-[#F5E6D3] uppercase tracking-wide">
                                                                 {category}
                                                             </h3>
-                                                            <span className="text-[10px] text-[#B5B5B5] font-normal">
+                                                            <span className="text-[10px] text-muted-foreground font-normal">
                                                                 ({categoryItems.length})
                                                             </span>
                                                         </div>
                                                     </div>
 
                                                     <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-                                                        <span className="text-xs font-bold text-[#E8E8E6] tabular-nums">
+                                                        <span className="text-xs font-bold text-foreground tabular-nums">
                                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(categoryTotal)}
                                                         </span>
                                                         <button
                                                             onClick={() => toggleCategoryItems(category, categoryIncluded < categoryItems.length)}
-                                                            className={`w-4 h-4 border rounded transition-colors flex items-center justify-center ${categoryIncluded > 0 // Show check if ANY item is included
+                                                            className={`w-4 h-4 border rounded transition-colors flex items-center justify-center ${categoryIncluded > 0
                                                                 ? 'bg-blue-600 border-blue-600 text-white'
-                                                                : 'border-white/10 bg-[#222120] hover:border-white/20'
+                                                                : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-[#222120] hover:border-black/20 dark:hover:border-white/20'
                                                                 }`}
                                                         >
                                                             {categoryIncluded > 0 && <span className="text-[8px] font-bold">✓</span>}
@@ -877,7 +946,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                                                 {/* Items List (Accordion Body) */}
                                                 {isExpanded && (
-                                                    <div className="pb-4 pt-1 bg-[#2C2A29] border-t border-white/5">
+                                                    <div className="pb-4 pt-1 bg-card border-t border-white/5">
                                                         {/* Column Headers */}
                                                         <div className="grid grid-cols-12 gap-4 mb-2 px-4 text-[9px] font-bold text-[#8a8886] uppercase tracking-wider">
                                                             <div className="col-span-1"></div>
@@ -889,7 +958,6 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                         </div>
                                                         <div className="space-y-0 text-[11px]">
                                                             {(() => {
-                                                                // Sort: Services/Compositions first, then Materials
                                                                 const getType = (i: BoqItem) => i.type || 'composition';
                                                                 const sorted = [...categoryItems].sort((a, b) => {
                                                                     const typeA = getType(a);
@@ -904,6 +972,15 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                     const prevType = index > 0 ? getType(sorted[index - 1]) : null;
                                                                     const showDivider = currentType === 'material' && prevType !== 'material' && index > 0;
 
+                                                                    // EXPLICIT DISPLAY CALCULATION DUPLICATED (Since separate loop)
+                                                                    const basePrice = Number(item.price);
+                                                                    const rawLabor = Number(item.laborPrice);
+                                                                    const safeLabor = (rawLabor > 0 && rawLabor < basePrice) ? rawLabor : basePrice * 0.4;
+                                                                    const hasManual = item.manualPrice !== undefined && item.manualPrice !== null;
+                                                                    const displayValue = hasManual
+                                                                        ? Number(item.manualPrice)
+                                                                        : (includeMaterials ? basePrice : safeLabor);
+
                                                                     return (
                                                                         <React.Fragment key={item.id}>
                                                                             {showDivider && (
@@ -913,77 +990,65 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                             )}
                                                                             <div
                                                                                 id={`item-${item.id}`}
-                                                                                onClick={() => toggleInclude(item.id, true)} // Select on row click
+                                                                                onClick={() => toggleInclude(item.id, true)}
                                                                                 className={`grid grid-cols-12 gap-4 px-4 py-1 items-center hover:bg-white/5 transition-colors group/item cursor-pointer ${!item.included ? 'opacity-50' : ''}`}
                                                                             >
-                                                                                {/* Checkbox */}
                                                                                 <div className="col-span-1 flex justify-center -ml-4" onClick={(e) => e.stopPropagation()}>
                                                                                     <input
                                                                                         type="checkbox"
                                                                                         checked={item.included}
-                                                                                        onChange={() => toggleInclude(item.id)} // Specific toggle logic
+                                                                                        onChange={() => toggleInclude(item.id)}
                                                                                         className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                                                                     />
                                                                                 </div>
-
-                                                                                {/* Name & Icon */}
                                                                                 <div className="col-span-4 flex items-center gap-2">
-                                                                                    {/* Type Icon */}
                                                                                     <span
-                                                                                        title={currentType === 'service' ? 'Serviço (Mão de Obra)' : currentType === 'material' ? 'Material' : 'Composição (Serviço + Material)'}
-                                                                                        className="text-[10px] shrink-0 opacity-50 cursor-help select-none"
+                                                                                        title={currentType === 'service' ? 'Serviço/Mão de Obra' : currentType === 'material' ? 'Material' : 'Composição'}
+                                                                                        className="text-[10px] shrink-0 opacity-50 cursor-help select-none grayscale hover:grayscale-0 transition-all"
                                                                                     >
-                                                                                        {currentType === 'service' ? '🔨' : currentType === 'material' ? '🧱' : '🛠️'}
+                                                                                        {currentType === 'service' ? '👷' : currentType === 'material' ? '🧱' : '🛠️'}
                                                                                     </span>
                                                                                     <input
                                                                                         type="text"
                                                                                         value={item.name}
                                                                                         onChange={(e) => handleNameChange(item.id, e.target.value)}
-                                                                                        className="w-full bg-transparent border-none p-0 text-[11px] font-medium text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-0 placeholder-[#B5B5B5] leading-tight"
+                                                                                        className="w-full bg-transparent border-none p-0 text-[11px] font-medium text-foreground focus:text-foreground focus:ring-0 placeholder-[#B5B5B5] leading-tight"
                                                                                         placeholder="Nome do item"
                                                                                     />
                                                                                 </div>
-
-                                                                                {/* Unit */}
                                                                                 <div className="col-span-1 text-center">
                                                                                     <input
                                                                                         type="text"
                                                                                         value={item.unit}
                                                                                         onChange={(e) => handleUnitChange(item.id, e.target.value)}
-                                                                                        className="w-full text-center bg-transparent border-none p-0 text-[10px] text-[#B5B5B5] uppercase focus:ring-0"
+                                                                                        className="w-full text-center bg-transparent border-none p-0 text-[10px] text-muted-foreground uppercase focus:ring-0"
                                                                                     />
                                                                                 </div>
-
-                                                                                {/* Qty */}
                                                                                 <div className="col-span-2 px-2">
                                                                                     <input
                                                                                         type="number"
                                                                                         value={item.quantity}
                                                                                         onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                                                                         data-item-id={item.id}
-                                                                                        className="w-full text-center bg-[#222120] border-none rounded py-1 text-[11px] text-[#E8E8E6] focus:text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 hover:bg-white/10 tabular-nums"
+                                                                                        className="w-full text-center bg-black/5 dark:bg-[#222120] border-none rounded py-1 text-[11px] text-foreground focus:text-foreground focus:ring-1 focus:ring-blue-500 hover:bg-black/10 dark:hover:bg-white/10 tabular-nums"
                                                                                         min="0"
                                                                                         step="1"
                                                                                     />
                                                                                 </div>
-
-                                                                                {/* Unit Price */}
                                                                                 <div className="col-span-2 text-right">
                                                                                     <input
                                                                                         type="number"
-                                                                                        value={item.manualPrice ?? item.price}
+                                                                                        value={displayValue.toFixed(2)}
                                                                                         onChange={(e) => handlePriceChange(item.id, e.target.value)}
-                                                                                        className="w-full text-right bg-transparent border-none p-0 text-[11px] text-[#B5B5B5] focus:text-[#E8E8E6] focus:ring-0 tabular-nums"
+                                                                                        className="w-full text-right bg-transparent border-none p-0 text-[11px] text-muted-foreground focus:text-foreground focus:ring-0 tabular-nums"
                                                                                         min="0"
                                                                                         step="0.01"
                                                                                     />
                                                                                 </div>
-
-                                                                                {/* Total & Trash */}
                                                                                 <div className="col-span-2 text-right flex items-center justify-end gap-2 group/actions relative">
-                                                                                    <span className="text-[11px] font-bold text-[#B5B5B5] tabular-nums">
+                                                                                    <span className="text-[11px] font-bold text-muted-foreground tabular-nums">
                                                                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                                                                                            (item.manualPrice ?? item.price) * item.quantity
+                                                                                            displayValue * item.quantity
                                                                                         )}
                                                                                     </span>
                                                                                     {item.isCustom && (
@@ -999,18 +1064,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                             </div>
                                                                         </React.Fragment>
                                                                     );
-                                                                });
+                                                                })
                                                             })()}
-                                                        </div>
-
-                                                        {/* Add Button */}
-                                                        <div className="mt-4 flex justify-center border-t border-dashed border-white/10 pt-4 mx-6">
-                                                            <button
-                                                                onClick={() => handleAddCustomItem(category)}
-                                                                className="flex items-center gap-1 text-[11px] font-bold text-[#B5B5B5] hover:text-blue-600 uppercase tracking-widest transition-colors py-2 px-4 rounded hover:bg-blue-50"
-                                                            >
-                                                                <Plus size={12} /> Adicionar
-                                                            </button>
                                                         </div>
                                                     </div>
                                                 )}
@@ -1019,261 +1074,195 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     })}
                                 </div>
                             )}
-                        </div>
 
+                        </div>
                     </div>
 
 
-                    {/* RIGHT COLUMN: Sidebar (1/3) */}
-                    <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6">
-
-                        {/* Actions Card */}
-                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-4 space-y-3">
-                            <button
-                                onClick={() => handleAddCustomItem('ITENS ADICIONAIS')}
-                                className="w-full flex items-center justify-center gap-2 p-3 bg-[#E89E37]/10 hover:bg-[#E89E37]/20 text-[#E89E37] rounded-lg transition-colors font-medium text-sm group"
-                            >
-                                <Plus size={16} className="group-hover:scale-110 transition-transform" />
-                                Adicionar Item Manual
-                            </button>
-                        </div>
-
-                        {/* Totals Card */}
-                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-6">
-                            <h2 className="text-lg font-bold text-[#E8E8E6] mb-4 flex items-center gap-2">
-                                <div className="p-1.5 bg-[#E89E37]/10 rounded-md">
-                                    <Settings size={16} className="text-[#E89E37]" />
-                                </div>
-                                Resumo Financeiro
+                    {/* RIGHT COLUMN: Resumo Financeiro (Fixed/Sticky) */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-card rounded-lg p-6 sticky top-6 border border-white/5 shadow-2xl">
+                            <h2 className="text-sm font-bold text-foreground dark:text-[#F5E6D3] uppercase tracking-wider mb-6 pb-2 border-b border-black/10 dark:border-white/10">
+                                📊 Resumo Financeiro
                             </h2>
 
                             <div className="space-y-4">
-                                <div className="flex justify-between items-center text-sm font-bold text-[#E8E8E6]">
-                                    <span>SUBTOTAL</span>
-                                    <span>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-muted-foreground">Subtotal</span>
+                                    <span className="text-foreground tabular-nums font-medium">
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
                                     </span>
                                 </div>
 
-                                <div className="flex justify-between items-center text-sm font-bold text-[#E8E8E6]">
-                                    <div className="flex items-center gap-2">
-                                        <span>BDI</span>
-                                        <div className="bg-[#222120] rounded px-2 py-0.5 text-xs text-[#B5B5B5] font-mono">
-                                            <input
-                                                type="number"
-                                                value={bdi}
-                                                onChange={(e) => setBdi(parseFloat(e.target.value) || 0)}
-                                                className="w-8 bg-transparent text-center outline-none"
-                                                min="0"
-                                                max="100"
-                                            />
-                                            %
-                                        </div>
-                                    </div>
-                                    <span>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-muted-foreground">BDI ({bdi}%)</span>
+                                    <span className="text-foreground tabular-nums font-medium">
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bdiValue)}
                                     </span>
                                 </div>
 
-                                <div className="pt-4 mt-2 border-t border-white/10 flex justify-between items-center">
-                                    <span className="text-sm font-bold text-green-600 uppercase">Total Geral</span>
-                                    <span className="text-xl font-bold text-green-600 tabular-nums">
+                                <div className="pt-4 border-t border-black/10 dark:border-white/10 flex justify-between items-center">
+                                    <span className="text-base font-bold text-foreground dark:text-[#F5E6D3]">TOTAL GERAL</span>
+                                    <span className="text-xl font-bold text-orange-500 tabular-nums">
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
                                     </span>
                                 </div>
                             </div>
+
+                            {/* Configuration Toggles */}
+                            <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-bold text-foreground">BDI Personalizado</span>
+                                        <span className="text-[10px] text-muted-foreground">Taxa de Benefícios e Despesas</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 bg-black/5 dark:bg-[#222120] rounded border border-black/10 dark:border-white/10 px-2 py-1">
+                                        <input
+                                            type="number"
+                                            value={bdi}
+                                            onChange={(e) => setBdi(Number(e.target.value))}
+                                            className="w-10 bg-transparent text-right text-xs font-bold text-foreground border-none p-0 focus:ring-0"
+                                        />
+                                        <span className="text-xs text-muted-foreground">%</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-bold text-foreground">Incluir Materiais</span>
+                                        <span className="text-[10px] text-muted-foreground">Calcular com insumos</span>
+                                    </div>
+                                    <button
+                                        onClick={() => setIncludeMaterials(!includeMaterials)}
+                                        className={`w-10 h-5 rounded-full transition-colors relative ${includeMaterials ? 'bg-orange-500' : 'bg-[#4A4A4A]'}`}
+                                    >
+                                        <div className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-transform ${includeMaterials ? 'left-6' : 'left-1'}`} />
+                                    </button>
+                                </div>
+                            </div>
+
+
+
+                            {/* Info */}
+                            <div className="mt-4 text-[10px] text-center text-muted-foreground opacity-50">
+                                <p>Os valores são estimados com base no SINAPI/SBC.</p>
+                                <p>Revisão de preços recomendada antes do fechamento.</p>
+                            </div>
                         </div>
 
-                        {/* Information Card */}
-                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-6 mb-6">
-                            <h3 className="text-xs font-bold text-[#8a8886] uppercase tracking-wider mb-6">
-                                Informações do Relatório
-                            </h3>
+                        {/* LEAD CAPTURE FORM (Moved to Sidebar) */}
+                        <div className="bg-card rounded-lg p-6 mt-6 border border-white/5 shadow-2xl sticky top-[450px]">
+                            <h2 className="text-sm font-bold text-foreground dark:text-[#F5E6D3] uppercase tracking-wider mb-4 pb-2 border-b border-black/10 dark:border-white/10 flex items-center gap-2">
+                                📝 Detalhes da Obra
+                            </h2>
 
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                        Prestador *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={providerName}
-                                        onChange={(e) => setProviderName(e.target.value)}
-                                        placeholder="Nome ou empresa"
-                                        className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
-                                    />
-                                </div>
-                                <div>
-                                    <div>
-                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                            Telefone Prestador *
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            value={providerPhone}
-                                            onChange={handlePhoneChange(setProviderPhone)}
-                                            placeholder="(00) 00000-0000"
-                                            maxLength={15}
-                                            className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
-                                        />
-                                        {providerDddInfo && (
-                                            <div className="mt-1.5 text-[10px] text-[#B5B5B5] flex items-center gap-1.5">
-                                                <span className="font-semibold text-blue-600">{providerDddInfo.state}</span>
-                                                <span>•</span>
-                                                <span>{providerDddInfo.region}</span>
-                                            </div>
-                                        )}
+                            <div className="space-y-6">
+                                {/* Provider Info */}
+                                {/* Provider Info Removed - Managed via Profile */}
+                                {profile ? (
+                                    <div className="p-3 bg-blue-50/10 border border-blue-500/20 rounded-lg mb-4">
+                                        <p className="text-[10px] text-blue-400 font-bold uppercase tracking-wide mb-1">Responsável Técnico</p>
+                                        <p className="text-xs text-foreground font-medium">{profile.full_name || profile.company_name}</p>
+                                        <Link href="/dashboard" className="text-[10px] text-muted-foreground underline hover:text-blue-400">Gerenciar Dados no Perfil</Link>
                                     </div>
-                                    <div className="pt-2">
-                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                            Cliente *
-                                        </label>
+                                ) : (
+                                    <div className="p-3 bg-orange-50/10 border border-orange-500/20 rounded-lg mb-4">
+                                        <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wide mb-1">Modo Visitante</p>
+                                        <p className="text-[10px] text-muted-foreground">Crie uma conta grátis para personalizar seus dados no relatório.</p>
+                                    </div>
+                                )}
+
+                                {/* Client Info */}
+                                <div className="space-y-3">
+                                    <h3 className="text-[10px] font-bold text-blue-400/80 uppercase tracking-wider">
+                                        Cliente
+                                    </h3>
+                                    <div className="space-y-2">
                                         <input
                                             type="text"
                                             value={clientName}
                                             onChange={(e) => setClientName(e.target.value)}
-                                            placeholder="Nome completo"
-                                            className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
+                                            className="w-full bg-black/5 dark:bg-[#222120] border border-black/10 dark:border-white/10 rounded px-3 py-2 text-xs text-foreground focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder-black/30 dark:placeholder-white/20"
+                                            placeholder="Nome do Cliente"
                                         />
-                                    </div>
-                                    <div className="pt-2">
-                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                            Telefone Cliente *
-                                        </label>
                                         <input
                                             type="tel"
                                             value={clientPhone}
                                             onChange={handlePhoneChange(setClientPhone)}
-                                            placeholder="(00) 00000-0000"
+                                            className="w-full bg-black/5 dark:bg-[#222120] border border-black/10 dark:border-white/10 rounded px-3 py-2 text-xs text-foreground focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder-black/30 dark:placeholder-white/20 tabular-nums"
+                                            placeholder="WhatsApp: (00) 00000-0000"
                                             maxLength={15}
-                                            className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
                                         />
-                                        {clientDddInfo && (
-                                            <div className="mt-1.5 text-[10px] text-[#B5B5B5] flex items-center gap-1.5">
-                                                <span className="font-semibold text-blue-600">{clientDddInfo.state}</span>
-                                                <span>•</span>
-                                                <span>{clientDddInfo.region}</span>
-                                            </div>
-                                        )}
                                     </div>
-                                    <div className="grid grid-cols-3 gap-3 pt-2">
-                                        <div className="col-span-2">
-                                            <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                                Cidade da Obra
-                                            </label>
+                                </div>
+
+                                {/* Project Context */}
+                                <div className="space-y-3 pt-2 border-t border-white/5">
+                                    <div className="grid grid-cols-1 gap-3">
+                                        <div>
+                                            <label className="block text-[9px] text-muted-foreground uppercase mb-1">Tipo de Serviço</label>
                                             <input
                                                 type="text"
-                                                value={workCity}
-                                                onChange={(e) => setWorkCity(e.target.value)}
-                                                placeholder="Ex: São Paulo"
-                                                className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5]"
+                                                value={projectType}
+                                                onChange={(e) => setProjectType(e.target.value)}
+                                                className="w-full bg-black/5 dark:bg-[#222120] border border-black/10 dark:border-white/10 rounded px-3 py-2 text-xs text-foreground focus:border-black/20 dark:focus:border-white/20 focus:ring-0 transition-all placeholder-black/30 dark:placeholder-white/20"
+                                                placeholder="Ex: Reforma Banheiro"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                                UF
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={workState}
-                                                onChange={(e) => setWorkState(e.target.value.toUpperCase().slice(0, 2))}
-                                                placeholder="UF"
-                                                maxLength={2}
-                                                className="w-full bg-[#222120] border border-white/10 rounded px-3 py-2 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-[#B5B5B5] uppercase"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="pt-6">
-                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                            Tipo de Obra *
-                                        </label>
-                                        <div className="relative">
-                                            <select
-                                                value={projectType}
-                                                onChange={(e) => setProjectType(e.target.value)}
-                                                className="w-full bg-[#222120] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer"
-                                            >
-                                                <option value="" className="text-[#B5B5B5]">Selecione...</option>
-                                                <option value="Construção Nova">Construção Nova</option>
-                                                <option value="Reforma">Reforma</option>
-                                                <option value="Ampliação">Ampliação</option>
-                                            </select>
-                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#E89E37]">
-                                                <ChevronDown size={14} />
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="pt-6">
-                                        <label className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wide mb-1.5 block">
-                                            Prazo Estimado *
-                                        </label>
-                                        <div className="relative">
-                                            <select
-                                                value={deadline}
-                                                onChange={(e) => setDeadline(e.target.value)}
-                                                className="w-full bg-[#222120] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-[#E8E8E6] focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer"
-                                            >
-                                                <option value="" className="text-[#B5B5B5]">Selecione...</option>
-                                                <option value="imediato">Imediato (até 30 dias)</option>
-                                                <option value="curto">Curto prazo (30 a 90 dias)</option>
-                                                <option value="medio">Médio prazo (3 a 6 meses)</option>
-                                                <option value="longo">Longo prazo (+6 meses)</option>
-                                            </select>
-                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#E89E37]">
-                                                <ChevronDown size={14} />
-                                            </span>
+                                            <label className="block text-[9px] text-muted-foreground uppercase mb-2">Previsão de Início</label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['Imediato', '30 dias', '60 dias', '90 dias'].map((option) => (
+                                                    <button
+                                                        key={option}
+                                                        onClick={() => setDeadline(option)}
+                                                        className={`
+                                                            group relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
+                                                            ${deadline === option
+                                                                ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20'
+                                                                : 'bg-transparent border-border text-muted-foreground hover:border-blue-500/50 hover:text-foreground'
+                                                            }
+                                                        `}
+                                                    >
+                                                        {deadline === option && (
+                                                            <div className="bg-white text-blue-600 rounded-full p-0.5">
+                                                                <Check size={8} strokeWidth={4} />
+                                                            </div>
+                                                        )}
+                                                        {option}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            {/* GENERATE REPORT BUTTON (Moved Here) */}
+                            <button
+                                onClick={handleGenerateReport}
+                                disabled={isSaving || !isFormValid}
+                                title={!isFormValid ? "Preencha todos os campos acima para gerar o relatório" : "Gerar Relatório PDF"}
+                                className={`w-full mt-6 font-bold py-3 rounded-lg transition-all transform flex items-center justify-center gap-2 shadow-lg 
+                                    ${!isFormValid
+                                        ? 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-50'
+                                        : 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95 shadow-blue-900/20'
+                                    }`}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="animate-spin w-4 h-4" />
+                                        Gerando...
+                                    </>
+                                ) : (
+                                    <>
+                                        {isFormValid ? <FileText className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
+                                        {isFormValid ? 'Gerar Relatório PDF' : 'Preencha os Dados'}
+                                    </>
+                                )}
+                            </button>
                         </div>
-
-                        {/* Generate Report Button */}
-                        <button
-                            onClick={handleGenerateReport}
-                            disabled={isSaving || !isFormValid}
-                            className={`w-full mb-6 py-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 outline-none focus:outline-none ${isSaving || !isFormValid
-                                ? 'bg-green-100 text-green-700 cursor-not-allowed opacity-80'
-                                : 'bg-green-600 hover:bg-green-700 text-white hover:scale-[1.02] active:scale-[0.98]'
-                                }`}
-                        >
-                            {isSaving ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    <span className="font-bold uppercase tracking-widest text-xs">Salvando...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <FileText className={`w-5 h-5 ${!isFormValid ? 'text-green-600' : 'text-white'}`} />
-                                    <span className="font-bold uppercase tracking-widest text-xs">
-                                        {isFormValid ? 'Gerar Relatório' : 'Preencha os Campos *'}
-                                    </span>
-                                </>
-                            )}
-                        </button>
-
-                        {/* Legend Card */}
-                        <div className="bg-[#2C2A29] rounded-lg shadow-sm border border-white/5 p-4">
-                            <h3 className="text-[10px] font-bold text-[#8a8886] uppercase tracking-wider mb-3">Legenda</h3>
-                            <div className="space-y-2 text-[10px] text-[#B5B5B5] uppercase tracking-wide font-medium">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🛠️</span>
-                                    <span>Composição (Serviço + Material)</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🔨</span>
-                                    <span>Mão de Obra (Apenas Execução)</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🧱</span>
-                                    <span>Material (Insumo Isolado)</span>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
-
-
 
                 </div>
             </div>

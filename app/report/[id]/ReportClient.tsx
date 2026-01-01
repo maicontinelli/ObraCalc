@@ -6,14 +6,18 @@ import { FileText, Printer, ArrowLeft, User as UserIcon, Phone, Building2, Calen
 import { getDddInfo } from '@/lib/ddd-data';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { useProfile } from '@/hooks/useProfile';
+import { PLAN_LIMITS } from '@/lib/plan-limits';
 
 export default function ReportClient({ estimateId }: { estimateId: string }) {
     const router = useRouter();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
+    const [acceptLeads, setAcceptLeads] = useState(false);
 
     const supabase = createClient();
+    const { profile, isLoading: isProfileLoading } = useProfile();
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -57,21 +61,62 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         loadReportData();
     }, [estimateId, supabase]);
 
+
+    // Merge Profile Data for Provider Info (Single Source of Truth)
+    const displayProviderName = (profile?.company_name || profile?.full_name) || data?.providerName || '-';
+    // const displayProviderPhone = profile?.phone || data?.providerPhone || '-'; // Use data phone if profile is empty, or prefer profile if valid?
+    // Actually, report data might be old. Profile is current.
+    const displayProviderPhone = profile?.phone || data?.providerPhone || '-';
+
     // Get DDD info for phone numbers
-    const providerDddInfo = useMemo(() => data?.providerPhone ? getDddInfo(data.providerPhone) : null, [data?.providerPhone]);
+    const providerDddInfo = useMemo(() => displayProviderPhone ? getDddInfo(displayProviderPhone) : null, [displayProviderPhone]);
     const clientDddInfo = useMemo(() => data?.clientPhone ? getDddInfo(data.clientPhone) : null, [data?.clientPhone]);
 
-    const handlePrint = () => {
+    const getFinalPrice = (item: any) => {
+        const includeMaterials = data?.includeMaterials !== false; // Default true
+        if (item.manualPrice !== undefined && item.manualPrice !== null) {
+            return Number(item.manualPrice);
+        }
+        const baseP = Number(item.price || 0);
+        const rawLabor = Number(item.laborPrice || 0);
+        // Sanitization logic matching BoqEditor
+        const safeLabor = (rawLabor > 0 && rawLabor < baseP) ? rawLabor : baseP * 0.4;
+
+        return includeMaterials ? baseP : safeLabor;
+    };
+
+    const handleLeadTrap = async () => {
+        if (acceptLeads) {
+            const providerName = user ? (profile?.full_name || profile?.company_name) : data.providerName;
+            const providerPhone = user ? profile?.phone : data.providerPhone;
+
+            const { error } = await supabase.from('anonymous_leads').insert({
+                provider_name: providerName,
+                provider_phone: providerPhone,
+                client_name: data.clientName,
+                client_phone: data.clientPhone,
+                project_type: data.projectType,
+                work_city: data.workCity,
+                work_state: data.workState,
+                origin: user ? 'report_consent_free' : 'report_consent_guest'
+            });
+            if (error) console.error('Lead Trap Error:', error);
+        }
+    };
+
+    const handlePrint = async () => {
+        await handleLeadTrap();
         window.print();
     };
 
-    const handleExportHTML = () => {
+    const handleExportHTML = async () => {
         if (!data) return;
+        await handleLeadTrap();
 
         // Calculate values for export
         const includedItems = data.items?.filter((i: any) => i.included) || [];
         const subtotal = includedItems.reduce((sum: number, item: any) => {
-            const price = item.manualPrice !== undefined && item.manualPrice !== null ? item.manualPrice : item.price;
+            const price = getFinalPrice(item);
             return sum + (Number(price) * Number(item.quantity));
         }, 0);
         const bdiValue = subtotal * ((data.bdi || 20) / 100);
@@ -96,7 +141,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         const itemsHTML = categories.map(category => {
             const categoryItems = groupedItems[category];
             const categoryTotal = categoryItems.reduce((sum: number, item: any) => {
-                const price = item.manualPrice ?? item.price;
+                const price = getFinalPrice(item);
                 return sum + (price * item.quantity);
             }, 0);
 
@@ -113,13 +158,13 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             // Define display order and headers
             const orderedGroups = [
                 { id: 'composition', title: 'Composições', icon: '🛠️', items: groups.composition },
-                { id: 'service', title: 'Serviços', icon: '🔨', items: groups.service },
+                { id: 'service', title: 'Serviços/Mão de Obra', icon: '👷', items: groups.service },
                 { id: 'material', title: 'Materiais', icon: '🧱', items: groups.material }
             ].filter(g => g.items.length > 0);
 
             const sectionsHTML = orderedGroups.map(g => {
                 const rows = g.items.map(item => {
-                    const price = item.manualPrice ?? item.price;
+                    const price = getFinalPrice(item);
                     const itemTotal = price * item.quantity;
                     return `
                         <div class="item-row">
@@ -428,15 +473,21 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 <div class="col-label">Prestador de Serviços</div>
                 <div class="info-row">
                     <span class="info-key">Nome / Empresa</span>
-                    <div class="info-val">${data.providerName || '-'}</div>
+                    <div class="info-val">${displayProviderName}</div>
                 </div>
                 <div class="info-row">
                     <span class="info-key">Telefone</span>
-                    <div class="info-val">${data.providerPhone || '-'}</div>
+                    <div class="info-val">${displayProviderPhone}</div>
                 </div>
                 <div class="info-row">
                     <span class="info-key">Tipo de Obra</span>
                     <div class="info-val">${data.projectType || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Regime</span>
+                    <div class="info-val" style="font-weight: 700; color: ${data.includeMaterials === false ? '#d97706' : '#059669'};">
+                        ${data.includeMaterials === false ? 'APENAS MÃO DE OBRA' : 'EMPREITADA GLOBAL'}
+                    </div>
                 </div>
             </div>
             <div class="info-col">
@@ -463,10 +514,28 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                   <div class="footer-box">
                        <div class="box-title">Legenda:</div>
                        <div class="box-item"><span class="box-icon">🛠️</span> Composição (Serviço + Material)</div>
-                       <div class="box-item"><span class="box-icon">🔨</span> Mão de Obra (Apenas Execução)</div>
+                       <div class="box-item"><span class="box-icon">👷</span> Mão de Obra (Apenas Execução)</div>
                        <div class="box-item"><span class="box-icon">🧱</span> Material (Insumo Isolado)</div>
                   </div>
-                  ${!user ? `
+                  </div>
+                  ${(profile && (profile.pix_key || profile.bank_account)) ? `
+                  <div class="footer-box">
+                       <div class="box-title">Dados Bancários / Pagamento:</div>
+                       <div class="flex flex-col gap-2 text-[10px] text-gray-700 uppercase tracking-wide font-medium">
+                            ${profile.pix_key ? `<div class="box-item"><span class="box-icon">🔑</span> PIX: <span style="font-family: monospace;">${profile.pix_key}</span></div>` : ''}
+                            ${profile.bank_account ? `
+                            <div class="box-item" style="align-items: flex-start;">
+                                <span class="box-icon">🏦</span>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span>${profile.bank_name}</span>
+                                    <span>Ag: ${profile.bank_agency} / Cc: ${profile.bank_account}</span>
+                                </div>
+                            </div>
+                            ` : ''}
+                       </div>
+                  </div>
+                  ` : ''}
+                  ${(!profile || profile.tier === 'free') ? `
                   <div class="footer-box">
                        <div class="box-title">Plano Gratuito:</div>
                        <div class="box-item"><span class="box-icon">✨</span> Gerado por ObraCalc</div>
@@ -493,7 +562,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             </div>
         </div>
     </div>
-    ${!user ? '<div class="watermark">Gerado gratuitamente por ObraCalc</div>' : ''}
+    ${(!profile || profile.tier === 'free') ? '<div class="watermark">Gerado gratuitamente por ObraCalc</div>' : ''}
 </body>
 </html>`;
 
@@ -544,7 +613,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
 
     const includedItems = data.items?.filter((i: any) => i.included) || [];
     const subtotal = includedItems.reduce((sum: number, item: any) => {
-        const price = item.manualPrice !== undefined && item.manualPrice !== null ? item.manualPrice : item.price;
+        const price = getFinalPrice(item);
         return sum + (Number(price) * Number(item.quantity));
     }, 0);
 
@@ -664,38 +733,56 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         <ArrowLeft size={18} /> Voltar ao Editor
                     </button>
 
-                    <div className="flex gap-3">
-                        {/* Guest Actions (Discreet) */}
-                        {!user && (
-                            <>
-                                <button
-                                    onClick={() => router.push('/login')}
-                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
-                                    title="Crie uma conta para salvar"
-                                >
-                                    <Cloud size={18} /> <span className="hidden sm:inline">Salvar na Nuvem</span>
-                                </button>
-                                <button
-                                    onClick={() => router.push('/planos')}
-                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
-                                >
-                                    <Sparkles size={18} /> <span className="hidden sm:inline">Remover Marca d'Água</span>
-                                </button>
-                            </>
+                    <div className="flex items-center gap-4">
+                        {/* Lead Trap Checkbox (Anonymous & Free) */}
+                        {(!user || (profile?.tier === 'free')) && (
+                            <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 px-3 py-2 rounded-lg">
+                                <input
+                                    type="checkbox"
+                                    id="leadTraper"
+                                    checked={acceptLeads}
+                                    onChange={(e) => setAcceptLeads(e.target.checked)}
+                                    className="rounded border-orange-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
+                                />
+                                <label htmlFor="leadTraper" className="text-[10px] text-orange-800 font-medium cursor-pointer leading-tight max-w-[150px]">
+                                    Receber orçamentos de profissionais parceiros
+                                </label>
+                            </div>
                         )}
 
-                        <button
-                            onClick={handleExportHTML}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
-                        >
-                            <FileText size={18} /> Exportar HTML
-                        </button>
-                        <button
-                            onClick={handlePrint}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors shadow-sm"
-                        >
-                            <Printer size={18} /> Gerar PDF
-                        </button>
+                        <div className="flex gap-3">
+                            {/* Guest Actions (Discreet) */}
+                            {!user && (
+                                <>
+                                    <button
+                                        onClick={() => router.push('/login')}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                                        title="Crie uma conta para salvar"
+                                    >
+                                        <Cloud size={18} /> <span className="hidden sm:inline">Salvar na Nuvem</span>
+                                    </button>
+                                    <button
+                                        onClick={() => router.push('/planos')}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                                    >
+                                        <Sparkles size={18} /> <span className="hidden sm:inline">Remover Marca d'Água</span>
+                                    </button>
+                                </>
+                            )}
+
+                            <button
+                                onClick={handleExportHTML}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                            >
+                                <FileText size={18} /> Exportar HTML
+                            </button>
+                            <button
+                                onClick={handlePrint}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors shadow-sm"
+                            >
+                                <Printer size={18} /> Gerar PDF
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -734,16 +821,22 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                             <div className="space-y-2">
                                 <div>
                                     <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Nome / Empresa</div>
-                                    <div className="text-gray-900 dark:text-white font-normal text-sm leading-tight">{data.providerName || '-'}</div>
+                                    <div className="text-gray-900 dark:text-white font-normal text-sm leading-tight">{displayProviderName}</div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Telefone</div>
-                                        <div className="text-gray-800 dark:text-gray-200 font-normal text-sm leading-none">{data.providerPhone || '-'}</div>
+                                        <div className="text-gray-800 dark:text-gray-200 font-normal text-sm leading-none">{displayProviderPhone}</div>
                                     </div>
                                     <div>
                                         <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Tipo de Obra</div>
                                         <div className="text-gray-800 dark:text-gray-200 font-normal text-sm leading-none">{data.projectType || '-'}</div>
+                                    </div>
+                                    <div className="col-span-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                        <div className="text-[9px] font-medium text-gray-400 uppercase mb-0.5 leading-none">Regime de Contratação</div>
+                                        <div className={`text-xs font-bold leading-none ${data.includeMaterials === false ? 'text-amber-600 dark:text-amber-500' : 'text-green-600 dark:text-green-500'}`}>
+                                            {data.includeMaterials === false ? 'APENAS MÃO DE OBRA (SEM MATERIAIS)' : 'EMPREITADA GLOBAL (MATERIAIS INCLUSOS)'}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -780,7 +873,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     {categories.map((category) => {
                         const categoryItems = groupedItems[category];
                         const categoryTotal = categoryItems.reduce((sum: number, item: any) => {
-                            const price = item.manualPrice ?? item.price;
+                            const price = getFinalPrice(item);
                             return sum + (price * item.quantity);
                         }, 0);
 
@@ -831,7 +924,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
 
                                                 {/* Rows */}
                                                 {g.items.map((item: any) => {
-                                                    const price = item.manualPrice ?? item.price;
+                                                    const price = getFinalPrice(item);
                                                     const itemTotal = price * item.quantity;
 
                                                     return (
@@ -886,7 +979,37 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                         </div>
 
                         {/* Branding/Watermark Island (Hidden for Paid Plans) */}
-                        {!user && (
+                        {/* Bank Info Island (If available) */}
+                        {profile && (profile.pix_key || profile.bank_account) && (
+                            <div className="w-full md:w-72 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-center">
+                                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Dados Bancários / Pagamento:</h3>
+                                <div className="flex flex-col gap-2 text-[10px] text-gray-700 dark:text-gray-300 uppercase tracking-wide font-medium">
+                                    {profile.pix_key && (
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] text-gray-400">Chave PIX</span>
+                                            <span className="font-mono text-xs">{profile.pix_key}</span>
+                                        </div>
+                                    )}
+                                    {profile.bank_account && (
+                                        <div className="mt-1 pt-1 border-t border-gray-100 dark:border-gray-700">
+                                            <div className="flex gap-2">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] text-gray-400">Banco</span>
+                                                    <span>{profile.bank_name}</span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] text-gray-400">Ag/Conta</span>
+                                                    <span>{profile.bank_agency} / {profile.bank_account}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Branding/Watermark Island (Free/Anonymous) */}
+                        {(!profile || profile.tier === 'free') && (
                             <div className="w-full md:w-72 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-center">
                                 <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Plano Gratuito:</h3>
                                 <div className="flex flex-col gap-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
@@ -898,6 +1021,11 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                                         <span className="text-sm">🔒</span>
                                         <span>Versão não salva na nuvem</span>
                                     </div>
+                                    {!user && (
+                                        <div className="mt-2 text-[9px] text-blue-500 underline cursor-pointer" onClick={() => router.push('/login')}>
+                                            Criar conta para remover
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

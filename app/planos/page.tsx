@@ -42,67 +42,70 @@ export default function PlansPage() {
             name: 'Grátis',
             price: 'R$ 0',
             period: '/mês',
-            description: 'Ideal para conhecer a ferramenta e criar orçamentos rápidos.',
+            description: 'Para quem está começando e precisa de agilidade.',
             features: [
-                'Criação de orçamentos (Lim. 20 itens)',
-                'Salva até 3 orçamentos na nuvem',
-                'Exportação em PDF e HTML',
+                'Até 3 orçamentos salvos',
+                'Exportação PDF e HTML',
+                'Painel de Controle (Dashboard)',
                 'Acesso à IA de Orçamentos',
             ],
             limitations: [
+                'Máximo de 20 itens por obra',
+                'Não permite editar obras salvas',
+                'Não permite excluir obras',
                 'Relatórios com marca d\'água',
-                'Limite de itens e salvamentos',
-                'Sem histórico ilimitado',
+                'Sem acesso a Leads de clientes',
             ],
-            cta: 'Começar Grátis',
-            href: '/login', // Mantém link interno para login
+            cta: 'Criar Conta Grátis',
+            href: '/login',
             priceId: null,
             popular: false,
         },
         {
             name: 'Profissional',
-            price: 'R$ 18,30',
+            price: 'R$ 29,90',
             period: '/mês',
-            description: 'Uso profissional ilimitado. Teste 30 dias grátis.',
+            description: 'Liberdade total para criar e gerenciar suas obras.',
             features: [
-                'Itens ilimitados por orçamento',
-                'Histórico de orçamentos ilimitado',
-                'Relatórios limpos (Sem marca d\'água)',
-                'Gerenciamento de clientes e serviços',
-                'Base de dados ampliada',
-                'Acesso para até 2 usuários',
+                'Orçamentos e itens ilimitados',
+                'Edição e exclusão liberadas',
+                'Sem marca d\'água nos relatórios',
+                'Visualização prévia de Leads',
+                'Histórico completo',
+                'Suporte prioritário',
             ],
-            limitations: [],
-            cta: 'Assinar',
-            href: 'https://buy.stripe.com/00w28rbqrgAp10Q51d6g800',
-            priceId: null, // Usando Link de Pagamento direto
+            limitations: [
+                'Sem contato com Leads (apenas visualização)',
+            ],
+            cta: 'Assinar Profissional',
+            href: 'https://buy.stripe.com/test_eVaeV02222', // Placeholder
+            priceId: 'price_pro',
             popular: true,
         },
         {
-            name: 'Negócio',
-            price: 'R$ 139,90',
+            name: 'Empresarial',
+            price: 'R$ 149,90',
             period: '/mês',
-            description: 'Para empresas que precisam de colaboração e controle total.',
+            description: 'Para quem quer fechar mais obras com clientes da região.',
             features: [
                 'Tudo do plano Profissional',
-                'Gerenciamento compartilhável',
-                'Painel administrativo avançado',
-                'Suporte prioritário',
-                'Acesso para até 9 usuários',
-                'Personalização de relatórios',
+                'Acesso total aos Leads da região',
+                ' Destaque para clientes',
+                'Conta verificada',
+                'Gestão de Múltiplos Usuários',
             ],
             limitations: [],
-            cta: 'Assinar', // Alterado de "Falar com Vendas" para fluxo direto
-            href: null,
-            priceId: 'price_PLACEHOLDER_NEGOCIO', // USUÁRIO DEVE SUBSTITUIR ISSO
+            cta: 'Assinar Empresarial',
+            href: null, // Use handleSubscribe
+            priceId: 'price_business_placeholder',
             popular: false,
         },
     ];
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#262423]">
+        <div className="min-h-screen flex flex-col bg-background">
             <main className="flex-grow pb-24">
-                <section className="relative overflow-hidden bg-gradient-to-br from-[#74D2E7]/5 via-[#262423] to-[#74D2E7]/5 py-20 border-b border-white/5 mb-16">
+                <section className="relative overflow-hidden bg-gradient-to-br from-[#74D2E7]/5 via-background to-[#74D2E7]/5 py-20 border-b border-white/5 mb-16">
                     <div className="absolute inset-0 overflow-hidden">
                         <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#74D2E7]/10 rounded-full blur-3xl"></div>
                         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#74D2E7]/10 rounded-full blur-3xl"></div>
@@ -110,10 +113,10 @@ export default function PlansPage() {
 
                     <div className="container mx-auto px-4 relative z-10">
                         <div className="text-center max-w-3xl mx-auto">
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
                                 Escolha o plano ideal para começar
                             </h1>
-                            <p className="text-xl text-[#B5B5B5]">
+                            <p className="text-xl text-muted-foreground">
                                 Comece gratuitamente e evolua conforme suas necessidades de gerenciamento e equipe.
                             </p>
                         </div>
@@ -127,8 +130,8 @@ export default function PlansPage() {
                                 key={plan.name}
                                 className={`relative flex flex-col p-8 rounded-2xl border ${plan.popular
                                     ? 'border-[#74D2E7] shadow-lg ring-1 ring-[#74D2E7]'
-                                    : 'border-white/5'
-                                    } bg-[#2C2A29] transition-shadow hover:shadow-xl`}
+                                    : 'border-border'
+                                    } bg-card transition-shadow hover:shadow-xl`}
                             >
                                 {plan.popular && (
                                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#74D2E7] text-white text-sm font-medium rounded-full">
@@ -137,18 +140,18 @@ export default function PlansPage() {
                                 )}
 
                                 <div className="mb-8">
-                                    <h3 className="text-2xl font-bold text-white mb-2">
+                                    <h3 className="text-2xl font-bold text-foreground mb-2">
                                         {plan.name}
                                     </h3>
                                     <div className="flex items-baseline gap-1 mb-4">
-                                        <span className="text-4xl font-bold text-white">
+                                        <span className="text-4xl font-bold text-foreground">
                                             {plan.price}
                                         </span>
-                                        <span className="text-[#B5B5B5]">
+                                        <span className="text-muted-foreground">
                                             {plan.period}
                                         </span>
                                     </div>
-                                    <p className="text-[#B5B5B5]">
+                                    <p className="text-muted-foreground">
                                         {plan.description}
                                     </p>
                                 </div>
@@ -158,7 +161,7 @@ export default function PlansPage() {
                                         {plan.features.map((feature) => (
                                             <li key={feature} className="flex items-start gap-3">
                                                 <Check className="w-5 h-5 text-[#74D2E7] flex-shrink-0 mt-0.5" />
-                                                <span className="text-[#E8E8E6] text-sm">
+                                                <span className="text-foreground text-sm">
                                                     {feature}
                                                 </span>
                                             </li>
@@ -166,7 +169,7 @@ export default function PlansPage() {
                                         {plan.limitations.map((limitation) => (
                                             <li key={limitation} className="flex items-start gap-3">
                                                 <X className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-[#8a8886] text-sm line-through">
+                                                <span className="text-muted-foreground text-sm line-through">
                                                     {limitation}
                                                 </span>
                                             </li>
@@ -183,7 +186,7 @@ export default function PlansPage() {
                                         <Button
                                             className={`w-full h-12 text-lg font-medium ${plan.popular
                                                 ? 'bg-[#74D2E7] hover:bg-[#74D2E7]/90 text-white'
-                                                : 'bg-[#2C2A29] border border-white/10 text-white hover:bg-[#3D3A38]'
+                                                : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
                                                 }`}
                                             variant={plan.popular ? 'default' : 'outline'}
                                         >
@@ -194,7 +197,7 @@ export default function PlansPage() {
                                     <Button
                                         className={`w-full h-12 text-lg font-medium ${plan.popular
                                             ? 'bg-[#74D2E7] hover:bg-[#74D2E7]/90 text-white'
-                                            : 'bg-[#2C2A29] border border-white/10 text-white hover:bg-[#3D3A38]'
+                                            : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
                                             }`}
                                         variant={plan.popular ? 'default' : 'outline'}
                                         onClick={() => plan.priceId && handleSubscribe(plan.priceId)}

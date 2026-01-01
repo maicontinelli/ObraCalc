@@ -10,23 +10,42 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                border: "hsl(var(--border))",
+                input: "hsl(var(--input))",
+                ring: "hsl(var(--ring))",
+                background: "hsl(var(--background))",
+                foreground: "hsl(var(--foreground))",
                 primary: {
-                    DEFAULT: '#00704A', // Brand Green
+                    DEFAULT: "hsl(var(--primary))",
+                    foreground: "hsl(var(--primary-foreground))",
                     hover: '#005c3d',
                 },
                 secondary: {
-                    DEFAULT: '#1E3A8A', // Deep Blue
+                    DEFAULT: "hsl(var(--secondary))",
+                    foreground: "hsl(var(--secondary-foreground))",
                     hover: '#1e3a8a',
                 },
-                accent: {
-                    DEFAULT: '#F97316', // Vibrant Orange for details
-                    hover: '#ea580c',
-                    foreground: '#ffffff',
-                    light: '#FFF7ED', // Orange-50
-                },
                 destructive: {
-                    DEFAULT: '#ef4444',
-                    foreground: '#ffffff',
+                    DEFAULT: "hsl(var(--destructive))",
+                    foreground: "hsl(var(--destructive-foreground))",
+                },
+                muted: {
+                    DEFAULT: "hsl(var(--muted))",
+                    foreground: "hsl(var(--muted-foreground))",
+                },
+                accent: {
+                    DEFAULT: "hsl(var(--accent))",
+                    foreground: "hsl(var(--accent-foreground))",
+                    hover: '#ea580c',
+                    light: '#FFF7ED',
+                },
+                popover: {
+                    DEFAULT: "hsl(var(--popover))",
+                    foreground: "hsl(var(--popover-foreground))",
+                },
+                card: {
+                    DEFAULT: "hsl(var(--card))",
+                    foreground: "hsl(var(--card-foreground))",
                 },
             },
             fontFamily: {

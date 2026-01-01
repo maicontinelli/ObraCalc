@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 
-export default function LoginPage() {
+function LoginForm() {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-    const router = useRouter();
+    const searchParams = useSearchParams();
+    const next = searchParams?.get('next');
+    const redirectUrl = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback${next ? `?next=${encodeURIComponent(next)}` : ''}` : '';
 
     useEffect(() => {
         // Force Dark Mode for Login Page to match Home theme
@@ -28,7 +30,7 @@ export default function LoginPage() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
+                redirectTo: redirectUrl,
             },
         });
 
@@ -46,7 +48,7 @@ export default function LoginPage() {
         const { error } = await supabase.auth.signInWithOtp({
             email,
             options: {
-                emailRedirectTo: `${window.location.origin}/auth/callback`,
+                emailRedirectTo: redirectUrl,
             },
         });
 
@@ -62,13 +64,13 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-[#262423] flex flex-col justify-center items-center p-4">
+        <div className="min-h-[calc(100vh-64px)] bg-background flex flex-col justify-center items-center p-4">
 
-            <div className="w-full max-w-md bg-[#2C2A29] rounded-2xl shadow-xl border border-white/5 p-8">
+            <div className="w-full max-w-md bg-card rounded-2xl shadow-xl border border-border p-8">
 
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-[#E8E8E6] mb-2">Acesse ou Crie sua Conta</h1>
-                    <p className="text-[#B5B5B5] text-sm">
+                    <h1 className="text-2xl font-bold text-foreground mb-2">Acesse ou Crie sua Conta</h1>
+                    <p className="text-muted-foreground text-sm">
                         Use seu e-mail ou Google para entrar. Se ainda não tem cadastro, sua conta será criada automaticamente.
                     </p>
                 </div>
@@ -77,7 +79,7 @@ export default function LoginPage() {
                     <button
                         onClick={handleGoogleLogin}
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 bg-[#222120] text-[#E8E8E6] border border-white/10 hover:bg-[#333130] p-3 rounded-xl transition-all shadow-sm font-medium h-12"
+                        className="w-full flex items-center justify-center gap-3 bg-card text-foreground border border-input hover:bg-accent hover:text-accent-foreground p-3 rounded-xl transition-all shadow-sm font-medium h-12"
                     >
                         {loading ? (
                             <Loader2 className="animate-spin" />
@@ -91,10 +93,10 @@ export default function LoginPage() {
 
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-white/10" />
+                            <span className="w-full border-t border-border" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-[#2C2A29] px-2 text-[#8a8886]">ou entre com email</span>
+                            <span className="bg-card px-2 text-[#8a8886]">ou entre com email</span>
                         </div>
                     </div>
 
@@ -110,7 +112,7 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="seu@email.com"
-                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-[#222120] text-[#E8E8E6] placeholder-[#6b6967] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                             />
                         </div>
                         <button
@@ -135,8 +137,20 @@ export default function LoginPage() {
             </div>
 
             <p className="mt-8 text-center text-xs text-[#6b6967] max-w-xs mx-auto">
-                Ao continuar, você concorda com nossos <Link href="#" className="underline hover:text-[#E8E8E6]">Termos de Serviço</Link> e <Link href="#" className="underline hover:text-[#E8E8E6]">Política de Privacidade</Link>.
+                Ao continuar, você concorda com nossos <Link href="#" className="underline hover:text-foreground">Termos de Serviço</Link> e <Link href="#" className="underline hover:text-foreground">Política de Privacidade</Link>.
             </p>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-[calc(100vh-64px)] bg-background flex flex-col justify-center items-center p-4">
+                <Loader2 className="animate-spin text-white w-8 h-8" />
+            </div>
+        }>
+            <LoginForm />
+        </Suspense>
     );
 }

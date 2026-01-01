@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Camera, Upload, Loader2, ArrowLeft } from 'lucide-react';
+import { Camera, Upload, Loader2, ArrowLeft, CheckCircle2, RotateCw, Wrench, Hammer, Sparkles, Trophy, Zap, Droplets, User, UserCheck } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
+import { SelectionList } from '@/components/SelectionList';
 
 export default function NovoDiagnostico() {
     const router = useRouter();
@@ -114,34 +115,34 @@ export default function NovoDiagnostico() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="min-h-screen bg-background">
             <div className="max-w-4xl mx-auto px-4 py-12">
                 {/* Header */}
                 <div className="mb-8">
                     <button
                         onClick={() => router.push('/')}
-                        className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-4"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
                     >
                         <ArrowLeft size={20} />
                         Voltar
                     </button>
-                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h1 className="text-4xl font-bold text-foreground mb-2 font-heading">
                         Diagnóstico Visual
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-muted-foreground">
                         Faça upload de uma foto do ambiente e responda algumas perguntas
                     </p>
                 </div>
 
                 {/* Upload Step */}
                 {step === 'upload' && (
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border-2 border-dashed border-gray-300 dark:border-gray-600">
+                    <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
                         <div className="text-center">
-                            <Camera className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                            <Camera className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+                            <h3 className="text-xl font-semibold mb-2 text-foreground">
                                 Envie uma foto do ambiente
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-400 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 Tire ou selecione uma foto clara do ambiente a ser reformado
                             </p>
 
@@ -173,135 +174,79 @@ export default function NovoDiagnostico() {
                 {step === 'form' && image && (
                     <div className="space-y-6">
                         {/* Image Preview */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                        <div className="bg-card rounded-2xl shadow-xl overflow-hidden border border-border">
                             <img src={image} alt="Preview" className="w-full h-64 object-cover" />
                         </div>
 
                         {/* Form */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-                            <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+                        <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
+                            <h3 className="text-2xl font-bold mb-6 text-foreground font-heading">
                                 Conte-nos mais sobre o projeto
                             </h3>
 
                             <div className="space-y-6">
                                 {/* Pergunta 1 */}
                                 <div>
-                                    <label className="block text-base font-semibold mb-3 text-gray-900 dark:text-white">
-                                        1. Qual o objetivo da reforma?
-                                    </label>
-                                    <div className="space-y-1.5">
-                                        {[
-                                            { value: 'revitalizacao', label: 'Revitalização estética' },
-                                            { value: 'correcao', label: 'Correção de problemas' },
-                                            { value: 'ampliacao', label: 'Ampliação/Modificação' },
-                                            { value: 'modernizacao', label: 'Modernização' }
-                                        ].map((option) => (
-                                            <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
-                                                <input
-                                                    type="radio"
-                                                    name="objetivo"
-                                                    value={option.value}
-                                                    checked={formData.objetivo === option.value}
-                                                    onChange={(e) => setFormData({ ...formData, objetivo: e.target.value })}
-                                                    className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                                                />
-                                                <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                                                    {option.label}
-                                                </span>
-                                            </label>
-                                        ))}
-                                    </div>
+                                    <SelectionList
+                                        label="1. Qual o objetivo da reforma?"
+                                        value={formData.objetivo}
+                                        onChange={(val) => setFormData({ ...formData, objetivo: val })}
+                                        options={[
+                                            { value: 'revitalizacao', label: 'Revitalização estética', icon: <Sparkles size={18} /> },
+                                            { value: 'correcao', label: 'Correção de problemas', icon: <Wrench size={18} /> },
+                                            { value: 'ampliacao', label: 'Ampliação/Modificação', icon: <Hammer size={18} /> },
+                                            { value: 'modernizacao', label: 'Modernização', icon: <RotateCw size={18} /> }
+                                        ]}
+                                    />
                                 </div>
 
                                 {/* Pergunta 2 */}
                                 <div>
-                                    <label className="block text-base font-semibold mb-3 text-gray-900 dark:text-white">
-                                        2. Qual padrão de acabamento desejado?
-                                    </label>
-                                    <div className="space-y-1.5">
-                                        {[
-                                            { value: 'basico', label: 'Básico' },
-                                            { value: 'medio', label: 'Médio' },
-                                            { value: 'alto', label: 'Alto' },
-                                            { value: 'luxo', label: 'Luxo' }
-                                        ].map((option) => (
-                                            <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
-                                                <input
-                                                    type="radio"
-                                                    name="padrao"
-                                                    value={option.value}
-                                                    checked={formData.padrao === option.value}
-                                                    onChange={(e) => setFormData({ ...formData, padrao: e.target.value })}
-                                                    className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                                                />
-                                                <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                                                    {option.label}
-                                                </span>
-                                            </label>
-                                        ))}
-                                    </div>
+                                    <SelectionList
+                                        label="2. Qual padrão de acabamento desejado?"
+                                        value={formData.padrao}
+                                        onChange={(val) => setFormData({ ...formData, padrao: val })}
+                                        options={[
+                                            { value: 'basico', label: 'Básico', icon: <Trophy size={18} className="text-gray-400" /> },
+                                            { value: 'medio', label: 'Médio', icon: <Trophy size={18} className="text-yellow-600" /> },
+                                            { value: 'alto', label: 'Alto', icon: <Trophy size={18} className="text-yellow-400" /> },
+                                            { value: 'luxo', label: 'Luxo', icon: <Sparkles size={18} className="text-purple-400" /> }
+                                        ]}
+                                    />
                                 </div>
 
                                 {/* Pergunta 3 */}
                                 <div>
-                                    <label className="block text-base font-semibold mb-3 text-gray-900 dark:text-white">
-                                        3. Será necessário mexer em instalações?
-                                    </label>
-                                    <div className="space-y-1.5">
-                                        {[
-                                            { value: 'nao', label: 'Não' },
-                                            { value: 'eletrica', label: 'Apenas elétrica' },
-                                            { value: 'hidraulica', label: 'Apenas hidráulica' },
-                                            { value: 'ambas', label: 'Elétrica e hidráulica' }
-                                        ].map((option) => (
-                                            <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
-                                                <input
-                                                    type="radio"
-                                                    name="instalacoes"
-                                                    value={option.value}
-                                                    checked={formData.instalacoes === option.value}
-                                                    onChange={(e) => setFormData({ ...formData, instalacoes: e.target.value })}
-                                                    className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                                                />
-                                                <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                                                    {option.label}
-                                                </span>
-                                            </label>
-                                        ))}
-                                    </div>
+                                    <SelectionList
+                                        label="3. Será necessário mexer em instalações?"
+                                        value={formData.instalacoes}
+                                        onChange={(val) => setFormData({ ...formData, instalacoes: val })}
+                                        options={[
+                                            { value: 'nao', label: 'Não será necessário', icon: <CheckCircle2 size={18} /> },
+                                            { value: 'eletrica', label: 'Apenas elétrica', icon: <Zap size={18} /> },
+                                            { value: 'hidraulica', label: 'Apenas hidráulica', icon: <Droplets size={18} /> },
+                                            { value: 'ambas', label: 'Elétrica e Hidráulica', icon: <Wrench size={18} /> }
+                                        ]}
+                                    />
                                 </div>
 
                                 {/* Pergunta 4 */}
                                 <div>
-                                    <label className="block text-base font-semibold mb-3 text-gray-900 dark:text-white">
-                                        4. O ambiente estará ocupado durante a obra?
-                                    </label>
-                                    <div className="space-y-1.5">
-                                        {[
-                                            { value: 'desocupado', label: 'Desocupado' },
-                                            { value: 'parcialmente', label: 'Parcialmente ocupado' },
-                                            { value: 'totalmente', label: 'Totalmente ocupado' }
-                                        ].map((option) => (
-                                            <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
-                                                <input
-                                                    type="radio"
-                                                    name="ocupacao"
-                                                    value={option.value}
-                                                    checked={formData.ocupacao === option.value}
-                                                    onChange={(e) => setFormData({ ...formData, ocupacao: e.target.value })}
-                                                    className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                                                />
-                                                <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                                                    {option.label}
-                                                </span>
-                                            </label>
-                                        ))}
-                                    </div>
+                                    <SelectionList
+                                        label="4. O ambiente estará ocupado durante a obra?"
+                                        value={formData.ocupacao}
+                                        onChange={(val) => setFormData({ ...formData, ocupacao: val })}
+                                        options={[
+                                            { value: 'desocupado', label: 'Desocupado', icon: <UserCheck size={18} /> },
+                                            { value: 'parcialmente', label: 'Parcialmente', icon: <User size={18} /> },
+                                            { value: 'totalmente', label: 'Totalmente', icon: <User size={18} className="text-red-400" /> }
+                                        ]}
+                                    />
                                 </div>
 
                                 {/* Pergunta 5 - Área */}
                                 <div>
-                                    <label className="block text-base font-semibold mb-3 text-gray-900 dark:text-white">
+                                    <label className="block text-base font-semibold mb-3 text-foreground">
                                         5. Qual a área aproximada do ambiente? (m²)
                                     </label>
                                     <input
@@ -309,13 +254,13 @@ export default function NovoDiagnostico() {
                                         value={formData.area}
                                         onChange={(e) => setFormData({ ...formData, area: e.target.value })}
                                         placeholder="12"
-                                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                        className="w-full px-4 py-3 text-base rounded-xl border border-input bg-background text-foreground resize-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 placeholder-muted-foreground transition-all outline-none"
                                     />
                                 </div>
 
                                 {/* Observações */}
                                 <div>
-                                    <label className="block text-base font-semibold mb-3 text-gray-900 dark:text-white">
+                                    <label className="block text-base font-semibold mb-3 text-foreground">
                                         Observações adicionais
                                         <span className="text-xs font-normal text-gray-500 ml-2">(opcional)</span>
                                     </label>
@@ -324,7 +269,7 @@ export default function NovoDiagnostico() {
                                         onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
                                         placeholder="Ex: Quero trocar essa janela por um blindex e pintar tudo de branco"
                                         rows={3}
-                                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none focus:ring-2 focus:ring-orange-500 focus:border-transparent placeholder:text-gray-400"
+                                        className="w-full px-4 py-3 text-base rounded-xl border border-input bg-background text-foreground resize-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 placeholder-muted-foreground transition-all outline-none"
                                     />
                                 </div>
                             </div>

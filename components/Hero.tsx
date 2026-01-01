@@ -17,13 +17,13 @@ export function Hero() {
                         className="drop-shadow-xl"
                     />
                     <h1 className="text-5xl md:text-7xl font-heading font-bold tracking-tight leading-tight">
-                        <span className="text-[#E8E8E6]">
+                        <span className="text-foreground">
                             ObraCalc
                         </span>
                     </h1>
                 </div>
 
-                <h2 className="text-base md:text-lg text-[#B5B5B5] font-medium text-center mb-10 max-w-2xl mx-auto leading-relaxed">
+                <h2 className="text-base md:text-lg text-muted-foreground font-medium text-center mb-10 max-w-2xl mx-auto leading-relaxed">
                     Crie orçamentos e relatórios de obra detalhados em segundos usando Inteligência Artificial.
                 </h2>
 

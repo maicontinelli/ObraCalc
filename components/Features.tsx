@@ -15,8 +15,8 @@ const features = [
     {
         icon: <Zap className="h-6 w-6 text-yellow-500" />,
         title: "IA Generativa",
-        description: "Descreva sua obra e nossa IA gera automaticamente a lista completa de materiais e serviços.",
-        action: 'new',
+        description: "Envie uma foto e nossa IA diagnóstica analisa o ambiente e sugere melhorias automaticamente.",
+        link: '/novo-diagnostico',
         linkText: "Experimentar IA"
     },
     {

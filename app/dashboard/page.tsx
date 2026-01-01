@@ -22,10 +22,17 @@ import {
     Edit3,
     Trash2,
     Plus,
-    Sparkles
+    Sparkles,
+    Briefcase,
+    Lock,
+    CreditCard,
+    Landmark
 } from 'lucide-react';
 import Link from 'next/link';
 import { BudgetChart } from '@/components/BudgetChart';
+import { LeadsWall } from '@/components/LeadsWall';
+import { useProfile } from '@/hooks/useProfile';
+import { PLAN_LIMITS } from '@/lib/plan-limits';
 
 interface Budget {
     id: string;
@@ -54,6 +61,7 @@ export default function DashboardPage() {
     const [isProfileExpanded, setIsProfileExpanded] = useState(false);
     const [isSavingProfile, setIsSavingProfile] = useState(false);
     const [showOnboardingMessage, setShowOnboardingMessage] = useState(false);
+    const { profile, isLoading: isProfileLoading } = useProfile();
     const [profileData, setProfileData] = useState({
         full_name: '',
         company_name: '',
@@ -62,7 +70,12 @@ export default function DashboardPage() {
         state: '',
         profession: '',
         registration_number: '',
-        team_size: ''
+        team_size: '',
+        // Banking
+        pix_key: '',
+        bank_name: '',
+        bank_agency: '',
+        bank_account: ''
     });
 
     // Load Data
@@ -94,7 +107,11 @@ export default function DashboardPage() {
                     state: '',
                     profession: '',
                     registration_number: '',
-                    team_size: ''
+                    team_size: '',
+                    pix_key: '',
+                    bank_name: '',
+                    bank_agency: '',
+                    bank_account: ''
                 };
 
                 if (profile) {
@@ -106,7 +123,11 @@ export default function DashboardPage() {
                         state: profile.state || '',
                         profession: profile.profession || '',
                         registration_number: profile.registration_number || '',
-                        team_size: profile.team_size || ''
+                        team_size: profile.team_size || '',
+                        pix_key: profile.pix_key || '',
+                        bank_name: profile.bank_name || '',
+                        bank_agency: profile.bank_agency || '',
+                        bank_account: profile.bank_account || ''
                     };
                 } else if (user.user_metadata) {
                     // Fallback to auth metadata if profile is empty (migration)
@@ -118,7 +139,11 @@ export default function DashboardPage() {
                         state: user.user_metadata.state || '',
                         profession: '',
                         registration_number: '',
-                        team_size: ''
+                        team_size: '',
+                        pix_key: '',
+                        bank_name: '',
+                        bank_agency: '',
+                        bank_account: ''
                     };
                 }
 
@@ -191,6 +216,10 @@ export default function DashboardPage() {
                     profession: profileData.profession,
                     registration_number: profileData.registration_number,
                     team_size: profileData.team_size,
+                    pix_key: profileData.pix_key,
+                    bank_name: profileData.bank_name,
+                    bank_agency: profileData.bank_agency,
+                    bank_account: profileData.bank_account,
                     updated_at: new Date().toISOString()
                 });
 
@@ -221,36 +250,42 @@ export default function DashboardPage() {
     };
 
     const handleNewBudget = () => {
+        // Enforce Limits
+        if (profile?.tier === 'free' && budgets.length >= PLAN_LIMITS.free.max_estimates) {
+            alert('Você atingiu o limite de 3 orçamentos gratuítos. Faça o upgrade para criar mais.');
+            router.push('/planos');
+            return;
+        }
         const id = crypto.randomUUID();
         router.push(`/editor/${id}`);
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#262423]">
+            <div className="min-h-screen flex items-center justify-center bg-background">
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#262423] font-sans p-6 lg:p-12">
+        <div className="min-h-screen bg-background font-sans p-6 lg:p-12">
             <div className="max-w-7xl mx-auto space-y-8">
 
                 {/* Welcome Header Section */}
-                <div className="relative bg-[#2C2A29] rounded-3xl p-8 shadow-sm border border-white/5 overflow-hidden group">
+                <div className="relative bg-card rounded-3xl p-8 shadow-sm border border-border overflow-hidden group">
                     {/* Decorative Background */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-orange-900/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 dark:bg-orange-900/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
 
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div className="flex-1 max-w-lg">
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-4xl font-extrabold text-white tracking-tight">
+                                <h1 className="text-4xl font-extrabold text-foreground tracking-tight">
                                     Olá, {profileData.full_name?.split(' ')[0] || 'Parceiro'}!
                                 </h1>
                                 <span className="text-3xl animate-wave origin-bottom-right inline-block">👋</span>
                             </div>
-                            <p className="text-lg text-[#B5B5B5] font-medium leading-relaxed">
+                            <p className="text-lg text-muted-foreground font-medium leading-relaxed">
                                 É bom te ver aqui novamente. Preparei um resumo dos seus orçamentos para hoje.
                             </p>
 
@@ -315,40 +350,40 @@ export default function DashboardPage() {
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
+                            <div className="bg-card p-5 rounded-2xl shadow-sm border border-border">
                                 <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-lg w-fit mb-3">
                                     <FileText size={18} />
                                 </div>
                                 <p className="text-2xl font-bold text-white">{stats.totalBudgets}</p>
-                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Orçamentos</span>
+                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Orçamentos</span>
                             </div>
 
-                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
+                            <div className="bg-card p-5 rounded-2xl shadow-sm border border-border">
                                 <div className="p-2 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-lg w-fit mb-3">
                                     <DollarSign size={18} />
                                 </div>
                                 <p className="text-2xl font-bold text-white">
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(stats.totalValue)}
                                 </p>
-                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Total</span>
+                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total</span>
                             </div>
 
-                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
+                            <div className="bg-card p-5 rounded-2xl shadow-sm border border-border">
                                 <div className="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-lg w-fit mb-3">
                                     <TrendingUp size={18} />
                                 </div>
                                 <p className="text-2xl font-bold text-white">
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(stats.avgTicket)}
                                 </p>
-                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Médio</span>
+                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Médio</span>
                             </div>
 
-                            <div className="bg-[#2C2A29] p-5 rounded-2xl shadow-sm border border-white/5">
+                            <div className="bg-card p-5 rounded-2xl shadow-sm border border-border">
                                 <div className="p-2 bg-orange-50 dark:bg-orange-900/20 text-orange-600 rounded-lg w-fit mb-3">
                                     <Calendar size={18} />
                                 </div>
                                 <p className="text-2xl font-bold text-white">{stats.thisMonth}</p>
-                                <span className="text-xs font-medium text-[#B5B5B5] uppercase tracking-wide">Mês</span>
+                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Mês</span>
                             </div>
                         </div>
 
@@ -362,12 +397,12 @@ export default function DashboardPage() {
                                     <input
                                         type="text"
                                         placeholder="Buscar..."
-                                        className="w-full pl-9 pr-4 py-2 bg-[#1A1918] border border-white/10 rounded-full text-xs outline-none focus:ring-2 focus:ring-primary/20 transition-all text-[#E8E8E6] placeholder-[#8a8886]"
+                                        className="w-full pl-9 pr-4 py-2 bg-background border border-input rounded-full text-xs outline-none focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder-muted-foreground"
                                     />
                                 </div>
                             </div>
 
-                            <div className="bg-[#2C2A29] rounded-2xl shadow-sm border border-white/5 overflow-hidden">
+                            <div className="bg-card rounded-2xl shadow-sm border border-white/5 overflow-hidden">
                                 {budgets.length === 0 ? (
                                     <div className="p-12 text-center text-gray-500">
                                         <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
@@ -386,7 +421,7 @@ export default function DashboardPage() {
                                 ) : (
                                     <div className="divide-y divide-white/5">
                                         {/* Table Header (Desktop) */}
-                                        <div className="hidden md:grid grid-cols-12 gap-4 p-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider bg-[#222120]">
+                                        <div className="hidden md:grid grid-cols-12 gap-4 p-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider bg-muted/50">
                                             <div className="col-span-6">Cliente / Obra</div>
                                             <div className="col-span-3">Valor Total</div>
                                             <div className="col-span-3 text-right">Ações</div>
@@ -398,7 +433,7 @@ export default function DashboardPage() {
                                             }, 0) * (1 + (budget.content?.bdi || 0) / 100) || 0;
 
                                             return (
-                                                <div key={budget.id} className="p-4 md:grid md:grid-cols-12 md:gap-4 md:items-center hover:bg-[#222120] transition-colors group">
+                                                <div key={budget.id} className="p-4 md:grid md:grid-cols-12 md:gap-4 md:items-center hover:bg-accent/50 transition-colors group">
 
                                                     {/* Mobile: Top Row with Title & Value */}
                                                     <div className="flex justify-between items-start md:hidden mb-2">
@@ -427,7 +462,7 @@ export default function DashboardPage() {
                                                     </div>
 
                                                     <div className="col-span-3 hidden md:block">
-                                                        <span className="font-bold text-[#E8E8E6] text-sm">
+                                                        <span className="font-bold text-foreground text-sm">
                                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
                                                         </span>
                                                     </div>
@@ -441,17 +476,31 @@ export default function DashboardPage() {
                                                         >
                                                             <FileText size={16} />
                                                         </Link>
-                                                        <Link
-                                                            href={`/editor/${budget.id}`}
-                                                            className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-                                                            title="Editar"
+                                                        <button
+                                                            onClick={(e) => {
+                                                                if (profile?.tier !== 'free') return; // Allow if not free, otherwise block link
+                                                                if (profile?.tier === 'free') {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    alert('Edição de orçamentos salvos é exclusiva para assinantes. Upgrade para Pro para desbloquear.');
+                                                                    router.push('/planos');
+                                                                }
+                                                            }}
+                                                            className={`p-1.5 rounded-lg transition-colors ${profile?.tier === 'free' ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'}`}
+                                                            title={profile?.tier === 'free' ? "Bloqueado no Plano Gratuito" : "Editar"}
                                                         >
                                                             <Edit3 size={16} />
-                                                        </Link>
+                                                        </button>
                                                         <button
-                                                            onClick={() => handleDeleteBudget(budget.id)}
-                                                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                            title="Excluir"
+                                                            onClick={() => {
+                                                                if (profile?.tier === 'free') {
+                                                                    alert('Exclusão bloqueada no plano Gratuito.');
+                                                                    return;
+                                                                }
+                                                                handleDeleteBudget(budget.id);
+                                                            }}
+                                                            className={`p-1.5 rounded-lg transition-colors ${profile?.tier === 'free' ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 hover:text-red-600 hover:bg-red-50'}`}
+                                                            title={profile?.tier === 'free' ? "Bloqueado no Plano Gratuito" : "Excluir"}
                                                         >
                                                             <Trash2 size={16} />
                                                         </button>
@@ -467,22 +516,22 @@ export default function DashboardPage() {
 
                     {/* RIGHT COLUMN: Profile Sidebar */}
                     <div className="lg:col-span-1 lg:sticky lg:top-6">
-                        <div className="bg-[#2C2A29] rounded-2xl shadow-sm border border-white/5 overflow-hidden transition-all duration-300">
+                        <div className="bg-card rounded-2xl shadow-sm border border-white/5 overflow-hidden transition-all duration-300">
                             <div
-                                className="p-4 border-b border-white/5 flex justify-between items-center cursor-pointer hover:bg-[#222120] transition-colors"
+                                className="p-4 border-b border-border flex justify-between items-center cursor-pointer hover:bg-accent/50 transition-colors"
                                 onClick={() => setIsProfileExpanded(!isProfileExpanded)}
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center text-orange-600">
                                         <UserIcon size={16} />
                                     </div>
-                                    <h3 className="font-bold text-white text-sm">Seus Dados</h3>
+                                    <h3 className="font-bold text-foreground text-sm">Seus Dados</h3>
                                 </div>
                                 {isProfileExpanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
                             </div>
 
                             {isProfileExpanded && (
-                                <div className="bg-[#2C2A29]">
+                                <div className="bg-card">
                                     {showOnboardingMessage && (
                                         <div className="mx-4 mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-2 animate-in fade-in slide-in-from-top-2">
                                             <TrendingUp size={14} className="text-blue-600 shrink-0 mt-0.5" />
@@ -497,57 +546,57 @@ export default function DashboardPage() {
                                     {/* List Style Inputs */}
                                     <div className="divide-y divide-white/10">
                                         {/* Name */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-accent/50 transition-colors">
                                             <UserIcon size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1">
-                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Nome Completo</label>
+                                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Nome Completo</label>
                                                 <input
                                                     type="text"
                                                     value={profileData.full_name}
                                                     onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-foreground focus:ring-0 placeholder-muted-foreground"
                                                     placeholder="Digite seu nome..."
                                                 />
                                             </div>
                                         </div>
 
                                         {/* Phone */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-accent/50 transition-colors">
                                             <Phone size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1">
-                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Telefone / WhatsApp</label>
+                                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Telefone / WhatsApp</label>
                                                 <input
                                                     type="text"
                                                     value={profileData.phone}
                                                     onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-foreground focus:ring-0 placeholder-muted-foreground"
                                                     placeholder="(00) 00000-0000"
                                                 />
                                             </div>
                                         </div>
 
                                         {/* City/State Row */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-accent/50 transition-colors">
                                             <MapPin size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex gap-4 w-full">
                                                 <div className="flex-1">
-                                                    <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Cidade</label>
+                                                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Cidade</label>
                                                     <input
                                                         type="text"
                                                         value={profileData.city}
                                                         onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
-                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
+                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-foreground focus:ring-0 placeholder-muted-foreground"
                                                         placeholder="Cidade..."
                                                     />
                                                 </div>
                                                 <div className="w-16">
-                                                    <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">UF</label>
+                                                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">UF</label>
                                                     <input
                                                         type="text"
                                                         maxLength={2}
                                                         value={profileData.state}
                                                         onChange={(e) => setProfileData({ ...profileData, state: e.target.value.toUpperCase() })}
-                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967] uppercase"
+                                                        className="w-full bg-transparent border-none p-0 text-sm font-medium text-foreground focus:ring-0 placeholder-muted-foreground uppercase"
                                                         placeholder="UF"
                                                     />
                                                 </div>
@@ -555,14 +604,14 @@ export default function DashboardPage() {
                                         </div>
 
                                         {/* Profession */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-accent/50 transition-colors">
                                             <FileText size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1 relative">
-                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Profissão</label>
+                                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Profissão</label>
                                                 <select
                                                     value={profileData.profession}
                                                     onChange={(e) => setProfileData({ ...profileData, profession: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 appearance-none cursor-pointer"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-foreground focus:ring-0 appearance-none cursor-pointer"
                                                 >
                                                     <option value="">Selecione...</option>
                                                     <option value="Engenheiro">Engenheiro</option>
@@ -575,26 +624,26 @@ export default function DashboardPage() {
                                         </div>
 
                                         {/* Company */}
-                                        <div className="flex items-center px-4 py-2 group hover:bg-[#222120] transition-colors">
+                                        <div className="flex items-center px-4 py-2 group hover:bg-accent/50 transition-colors">
                                             <Building2 size={14} className="text-gray-300 mr-3 shrink-0" />
                                             <div className="flex-1">
-                                                <label className="text-[10px] font-bold text-[#B5B5B5] uppercase tracking-wider block">Empresa</label>
+                                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Empresa</label>
                                                 <input
                                                     type="text"
                                                     value={profileData.company_name}
                                                     onChange={(e) => setProfileData({ ...profileData, company_name: e.target.value })}
-                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-white focus:ring-0 placeholder-[#6b6967]"
+                                                    className="w-full bg-transparent border-none p-0 text-sm font-medium text-foreground focus:ring-0 placeholder-muted-foreground"
                                                     placeholder="Nome da empresa..."
                                                 />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="p-4 bg-[#1A1918]">
+                                    <div className="p-4 bg-muted/50">
                                         <button
                                             onClick={handleSaveProfile}
                                             disabled={isSavingProfile}
-                                            className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-gray-100 transition-all shadow-sm active:scale-[0.98]"
+                                            className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2.5 rounded-lg font-medium text-sm transition-all shadow-sm active:scale-[0.98]"
                                         >
                                             {isSavingProfile ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                                             Salvar Dados
@@ -612,6 +661,11 @@ export default function DashboardPage() {
                             <p className="text-xs text-orange-400 leading-relaxed">
                                 Use a busca com IA para adicionar pacotes completos de serviços, como "Reforma de Banheiro" ou "Construção de Muro".
                             </p>
+                        </div>
+
+                        {/* Leads Wall (Opportunity Feed) */}
+                        <div className="mt-6">
+                            <LeadsWall tier={profile?.tier || 'free'} />
                         </div>
                     </div>
                 </div>

@@ -19,7 +19,7 @@ IMPORTANTE:
 SEMPRE retorne uma resposta em formato JSON.
 
 Se o usuário descrever um serviço ou pedir orçamento:
-1. IDENTIFIQUE se a solicitação inclui materiais ou apenas mão de obra. Se não estiver claro, assuma AMBOS (Material + Mão de Obra) mas mencione na explicação que pode ser ajustado.
+1. IDENTIFIQUE o escopo e gere uma lista de serviços completos.
 2. SUGIRA ITENS NECESSÁRIOS E CORRELATOS:
    - Quebre o serviço em etapas lógicas.
    - Inclua serviços preparatórios (demolição, limpeza) e de acabamento (pintura, limpeza final).
@@ -30,27 +30,71 @@ Se o usuário descrever um serviço ou pedir orçamento:
    
 O formato do JSON deve ser EXATAMENTE este:
 {
-  "text": "Sua explicação técnica. Se relevante, pergunte se prefere apenas Mão de Obra ou Completo. Mencione itens opcionais sugeridos.",
+  "text": "Sua explicação técnica...",
   "suggestedBudget": {
-    "title": "Título Sugerido do Projeto",
-    "type": "material_labor" | "labor_only", // Identificado pelo contexto
+    "title": "Título do Projeto",
+    "type": "material_labor",
     "items": [
       {
         "name": "Nome do Serviço",
-        "unit": "unidade (m², m³, un, vb, etc)",
+        "unit": "un",
         "quantity": 1,
-        "price": 0,
-        "category": "Itens Adicionais",
-        "included": true, // false se for uma sugestão opcional/incerta
-        "type": "material" | "service" | "equipment" // Categorize o item
+        "price": 100.00,
+        "category": "12. PISOS E RODAPÉS",
+        "included": true,
+        "type": "service"
       }
     ]
   }
 }
 
-Se a pergunta for puramente teórica, retorne apenas "text" e "suggestedBudget": null.
-Responda em Português do Brasil. Use preços SINAPI/Mercado atualizados.
-SEMPRE retorne APENAS JSON válido.`;
+DIRETRIZES DE CATEGORIZAÇÃO (PADRÃO BANCO DE DADOS):
+Use estritamente estas categorias para agrupar os itens (mantenha a numeração e nome exatos):
+1. SERVIÇOS PRELIMINARES E GERAIS
+2. DEMOLIÇÕES E RETIRADAS
+3. MOVIMENTAÇÃO DE TERRA
+4. INFRAESTRUTURA / FUNDAÇÕES
+5. SUPERESTRUTURA
+6. PAREDES E PAINÉIS
+7. ESTRUTURAS METÁLICAS E MADEIRA
+8. COBERTURA E TELHADO
+9. IMPERMEABILIZAÇÃO
+10. REVESTIMENTOS DE PAREDE
+11. FORROS
+12. PISOS E RODAPÉS
+13. ESQUADRIAS E VIDROS
+14. INSTALAÇÕES ELÉTRICAS
+15. INSTALAÇÕES HIDRÁULICAS
+16. LOUÇAS E METAIS
+17. PINTURA
+18. SERVIÇOS FINAIS / DIVERSOS
+- Se não se encaixar, use: "ITENS ADICIONAIS"
+
+DIRETRIZES DE INTELIGÊNCIA DE ORÇAMENTO (SISTEMA DE COMPOSIÇÕES):
+
+1. REGRA DE OURO: "SERVIÇO INSTALADO"
+   - O sistema já calcula Material + Mão de Obra automaticamente dentro de cada serviço.
+   - NUNCA sugira insumos soltos (ex: "Saco de Cimento", "Lata de Tinta", "Tijolo", "Fios").
+   - SEMPRE sugira o serviço finalizado (ex: "Alvenaria de Vedação m²", "Pintura Acrílica m²", "Ponto de Tomada Instalado").
+   - Motivo: Se você sugerir o material separado, o custo será duplicado.
+
+2. CLASSIFICAÇÃO DE ESCOPO:
+   - Identifique se o pedido é um MICRO SERVIÇO ou MACRO PROJETO.
+   - Para reformas, sugira sempre a REMOÇÃO/DEMOLIÇÃO do item antigo antes do novo.
+
+3. PRECIFICAÇÃO:
+   - Os preços sugeridos devem representar o valor TOTAL (Material + Mão de Obra). O sistema cuidará de separar as porcentagens internamente.
+   - Exemplo: Ao sugerir "Pintura", use o preço cheio (~R$ 35,00/m²), não apenas a mão de obra.
+
+4. CATEGORIZAÇÃO VISUAL:
+   - Use 'type: "service"' para quase tudo, pois são composições.
+   - Use 'type: "material"' APENAS se o usuário pedir explicitamente "Lista de compras de materiais".
+
+5. PARA "MACRO PROJETOS" (Casas, Edificações):
+   - **CUB 2025:** Custo mínimo R$ 2.000,00/m².
+   - Liste etapas cronológicas: 1. Preliminares -> 2. Fundação -> 3. Estrutura -> ... -> 18. Finais.
+
+SEMPRE retorne APENAS JSON válido. Responda em Português.`;
 
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',

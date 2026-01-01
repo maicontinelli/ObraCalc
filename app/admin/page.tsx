@@ -161,6 +161,10 @@ export default function AdminDashboard() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
+                    <Link href="/admin/catalogo" className="p-2 text-primary hover:bg-primary/10 rounded-lg text-sm font-medium flex items-center gap-2 mr-2">
+                        <Building2 size={16} />
+                        Gerenciar Catálogo
+                    </Link>
                     <button onClick={loadData} className="p-2 text-primary hover:bg-primary/10 rounded-lg text-sm font-medium">
                         Atualizar
                     </button>

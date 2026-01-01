@@ -1,198 +1,241 @@
+
 export const BOQ_TEMPLATES = {
     obra_nova: [
         {
             id: 'cat_preliminares',
-            name: 'Serviços Preliminares',
+            name: '1. SERVIÇOS PRELIMINARES E GERAIS',
             items: [
-                { id: 'item_levantamento_topografico', name: 'Levantamento topográfico', unit: 'vb', price: 1800.00, quantity: 1 },
-                { id: 'item_sondagem_solo', name: 'Sondagem do solo (SPT)', unit: 'vb', price: 2500.00, quantity: 1 },
-                { id: 'item_projeto_arquitetonico', name: 'Projeto arquitetônico e complementares', unit: 'vb', price: 6500.00, quantity: 1 },
-                { id: 'item_mobilizacao', name: 'Mobilização de equipe e equipamentos', unit: 'vb', price: 2000.00, quantity: 1 },
-                { id: 'item_tapumes_fechamento', name: 'Tapumes e fechamento de obra', unit: 'm²', price: 85.00, quantity: 0 },
-                { id: 'item_instalacao_canteiro', name: 'Instalação de canteiro (banheiros, escritório)', unit: 'm²', price: 450.00, quantity: 0 },
-                { id: 'item_ligacoes_provisorias', name: 'Ligações provisórias (água, luz)', unit: 'vb', price: 1200.00, quantity: 1 },
-                { id: 'item_placa_obra', name: 'Placa de obra', unit: 'un', price: 450.00, quantity: 1 },
-                { id: 'item_demolicoes_diversas', name: 'Demolições diversas (paredes, pisos, lajes)', unit: 'm³', price: 90.00, quantity: 0 },
-                { id: 'item_remocao_entulho', name: 'Remoção de entulho / caçamba', unit: 'un', price: 450.00, quantity: 0 },
-                { id: 'item_limpeza_inicial', name: 'Limpeza inicial do terreno (capina, raspagem)', unit: 'm²', price: 6.50, quantity: 0 }
+                { id: 'pre_001', name: 'Levantamento topográfico planialtimétrico cadastral', unit: 'm²', price: 1.50, quantity: 1 },
+                { id: 'pre_002', name: 'Sondagem SPT (furo)', unit: 'm', price: 180.00, quantity: 15 },
+                { id: 'pre_003', name: 'Projeto Arquitetônico Executivo', unit: 'm²', price: 45.00, quantity: 1 },
+                { id: 'pre_004', name: 'Projetos Complementares (Elétrica, Hidráulica, Estrutural)', unit: 'm²', price: 35.00, quantity: 1 },
+                { id: 'pre_005', name: 'Mobilização e desmobilização de canteiro', unit: 'vb', price: 3500.00, quantity: 1 },
+                { id: 'pre_006', name: 'Tapume em chapa de madeira compensada (h=2.20m)', unit: 'm²', price: 95.00, quantity: 0 },
+                { id: 'pre_007', name: 'Barracão de obra / Escritório / Depósito', unit: 'm²', price: 550.00, quantity: 0 },
+                { id: 'pre_008', name: 'Locação da obra (gabarito de madeira)', unit: 'm²', price: 18.00, quantity: 0 },
+                { id: 'pre_009', name: 'Placa de obra em chapa galvanizada', unit: 'm²', price: 450.00, quantity: 1 },
+                { id: 'pre_010', name: 'Caçamba estacionária para entulho (5m³)', unit: 'un', price: 450.00, quantity: 0 },
+                { id: 'pre_011', name: 'Limpeza mecanizada de terreno (bota-fora)', unit: 'm²', price: 8.50, quantity: 0 },
+                { id: 'pre_012', name: 'Ligação provisória de energia e água', unit: 'vb', price: 1200.00, quantity: 1 }
             ]
         },
         {
-            id: 'cat_terraplenagem',
-            name: 'Terraplenagem e Escavações',
+            id: 'cat_demolicoes',
+            name: '2. DEMOLIÇÕES E RETIRADAS',
             items: [
-                { id: 'item_limpeza_terreno', name: 'Limpeza do terreno', unit: 'm²', price: 6.50, quantity: 0 },
-                { id: 'item_corte_aterro', name: 'Corte e aterro mecanizado', unit: 'm³', price: 45.00, quantity: 0 },
-                { id: 'item_escavacao_fundacoes', name: 'Escavação manual para fundações', unit: 'm³', price: 95.00, quantity: 0 },
-                { id: 'item_compactacao_solo', name: 'Compactação de aterro', unit: 'm³', price: 35.00, quantity: 0 },
-                { id: 'item_transporte_terra', name: 'Transporte de terra (bota-fora)', unit: 'm³', price: 55.00, quantity: 0 },
-                { id: 'item_aterros_estruturais', name: 'Aterro estrutural (material importado)', unit: 'm³', price: 120.00, quantity: 0 },
-                { id: 'item_escavacao_mecanica', name: 'Escavação mecânica para grandes volumes', unit: 'm³', price: 10.00, quantity: 0 },
-                { id: 'item_regularizacao_nivelamento', name: 'Regularização do terreno e nivelamento', unit: 'm²', price: 1.50, quantity: 0 }
+                { id: 'dem_001', name: 'Demolição manual de alvenaria', unit: 'm³', price: 120.00, quantity: 0 },
+                { id: 'dem_002', name: 'Demolição de concreto armado manual', unit: 'm³', price: 350.00, quantity: 0 },
+                { id: 'dem_003', name: 'Retirada de piso cerâmico ou ladrilho', unit: 'm²', price: 25.00, quantity: 0 },
+                { id: 'dem_004', name: 'Retirada de esquadrias (portas/janelas)', unit: 'un', price: 80.00, quantity: 0 },
+                { id: 'dem_005', name: 'Picoteamento de reboco', unit: 'm²', price: 18.00, quantity: 0 },
+                { id: 'dem_006', name: 'Retirada de louças e metais sanitários', unit: 'vb', price: 150.00, quantity: 0 }
+            ]
+        },
+        {
+            id: 'cat_mov_terra',
+            name: '3. MOVIMENTAÇÃO DE TERRA',
+            items: [
+                { id: 'mov_001', name: 'Escavação manual de valas (até 1.5m)', unit: 'm³', price: 90.00, quantity: 0 },
+                { id: 'mov_002', name: 'Escavação mecanizada de valas', unit: 'm³', price: 15.00, quantity: 0 },
+                { id: 'mov_003', name: 'Reaterro manual apiloado', unit: 'm³', price: 45.00, quantity: 0 },
+                { id: 'mov_004', name: 'Aterro com material importado (bota-dentro)', unit: 'm³', price: 110.00, quantity: 0 },
+                { id: 'mov_005', name: 'Compactação de aterro mecanizada (sapo)', unit: 'm³', price: 25.00, quantity: 0 }
             ]
         },
         {
             id: 'cat_fundacoes',
-            name: 'Fundações',
+            name: '4. INFRAESTRUTURA / FUNDAÇÕES',
             items: [
-                { id: 'item_fundacoes_rasas', name: 'Concreto para sapatas/radier (c/ forma e aço)', unit: 'm³', price: 2200.00, quantity: 0 },
-                { id: 'item_fundacoes_profundas', name: 'Estaca escavada/broca (concreto + aço)', unit: 'm', price: 140.00, quantity: 0 },
-                { id: 'item_vigas_baldrame', name: 'Vigas baldrame (concreto, forma, aço)', unit: 'm³', price: 2500.00, quantity: 0 },
-                { id: 'item_impermeabilizacao_baldrame', name: 'Impermeabilização de baldrame (tinta asfáltica)', unit: 'm²', price: 45.00, quantity: 0 },
-                { id: 'item_camada_protecao_mecanica', name: 'Lastro de concreto magro (5cm)', unit: 'm²', price: 38.00, quantity: 0 },
-                { id: 'item_reaterro_compactado', name: 'Reaterro interno de valas', unit: 'm³', price: 40.00, quantity: 0 },
-                { id: 'item_estacas_pre_moldadas', name: 'Estacas pré-moldadas / estacas cravadas', unit: 'm', price: 100.00, quantity: 0 },
-                { id: 'item_blocos_coroamento', name: 'Blocos de coroamento (para estacas)', unit: 'm³', price: 1500.00, quantity: 0 }
-            ]
-        },
-        {
-            id: 'cat_confinacoes',
-            name: 'Contenções e Muros',
-            items: [
-                { id: 'item_muros_arrimo', name: 'Muro de arrimo (bloco estrutural cheio)', unit: 'm²', price: 350.00, quantity: 0 },
-                { id: 'item_drenagem_profunda', name: 'Drenagem de muro (tubo + brita + manta)', unit: 'm', price: 85.00, quantity: 0 },
-                { id: 'item_gabioes', name: 'Gabiões', unit: 'm³', price: 850.00, quantity: 0 },
-                { id: 'item_taludes_vegetal', name: 'Taludes com contenção vegetal', unit: 'm²', price: 10.00, quantity: 0 }
+                { id: 'fun_001', name: 'Estaca Broca (trado manual) D=25cm', unit: 'm', price: 85.00, quantity: 0 },
+                { id: 'fun_002', name: 'Estaca Escavada mecanizada D=30cm', unit: 'm', price: 110.00, quantity: 0 },
+                { id: 'fun_003', name: 'Concreto para sapatas FCK 25MPa', unit: 'm³', price: 750.00, quantity: 0 },
+                { id: 'fun_004', name: 'Armação de aço CA-50 para fundações', unit: 'kg', price: 18.00, quantity: 0 },
+                { id: 'fun_005', name: 'Viga Baldrame (forma + armação + concreto)', unit: 'm³', price: 2200.00, quantity: 0 },
+                { id: 'fun_006', name: 'Lastro de concreto magro 5cm', unit: 'm²', price: 45.00, quantity: 0 },
+                { id: 'fun_007', name: 'Impermeabilização de baldrame (tinta betuminosa)', unit: 'm²', price: 35.00, quantity: 0 }
             ]
         },
         {
             id: 'cat_estrutura',
-            name: 'Estrutura',
+            name: '5. SUPERESTRUTURA',
             items: [
-                { id: 'item_pilares', name: 'Pilares em concreto armado (completo)', unit: 'm³', price: 3200.00, quantity: 0 },
-                { id: 'item_vigas', name: 'Vigas em concreto armado (completo)', unit: 'm³', price: 3200.00, quantity: 0 },
-                { id: 'item_lajes', name: 'Laje pré-moldada (fornecimento e montagem)', unit: 'm²', price: 160.00, quantity: 0 },
-                { id: 'item_escadas_estruturais', name: 'Escada em concreto armado', unit: 'm³', price: 3500.00, quantity: 0 },
-                { id: 'item_tercas_caibros', name: 'Estrutura de madeira para telhado', unit: 'm²', price: 120.00, quantity: 0 },
-                { id: 'item_laje_macica', name: 'Laje maciça moldada in loco', unit: 'm³', price: 2500.00, quantity: 0 },
-                { id: 'item_estrutura_metalica', name: 'Estrutura metálica (vigas e pilares)', unit: 'kg', price: 25.00, quantity: 0 }
+                { id: 'est_001', name: 'Pilar em Concreto Armado (Completo)', unit: 'm³', price: 3500.00, quantity: 0 },
+                { id: 'est_002', name: 'Viga em Concreto Armado (Completo)', unit: 'm³', price: 3200.00, quantity: 0 },
+                { id: 'est_003', name: 'Laje Pré-moldada Treliçada H=12cm (isopor)', unit: 'm²', price: 160.00, quantity: 0 },
+                { id: 'est_004', name: 'Laje Maciça (forma + armação + concreto)', unit: 'm³', price: 2800.00, quantity: 0 },
+                { id: 'est_005', name: 'Concreto Usinado FCK 25MPa (Bombeado)', unit: 'm³', price: 550.00, quantity: 0 },
+                { id: 'est_006', name: 'Escada de Concreto Armado', unit: 'm³', price: 4200.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_alvenarias',
-            name: 'Alvenarias',
+            id: 'cat_paredes',
+            name: '6. PAREDES E PAINÉIS',
             items: [
-                { id: 'item_alvenaria_vedacao', name: 'Alvenaria bloco cerâmico (c/ argamassa)', unit: 'm²', price: 110.00, quantity: 0 },
-                { id: 'item_vergas_contravergas', name: 'Vergas e contravergas (concreto)', unit: 'm', price: 45.00, quantity: 0 },
-                { id: 'item_amarracoes_cintas', name: 'Cintas de amarração', unit: 'm', price: 65.00, quantity: 0 },
-                { id: 'item_alvenaria_bloco_concreto', name: 'Alvenaria bloco de concreto', unit: 'm²', price: 140.00, quantity: 0 },
-                { id: 'item_divisorias_drywall', name: 'Divisórias internas leves (drywall)', unit: 'm²', price: 120.00, quantity: 0 }
+                { id: 'par_001', name: 'Alvenaria Bloco Cerâmico 14x19x29 (vedação)', unit: 'm²', price: 110.00, quantity: 0 },
+                { id: 'par_002', name: 'Alvenaria Bloco Estrutural 14x19x29', unit: 'm²', price: 145.00, quantity: 0 },
+                { id: 'par_003', name: 'Alvenaria Tijolinho Comum (aparente)', unit: 'm²', price: 180.00, quantity: 0 },
+                { id: 'par_004', name: 'Parede Drywall Standard (ST) - Simples', unit: 'm²', price: 120.00, quantity: 0 },
+                { id: 'par_005', name: 'Parede Drywall Resistente Umidade (RU) - Verde', unit: 'm²', price: 150.00, quantity: 0 },
+                { id: 'par_006', name: 'Vergas e Contravergas pré-moldadas', unit: 'm', price: 45.00, quantity: 0 },
+                { id: 'par_007', name: 'Divisória Naval / Eucatex', unit: 'm²', price: 95.00, quantity: 0 },
+                { id: 'par_008', name: 'Cobogó de concreto / cerâmico', unit: 'm²', price: 320.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_impermeabilizacoes',
-            name: 'Impermeabilizações',
+            id: 'cat_estrutura_metalica_madeira',
+            name: '7. ESTRUTURAS METÁLICAS E MADEIRA',
             items: [
-                { id: 'item_banheiros', name: 'Impermeabilização áreas úmidas (argamassa polimérica)', unit: 'm²', price: 65.00, quantity: 0 },
-                { id: 'item_lajes_expostas', name: 'Impermeabilização lajes (manta asfáltica)', unit: 'm²', price: 140.00, quantity: 0 },
-                { id: 'item_reservatorios', name: 'Impermeabilização reservatórios', unit: 'm²', price: 90.00, quantity: 0 },
-                { id: 'item_impermeabilizacao_fundacoes', name: 'Impermeabilização de fundações (manta + primer)', unit: 'm²', price: 65.00, quantity: 0 },
-                { id: 'item_drenagem_subsolo', name: 'Drenagem de subsolo', unit: 'm', price: 85.00, quantity: 0 }
+                { id: 'met_001', name: 'Estrutura aço galvanizado para telhado', unit: 'kg', price: 22.00, quantity: 0 },
+                { id: 'met_002', name: 'Estrutura madeira de lei para telhado', unit: 'm²', price: 140.00, quantity: 0 },
+                { id: 'met_003', name: 'Mezanino Metálico (Vigas I/W)', unit: 'kg', price: 28.00, quantity: 0 },
+                { id: 'met_004', name: 'Pergolado de Madeira (Eucalipto tratado)', unit: 'm²', price: 350.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_hidraulicas',
-            name: 'Instalações Hidráulicas',
+            id: 'cat_cobertura',
+            name: '8. COBERTURA E TELHADO',
             items: [
-                { id: 'item_agua_fria', name: 'Ponto de água fria (tubo + conexões)', unit: 'pt', price: 250.00, quantity: 0 },
-                { id: 'item_agua_quente', name: 'Ponto de água quente (CPVC/PPR)', unit: 'pt', price: 380.00, quantity: 0 },
-                { id: 'item_esgoto_ventilacao', name: 'Ponto de esgoto/ventilação', unit: 'pt', price: 280.00, quantity: 0 },
-                { id: 'item_reservatorios_superiores', name: 'Caixa d\'água 1000L (instalada)', unit: 'un', price: 1200.00, quantity: 0 },
-                { id: 'item_caixa_gordura', name: 'Caixa de gordura/inspeção (PVC)', unit: 'un', price: 450.00, quantity: 0 },
-                { id: 'item_drenagem_pluvial', name: 'Drenagem pluvial (caleiras, tubos, ralos)', unit: 'm', price: 60.00, quantity: 0 },
-                { id: 'item_pressurizador', name: 'Pressurizador / bomba (infraestrutura)', unit: 'un', price: 1500.00, quantity: 0 }
+                { id: 'cob_001', name: 'Telhamento com telha cerâmica tipo portuguesa', unit: 'm²', price: 95.00, quantity: 0 },
+                { id: 'cob_002', name: 'Telhamento com telha de fibrocimento 6mm', unit: 'm²', price: 65.00, quantity: 0 },
+                { id: 'cob_003', name: 'Telha metálica termoacústica (Sanduíche) 30mm', unit: 'm²', price: 240.00, quantity: 0 },
+                { id: 'cob_004', name: 'Calha em chapa galvanizada (corte 33)', unit: 'm', price: 90.00, quantity: 0 },
+                { id: 'cob_005', name: 'Rufo pingadeira em chapa galvanizada', unit: 'm', price: 65.00, quantity: 0 },
+                { id: 'cob_006', name: 'Manta térmica subcobertura (alumínio)', unit: 'm²', price: 25.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_eletricas',
-            name: 'Instalações Elétricas',
+            id: 'cat_impermeabilizacao',
+            name: '9. IMPERMEABILIZAÇÃO',
             items: [
-                { id: 'item_entrada_energia', name: 'Padrão de entrada (monofásico/bifásico)', unit: 'un', price: 1800.00, quantity: 0 },
-                { id: 'item_quadro_geral', name: 'Quadro de distribuição (montado)', unit: 'un', price: 1500.00, quantity: 0 },
-                { id: 'item_infra_tomadas', name: 'Ponto de tomada/interruptor (eletroduto + fio + caixa)', unit: 'pt', price: 190.00, quantity: 0 },
-                { id: 'item_infra_iluminacao', name: 'Ponto de iluminação (caixa no teto)', unit: 'pt', price: 160.00, quantity: 0 },
-                { id: 'item_aterramento_spda', name: 'Haste de aterramento', unit: 'un', price: 120.00, quantity: 0 },
-                { id: 'item_cabeamento_estruturado', name: 'Cabeamento estruturado (internet e redes)', unit: 'pt', price: 250.00, quantity: 0 },
-                { id: 'item_infra_cftv', name: 'Infraestrutura para CFTV / alarmes', unit: 'pt', price: 280.00, quantity: 0 },
-                { id: 'item_spda', name: 'SPDA (Sistema de Proteção contra Descargas Atmosféricas)', unit: 'vb', price: 4500.00, quantity: 0 }
+                { id: 'imp_001', name: 'Manta asfáltica aluminizada 3mm (lajes expostas)', unit: 'm²', price: 140.00, quantity: 0 },
+                { id: 'imp_002', name: 'Argamassa polimérica (banheiros/cozinhas)', unit: 'm²', price: 55.00, quantity: 0 },
+                { id: 'imp_003', name: 'Manta líquida acrílica (3 demãos)', unit: 'm²', price: 65.00, quantity: 0 },
+                { id: 'imp_004', name: 'Proteção mecânica sobre impermeabilização', unit: 'm²', price: 40.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_climatizacao',
-            name: 'Climatização',
+            id: 'cat_revest_parede',
+            name: '10. REVESTIMENTOS DE PAREDE',
             items: [
-                { id: 'item_ar_condicionado', name: 'Infraestrutura para Ar Condicionado (dreno + cobre)', unit: 'pt', price: 850.00, quantity: 0 },
-                { id: 'item_ponto_eletrico_ac', name: 'Ponto elétrico reforçado para AC', unit: 'un', price: 180.00, quantity: 0 },
-                { id: 'item_exaustores', name: 'Instalação de exaustores / ventilação mecânica', unit: 'un', price: 450.00, quantity: 0 }
+                { id: 'rev_p_001', name: 'Chapisco rolaso ou convencional', unit: 'm²', price: 12.00, quantity: 0 },
+                { id: 'rev_p_002', name: 'Emboço/Reboco (massa única) interno', unit: 'm²', price: 48.00, quantity: 0 },
+                { id: 'rev_p_003', name: 'Reboco externo (com impermeabilizante)', unit: 'm²', price: 55.00, quantity: 0 },
+                { id: 'rev_p_004', name: 'Azulejo/Cerâmica branca padrão médio', unit: 'm²', price: 120.00, quantity: 0 },
+                { id: 'rev_p_005', name: 'Porcelanato Polido (parede/banheiro)', unit: 'm²', price: 210.00, quantity: 0 },
+                { id: 'rev_p_006', name: 'Pastilha de vidro/cerâmica', unit: 'm²', price: 350.00, quantity: 0 },
+                { id: 'rev_p_007', name: 'Gesso liso direto na alvenaria', unit: 'm²', price: 45.00, quantity: 0 }
+            ]
+        },
+        {
+            id: 'cat_forros',
+            name: '11. FORROS',
+            items: [
+                { id: 'for_001', name: 'Forro de Gesso Acartonado (Plaquinha)', unit: 'm²', price: 65.00, quantity: 0 },
+                { id: 'for_002', name: 'Forro de Gesso Estruturado (Drywall) C/ Tabica', unit: 'm²', price: 110.00, quantity: 0 },
+                { id: 'for_003', name: 'Forro de PVC branco liso', unit: 'm²', price: 75.00, quantity: 0 },
+                { id: 'for_004', name: 'Sanca de gesso aberta (iluminação indireta)', unit: 'm', price: 85.00, quantity: 0 },
+                { id: 'for_005', name: 'Moldura de gesso (rodateto) 15cm', unit: 'm', price: 25.00, quantity: 0 }
+            ]
+        },
+        {
+            id: 'cat_pisos',
+            name: '12. PISOS E RODAPÉS',
+            items: [
+                { id: 'pis_001', name: 'Contrapiso argamassa farofa (4cm)', unit: 'm²', price: 45.00, quantity: 0 },
+                { id: 'pis_002', name: 'Regularização autonivelante', unit: 'm²', price: 65.00, quantity: 0 },
+                { id: 'pis_003', name: 'Piso Cerâmico PEI-4 (médio)', unit: 'm²', price: 110.00, quantity: 0 },
+                { id: 'pis_004', name: 'Porcelanato Polido/Acetinado 80x80', unit: 'm²', price: 240.00, quantity: 0 },
+                { id: 'pis_005', name: 'Piso Vinílico LVT Colado (Régua)', unit: 'm²', price: 160.00, quantity: 0 },
+                { id: 'pis_006', name: 'Piso Laminado Durafloor/Eucafloor', unit: 'm²', price: 110.00, quantity: 0 },
+                { id: 'pis_007', name: 'Piso Cimento Queimado', unit: 'm²', price: 85.00, quantity: 0 },
+                { id: 'pis_008', name: 'Piso Intertravado de Concreto (Paver) 6cm', unit: 'm²', price: 105.00, quantity: 0 },
+                { id: 'pis_009', name: 'Rodapé Poliestireno (Santa Luzia) 10cm', unit: 'm', price: 55.00, quantity: 0 },
+                { id: 'pis_010', name: 'Rodapé Cerâmico/Porcelanato', unit: 'm', price: 35.00, quantity: 0 },
+                { id: 'pis_011', name: 'Soleira de Granito (largura 15cm)', unit: 'm', price: 120.00, quantity: 0 }
             ]
         },
         {
             id: 'cat_esquadrias',
-            name: 'Esquadrias',
+            name: '13. ESQUADRIAS E VIDROS',
             items: [
-                { id: 'item_portas_madeira', name: 'Porta interna madeira (completa)', unit: 'un', price: 1350.00, quantity: 0 },
-                { id: 'item_portas_janelas_aluminio', name: 'Janela/Porta alumínio e vidro', unit: 'm²', price: 950.00, quantity: 0 },
-                { id: 'item_portoes', name: 'Portão garagem (alumínio/ferro)', unit: 'm²', price: 750.00, quantity: 0 },
-                { id: 'item_portas_externas_metalicas', name: 'Portas externas metálicas', unit: 'un', price: 1200.00, quantity: 0 },
-                { id: 'item_gradis_metalicos', name: 'Gradis e guarda-corpos metálicos', unit: 'm²', price: 450.00, quantity: 0 }
+                { id: 'esq_001', name: 'Porta de Madeira Lisa (Kit Completo) - 80cm', unit: 'un', price: 1100.00, quantity: 0 },
+                { id: 'esq_002', name: 'Porta de Madeira Maciça (Entrada)', unit: 'un', price: 2500.00, quantity: 0 },
+                { id: 'esq_003', name: 'Porta de Alumínio Veneziana', unit: 'un', price: 1800.00, quantity: 0 },
+                { id: 'esq_004', name: 'Janela de Correr Vidro Temperado 8mm (Blindex)', unit: 'm²', price: 650.00, quantity: 0 },
+                { id: 'esq_005', name: 'Janela em Alumínio Branco suprema c/ vidro', unit: 'm²', price: 950.00, quantity: 0 },
+                { id: 'esq_006', name: 'Box de Banheiro Vidro Temperado Incolor', unit: 'm²', price: 450.00, quantity: 0 },
+                { id: 'esq_007', name: 'Espelhos Lapidados 4mm', unit: 'm²', price: 550.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_coberturas',
-            name: 'Coberturas',
+            id: 'cat_eletrica',
+            name: '14. INSTALAÇÕES ELÉTRICAS',
             items: [
-                { id: 'item_telhas', name: 'Telhamento (cerâmica/concreto)', unit: 'm²', price: 95.00, quantity: 0 },
-                { id: 'item_rufos_calhas', name: 'Rufos e calhas (chapa galvanizada)', unit: 'm', price: 85.00, quantity: 0 },
-                { id: 'item_telhas_metalicas', name: 'Telhas metálicas/sanduíche', unit: 'm²', price: 280.00, quantity: 0 },
-                { id: 'item_cumeeiras', name: 'Cumeeiras e arremates', unit: 'm', price: 55.00, quantity: 0 },
-                { id: 'item_forro_cobertura', name: 'Forro de madeira / PVC / drywall em áreas de cobertura', unit: 'm²', price: 100.00, quantity: 0 }
+                { id: 'ele_001', name: 'Ponto de Luz no Teto (Caixa + Eletroduto + Fiação)', unit: 'pt', price: 180.00, quantity: 0 },
+                { id: 'ele_002', name: 'Ponto de Tomada Baixa/Média/Alta', unit: 'pt', price: 195.00, quantity: 0 },
+                { id: 'ele_003', name: 'Interruptor Simples (Módulo + Placa)', unit: 'un', price: 45.00, quantity: 0 },
+                { id: 'ele_004', name: 'Tomada 10A/20A (Módulo + Placa)', unit: 'un', price: 35.00, quantity: 0 },
+                { id: 'ele_005', name: 'Quadro de Distribuição 24 disjuntores (Instalado)', unit: 'un', price: 1200.00, quantity: 0 },
+                { id: 'ele_006', name: 'Disjuntor Monopolar DIN (10 a 32A)', unit: 'un', price: 35.00, quantity: 0 },
+                { id: 'ele_007', name: 'Disjuntor Bipolar DIN', unit: 'un', price: 85.00, quantity: 0 },
+                { id: 'ele_008', name: 'Dispositivo DR (Diferencial Residual)', unit: 'un', price: 210.00, quantity: 0 },
+                { id: 'ele_009', name: 'Padrão de Entrada Energia Bifásico (Completo)', unit: 'un', price: 2200.00, quantity: 0 },
+                { id: 'ele_010', name: 'Luminária Plafon LED 18/24W Sobrepor/Embutir', unit: 'un', price: 85.00, quantity: 0 },
+                { id: 'ele_011', name: 'Fita LED com fonte (metro)', unit: 'm', price: 55.00, quantity: 0 },
+                { id: 'ele_012', name: 'Cabeamento estruturado Rede/TV (Cat6)', unit: 'pt', price: 250.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_revestimentos_internos',
-            name: 'Revestimentos',
+            id: 'cat_hidraulica',
+            name: '15. INSTALAÇÕES HIDRÁULICAS',
             items: [
-                { id: 'item_chapisco', name: 'Chapisco', unit: 'm²', price: 12.00, quantity: 0 },
-                { id: 'item_emboco', name: 'Emboço/Reboco', unit: 'm²', price: 45.00, quantity: 0 },
-                { id: 'item_contrapiso', name: 'Contrapiso (3-5cm)', unit: 'm²', price: 48.00, quantity: 0 },
-                { id: 'item_piso_porcelanato', name: 'Porcelanato (fornecimento + assentamento)', unit: 'm²', price: 210.00, quantity: 0 },
-                { id: 'item_revestimento_ceramico', name: 'Revestimento cerâmico parede', unit: 'm²', price: 160.00, quantity: 0 },
-                { id: 'item_rodapes', name: 'Rodapé', unit: 'm', price: 35.00, quantity: 0 },
-                { id: 'item_gesso_liso', name: 'Gesso liso / massa corrida avançada', unit: 'm²', price: 50.00, quantity: 0 },
-                { id: 'item_piso_laminado', name: 'Piso laminado / vinílico', unit: 'm²', price: 100.00, quantity: 0 },
-                { id: 'item_revestimento_3d', name: 'Revestimento 3D / pedras decorativas', unit: 'm²', price: 120.00, quantity: 0 }
+                { id: 'hid_001', name: 'Ponto de Água Fria PVC Soldável', unit: 'pt', price: 210.00, quantity: 0 },
+                { id: 'hid_002', name: 'Ponto de Água Quente CPVC ou PPR', unit: 'pt', price: 350.00, quantity: 0 },
+                { id: 'hid_003', name: 'Ponto de Esgoto Secundário 40/50mm', unit: 'pt', price: 180.00, quantity: 0 },
+                { id: 'hid_004', name: 'Ponto de Esgoto Primário 100mm (Vaso)', unit: 'pt', price: 280.00, quantity: 0 },
+                { id: 'hid_005', name: 'Caixa Sifonada 150x150x50', unit: 'un', price: 85.00, quantity: 0 },
+                { id: 'hid_006', name: 'Caixa de Gordura PVC', unit: 'un', price: 420.00, quantity: 0 },
+                { id: 'hid_007', name: 'Caixa D\'água Polietileno 1000L Instalação', unit: 'un', price: 950.00, quantity: 0 },
+                { id: 'hid_008', name: 'Registro de Pressão com Acabamento', unit: 'un', price: 180.00, quantity: 0 },
+                { id: 'hid_009', name: 'Tubulação de águas pluviais 100mm', unit: 'm', price: 65.00, quantity: 0 }
+            ]
+        },
+        {
+            id: 'cat_loucas',
+            name: '16. LOUÇAS E METAIS',
+            items: [
+                { id: 'lou_001', name: 'Vaso Sanitário com Caixa Acoplada (Linha média)', unit: 'un', price: 850.00, quantity: 0 },
+                { id: 'lou_002', name: 'Assento Sanitário Soft Close', unit: 'un', price: 120.00, quantity: 0 },
+                { id: 'lou_003', name: 'Cuba de Apoio para Banheiro', unit: 'un', price: 450.00, quantity: 0 },
+                { id: 'lou_004', name: 'Torneira de Mesa Bica Alta (Banheiro)', unit: 'un', price: 320.00, quantity: 0 },
+                { id: 'lou_005', name: 'Misturador Monocomando Cozinha', unit: 'un', price: 550.00, quantity: 0 },
+                { id: 'lou_006', name: 'Tanque de Lavar Roupa (Louça/Inox/Sintético)', unit: 'un', price: 450.00, quantity: 0 },
+                { id: 'lou_007', name: 'Kit Acessórios Banheiro 5 peças (Metal)', unit: 'jg', price: 280.00, quantity: 0 },
+                { id: 'lou_008', name: 'Chuveiro Elétrico 7500W', unit: 'un', price: 220.00, quantity: 0 }
             ]
         },
         {
             id: 'cat_pintura',
-            name: 'Pintura',
+            name: '17. PINTURA',
             items: [
-                { id: 'item_massa_corrida', name: 'Massa corrida (2 demãos)', unit: 'm²', price: 28.00, quantity: 0 },
-                { id: 'item_pintura_interna_externa', name: 'Pintura Látex Acrílico (2 demãos)', unit: 'm²', price: 32.00, quantity: 0 },
-                { id: 'item_texturas_grafiato', name: 'Textura/Grafiato', unit: 'm²', price: 45.00, quantity: 0 },
-                { id: 'item_pintura_esmalte', name: 'Pintura esmalte (portas, estruturas metálicas)', unit: 'm²', price: 42.00, quantity: 0 },
-                { id: 'item_pintura_epoxi', name: 'Pintura epóxi (garagens, áreas técnicas)', unit: 'm²', price: 85.00, quantity: 0 }
+                { id: 'pin_001', name: 'Aplicação de Selador Acrílico', unit: 'm²', price: 8.00, quantity: 0 },
+                { id: 'pin_002', name: 'Aplicação de Massa Corrida (2 demãos)', unit: 'm²', price: 28.00, quantity: 0 },
+                { id: 'pin_003', name: 'Aplicação de Massa Acrílica (áreas externas)', unit: 'm²', price: 35.00, quantity: 0 },
+                { id: 'pin_004', name: 'Pintura Látex Acrílico Fosco (2 demãos) - Paredes', unit: 'm²', price: 28.00, quantity: 0 },
+                { id: 'pin_005', name: 'Pintura Teto Látex PVA (2 demãos)', unit: 'm²', price: 25.00, quantity: 0 },
+                { id: 'pin_006', name: 'Textura Rústica / Grafiato (Hidrorrepelente)', unit: 'm²', price: 42.00, quantity: 0 },
+                { id: 'pin_007', name: 'Pintura Esmalte em Portas e Batentes', unit: 'm²', price: 55.00, quantity: 0 },
+                { id: 'pin_008', name: 'Verniz em Madeira (3 demãos)', unit: 'm²', price: 45.00, quantity: 0 }
             ]
         },
         {
-            id: 'cat_loucas_metais',
-            name: 'Louças e Metais',
+            id: 'cat_servicos_finais',
+            name: '18. SERVIÇOS FINAIS / DIVERSOS',
             items: [
-                { id: 'item_instalacao_bacias', name: 'Vaso sanitário com caixa acoplada (médio)', unit: 'un', price: 850.00, quantity: 0 },
-                { id: 'item_instalacao_cubas', name: 'Cuba/Lavatório', unit: 'un', price: 450.00, quantity: 0 },
-                { id: 'item_instalacao_torneiras', name: 'Torneira/Misturador (médio)', unit: 'un', price: 350.00, quantity: 0 },
-                { id: 'item_instalacao_chuveiros', name: 'Chuveiro elétrico', unit: 'un', price: 180.00, quantity: 0 },
-                { id: 'item_ralo_linear', name: 'Ralo linear', unit: 'un', price: 350.00, quantity: 0 },
-                { id: 'item_acessorios_banheiro', name: 'Acessórios de banheiro (suporte toalha, papeleira)', unit: 'jg', price: 250.00, quantity: 0 }
-            ]
-        },
-        {
-            id: 'cat_limpeza',
-            name: 'Finalização',
-            items: [
-                { id: 'item_limpeza_pos_obra', name: 'Limpeza fina pós-obra', unit: 'm²', price: 25.00, quantity: 0 },
-                { id: 'item_comissionamento', name: 'Teste e comissionamento das instalações', unit: 'vb', price: 2500.00, quantity: 0 },
-                { id: 'item_entrega_tecnica', name: 'Entrega técnica / manual do proprietário', unit: 'vb', price: 1500.00, quantity: 0 }
+                { id: 'fin_001', name: 'Limpeza Final de Obra (Fina)', unit: 'm²', price: 25.00, quantity: 0 },
+                { id: 'fin_002', name: 'Verba para Jardinagem e Paisagismo', unit: 'vb', price: 2500.00, quantity: 0 },
+                { id: 'fin_003', name: 'Bancada de Granito/Mármore (Cozinha/Banheiro)', unit: 'm²', price: 1200.00, quantity: 0 },
+                { id: 'fin_004', name: 'Administração de Obra local (Mensal)', unit: 'mes', price: 3500.00, quantity: 0 }
             ]
         }
     ]

@@ -11,8 +11,8 @@ export function Footer() {
 
     return (
         <footer className={`border-t pt-16 pb-8 ${isReportPage
-            ? 'bg-white dark:bg-[#262423] border-gray-100 dark:border-white/5'
-            : 'bg-[#262423] border-white/5'
+            ? 'bg-white dark:bg-background border-gray-100 dark:border-white/5'
+            : 'bg-white border-gray-100 dark:bg-background dark:border-white/5'
             }`}>
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
@@ -26,7 +26,7 @@ export function Footer() {
                                 className="h-10 w-auto"
                             />
                         </Link>
-                        <p className={`text-sm mb-6 max-w-xs ${isReportPage ? 'text-gray-500 dark:text-[#B5B5B5]' : 'text-[#B5B5B5]'}`}>
+                        <p className="text-sm mb-6 max-w-xs text-gray-500 dark:text-muted-foreground">
                             Fluxo completo de documentação por IA — do orçamento ao relatório técnico.
                         </p>
                         <div className="flex gap-4">
@@ -43,8 +43,8 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className={`font-semibold mb-4 ${isReportPage ? 'text-gray-900 dark:text-[#E8E8E6]' : 'text-[#E8E8E6]'}`}>Produto</h4>
-                        <ul className={`space-y-2 text-sm ${isReportPage ? 'text-gray-600 dark:text-[#B5B5B5]' : 'text-[#B5B5B5]'}`}>
+                        <h4 className="font-semibold mb-4 text-gray-900 dark:text-foreground">Produto</h4>
+                        <ul className="space-y-2 text-sm text-gray-600 dark:text-muted-foreground">
                             <li><Link href="#" className="hover:text-primary">Funcionalidades</Link></li>
                             <li><Link href="#" className="hover:text-primary">Preços</Link></li>
                             <li><Link href="#" className="hover:text-primary">Integrações</Link></li>
@@ -53,18 +53,17 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className={`font-semibold mb-4 ${isReportPage ? 'text-gray-900 dark:text-[#E8E8E6]' : 'text-[#E8E8E6]'}`}>Recursos</h4>
-                        <ul className={`space-y-2 text-sm ${isReportPage ? 'text-gray-600 dark:text-[#B5B5B5]' : 'text-[#B5B5B5]'}`}>
-                            <li><Link href="#" className="hover:text-primary">Documentação</Link></li>
-                            <li><Link href="#" className="hover:text-primary">API</Link></li>
-                            <li><Link href="#" className="hover:text-primary">Comunidade</Link></li>
-                            <li><Link href="#" className="hover:text-primary">Blog</Link></li>
+                        <h4 className="font-semibold mb-4 text-gray-900 dark:text-foreground">Institucional</h4>
+                        <ul className="space-y-2 text-sm text-gray-600 dark:text-muted-foreground">
+                            <li><Link href="/sobre" className="hover:text-primary">Sobre Nós</Link></li>
+                            <li><Link href="/contato" className="hover:text-primary">Contato</Link></li>
+                            <li><Link href="/apoie" className="hover:text-primary">Apoie o Projeto</Link></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className={`font-semibold mb-4 ${isReportPage ? 'text-gray-900 dark:text-[#E8E8E6]' : 'text-[#E8E8E6]'}`}>Legal</h4>
-                        <ul className={`space-y-2 text-sm ${isReportPage ? 'text-gray-600 dark:text-[#B5B5B5]' : 'text-[#B5B5B5]'}`}>
+                        <h4 className="font-semibold mb-4 text-gray-900 dark:text-foreground">Legal</h4>
+                        <ul className="space-y-2 text-sm text-gray-600 dark:text-muted-foreground">
                             <li><Link href="#" className="hover:text-primary">Privacidade</Link></li>
                             <li><Link href="#" className="hover:text-primary">Termos</Link></li>
                             <li><Link href="#" className="hover:text-primary">Segurança</Link></li>
@@ -72,11 +71,11 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className={`border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 ${isReportPage ? 'border-gray-100 dark:border-white/5' : 'border-white/5'}`}>
-                    <p className={`text-xs ${isReportPage ? 'text-gray-500 dark:text-[#6b6967]' : 'text-[#6b6967]'}`}>
+                <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 border-gray-100 dark:border-white/5">
+                    <p className="text-xs text-gray-500 dark:text-[#6b6967]">
                         © 2024 ObraCalc. Todos os direitos reservados.
                     </p>
-                    <div className={`flex gap-6 text-xs ${isReportPage ? 'text-gray-500 dark:text-[#6b6967]' : 'text-[#6b6967]'}`}>
+                    <div className="flex gap-6 text-xs text-gray-500 dark:text-[#6b6967]">
                         <span>Feito com ❤️ para engenheiros</span>
                     </div>
                 </div>
