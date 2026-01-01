@@ -72,7 +72,7 @@ export default function ContatoPage() {
                         </h1>
 
                         <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-                            Com mais de 25 anos dedicados à engenharia de custos e orçamentação, desenvolvi o <strong>ObraCalc</strong> para democratizar
+                            Com mais de 25 anos dedicados à engenharia de custos e orçamentação, desenvolvi o <strong>ObraPlana</strong> para democratizar
                             o acesso a orçamentos profissionais. Minha missão é simplificar processos complexos e tornar a construção civil mais acessível e transparente.
                         </p>
 
@@ -88,7 +88,7 @@ export default function ContatoPage() {
                                 href="/sobre"
                                 className="btn bg-card border border-input text-foreground px-8 py-3 text-lg hover:border-[#F97316] transition-all"
                             >
-                                Conhecer o ObraCalc
+                                Conhecer o ObraPlana
                             </Link>
                         </div>
                     </div>
@@ -135,7 +135,7 @@ export default function ContatoPage() {
                                 </div>
                                 <div>
                                     <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                                        Por que criei o ObraCalc?
+                                        Por que criei o ObraPlana?
                                     </h2>
                                     <div className="space-y-4 text-muted-foreground leading-relaxed">
                                         <p>
@@ -143,7 +143,7 @@ export default function ContatoPage() {
                                             Pequenos construtores, arquitetos autônomos e proprietários muitas vezes não têm acesso a ferramentas profissionais de orçamentação.
                                         </p>
                                         <p>
-                                            <strong className="text-foreground">O ObraCalc nasceu dessa necessidade.</strong> Uma plataforma que combina
+                                            <strong className="text-foreground">O ObraPlana nasceu dessa necessidade.</strong> Uma plataforma que combina
                                             inteligência artificial com décadas de conhecimento técnico, tornando orçamentos precisos acessíveis a todos –
                                             desde uma reforma residencial até grandes empreendimentos.
                                         </p>

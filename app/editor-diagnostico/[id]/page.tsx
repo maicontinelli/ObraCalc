@@ -268,12 +268,12 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
                     <div className="bg-[#374151] text-white px-6 py-4 flex justify-between items-center print:bg-[#374151] print:text-white">
                         <div className="flex items-center gap-3">
                             <img
-                                src="/logo-v4.png"
+                                src="/logo-obraplana.png"
                                 alt="Logo"
                                 className="h-8 w-auto"
                             />
                             <div>
-                                <div className="text-xl font-semibold tracking-tight leading-none text-white">ObraCalc</div>
+                                <div className="text-xl font-semibold tracking-tight leading-none text-white">ObraPlana</div>
                                 <div className="text-[10px] text-gray-400 font-medium tracking-wide uppercase mt-0.5 leading-none">Inteligência Artificial</div>
                             </div>
                         </div>
@@ -460,7 +460,7 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
                                 <div className="flex flex-col gap-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm">✨</span>
-                                        <span>Gerado por ObraCalc</span>
+                                        <span>Gerado por ObraPlana</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm">🔒</span>
@@ -494,7 +494,7 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
                 </div>
 
             </div>
-            <div className="watermark hidden">Gerado pela IA ObraCalc</div>
+            <div className="watermark hidden">Gerado pela IA ObraPlana</div>
         </div>
     );
 }

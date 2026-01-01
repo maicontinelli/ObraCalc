@@ -22,7 +22,7 @@ export default function AboutPage() {
                                 <Info className="w-8 h-8 text-[#3B82F6]" />
                             </div>
                             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-8">
-                                Sobre o <span className="text-[#3B82F6]">ObraCalc</span>
+                                Sobre o <span className="text-[#3B82F6]">ObraPlana</span>
                             </h1>
                             <p className="text-xl md:text-2xl text-foreground leading-relaxed max-w-3xl mx-auto">
                                 Transformando a maneira como orçamentos de obras são criados: simples, rápido e acessível para todos.
@@ -79,7 +79,7 @@ export default function AboutPage() {
                                 </h2>
                                 <div className="space-y-6 text-foreground leading-relaxed">
                                     <p>
-                                        O ObraCalc nasceu da observação de um problema comum: a complexidade e a falta de padronização nos orçamentos de pequenas e médias obras.
+                                        O ObraPlana nasceu da observação de um problema comum: a complexidade e a falta de padronização nos orçamentos de pequenas e médias obras.
                                     </p>
                                     <p>
                                         Muitos profissionais perdem horas em planilhas complexas, enquanto clientes sofrem com a falta de clareza nos custos. Decidimos mudar isso usando tecnologia.

@@ -1,4 +1,4 @@
-# 🎉 OBRACALC SIMPLE - CONCLUÍDO
+# 🎉 OBRAPLANA SIMPLE - CONCLUÍDO
 
 ## ✅ TUDO FUNCIONANDO
 
@@ -8,7 +8,7 @@
 - ✅ **Páginas Institucionais** - Planos, Sobre, Contato, Apoie
 - ✅ **Editor de Orçamentos** - 100% funcional com localStorage
 - ✅ **Relatório/Exportação** - PDF e HTML funcionando
-- ✅ **IA Search** - Integrado e pronto
+- ✅ **IA SVersão simplificada do ObraPlana - Sistema de orçamentos de construção sem autenticação.** - Sistema simples e direto
 - ✅ **Sem autenticação** - Sistema simples e direto
 
 ---
@@ -41,7 +41,7 @@ npm run dev
 ## 📁 ESTRUTURA DO PROJETO
 
 ```
-obracalc-simple/
+obraplana-simple/
 ├── app/
 │   ├── page.tsx                 # Homepage
 │   ├── layout.tsx               # Layout limpo (sem auth)
@@ -124,7 +124,7 @@ obracalc-simple/
 
 ## ⚡ DIFERENÇAS DO PROJETO ANTIGO
 
-| Feature | Projeto Antigo | ObraCalc Simple |
+| Feature | Projeto Antigo | ObraPlana Simple |
 |---------|---------------|-----------------|
 | Auth | ✅ Login/Logout | ❌ Removido |
 | Dashboard | ✅ Histórico | ❌ Removido |

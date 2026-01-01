@@ -455,9 +455,9 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         <!-- Invoice Header -->
         <div class="invoice-header">
             <div class="brand">
-                <img src="${window.location.origin}/logo-v4.png" alt="Logo" style="height: 32px; width: auto;">
+                <img src="${window.location.origin}/logo-obraplana.png" alt="Logo" style="height: 32px; width: auto;">
                 <div style="display: flex; flex-direction: column;">
-                    <span class="brand-logo">ObraCalc</span>
+                    <span class="brand-logo">ObraPlana</span>
                     <span class="brand-subtitle">Tecnologia Especialista em Construção Civil</span>
                 </div>
             </div>
@@ -538,7 +538,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                   ${(!profile || profile.tier === 'free') ? `
                   <div class="footer-box">
                        <div class="box-title">Plano Gratuito:</div>
-                       <div class="box-item"><span class="box-icon">✨</span> Gerado por ObraCalc</div>
+                       <div class="box-item"><span class="box-icon">✨</span> Gerado por ObraPlana</div>
                        <div class="box-item"><span class="box-icon">🔒</span> Versão não salva na nuvem</div>
                   </div>
                   ` : ''}
@@ -562,7 +562,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
             </div>
         </div>
     </div>
-    ${(!profile || profile.tier === 'free') ? '<div class="watermark">Gerado gratuitamente por ObraCalc</div>' : ''}
+    ${(!profile || profile.tier === 'free') ? '<div class="watermark">Gerado gratuitamente por ObraPlana</div>' : ''}
 </body>
 </html>`;
 
@@ -795,13 +795,13 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     <div className="bg-[#374151] text-white px-6 py-4 flex justify-between items-center print:bg-[#374151] print:text-white">
                         <div className="flex items-center gap-3">
                             <img
-                                src="/logo-v4.png"
-                                alt="Logo ObraCalc"
+                                src="/logo-obraplana.png"
+                                alt="Logo ObraPlana"
                                 className="h-8 w-auto"
                             />
                             <div>
-                                <div className="text-xl font-semibold tracking-tight leading-none text-white">ObraCalc</div>
-                                <div className="text-[10px] text-gray-400 font-medium tracking-wide uppercase mt-0.5 leading-none">Tecnologia Especialista em Construção Civil</div>
+                                <div className="text-xl font-semibold tracking-tight leading-none text-white">ObraPlana</div>
+                                <div className="text-[10px] text-gray-400 font-medium tracking-wide uppercase mt-0.5 leading-none">Inteligência Artificial</div>
                             </div>
                         </div>
                         <div className="text-right">

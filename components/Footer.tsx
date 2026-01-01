@@ -19,8 +19,8 @@ export function Footer() {
                     <div className="col-span-2 md:col-span-1">
                         <Link href="/" className="mb-4 block">
                             <Image
-                                src="/logo-v4.png"
-                                alt="ObraCalc Logo"
+                                src="/logo-obraplana.png"
+                                alt="ObraPlana Logo"
                                 width={120}
                                 height={40}
                                 className="h-10 w-auto"
@@ -73,7 +73,7 @@ export function Footer() {
 
                 <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 border-gray-100 dark:border-white/5">
                     <p className="text-xs text-gray-500 dark:text-[#6b6967]">
-                        © 2024 ObraCalc. Todos os direitos reservados.
+                        © 2024 ObraPlana. Todos os direitos reservados.
                     </p>
                     <div className="flex gap-6 text-xs text-gray-500 dark:text-[#6b6967]">
                         <span>Feito com ❤️ para engenheiros</span>

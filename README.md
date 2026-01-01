@@ -1,6 +1,6 @@
-# 🏗️ ObraCalc Simple
+# 🏗️ ObraPlana Simple
 
-Versão simplificada do ObraCalc - Sistema de orçamentos de construção sem autenticação.
+Versão simplificada do ObraPlana - Sistema de orçamentos de construção sem autenticação.
 
 ## ✨ Funcionalidades
 

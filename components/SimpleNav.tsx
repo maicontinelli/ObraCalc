@@ -54,8 +54,8 @@ export default function SimpleNav() {
                     <div className="flex items-center">
                         <Link href="/" className="flex-shrink-0 flex items-center gap-2">
                             <Image
-                                src="/logo-v4.png"
-                                alt="ObraCalc Logo"
+                                src="/logo-obraplana.png"
+                                alt="ObraPlana Logo"
                                 width={32}
                                 height={32}
                                 className="h-8 w-auto"

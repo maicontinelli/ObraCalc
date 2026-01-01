@@ -10,7 +10,7 @@ export function Hero() {
             <div className="container mx-auto px-4 relative z-10">
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12">
                     <Image
-                        src="/logo-v4.png"
+                        src="/logo-obraplana.png"
                         alt="ObraCalc Logo"
                         width={100}
                         height={100}
@@ -18,7 +18,7 @@ export function Hero() {
                     />
                     <h1 className="text-5xl md:text-7xl font-heading font-bold tracking-tight leading-tight">
                         <span className="text-foreground">
-                            ObraCalc
+                            ObraPlana
                         </span>
                     </h1>
                 </div>
