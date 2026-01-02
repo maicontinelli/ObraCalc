@@ -116,69 +116,88 @@ export default function NovoDiagnostico() {
 
     return (
         <div className="min-h-screen bg-background">
-            <div className="max-w-4xl mx-auto px-4 py-12">
-                {/* Header */}
-                <div className="mb-8">
-                    <button
-                        onClick={() => router.push('/')}
-                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
-                    >
-                        <ArrowLeft size={20} />
-                        Voltar
-                    </button>
-                    <h1 className="text-4xl font-bold text-foreground mb-2 font-heading">
-                        Diagnóstico Visual
-                    </h1>
-                    <p className="text-muted-foreground">
-                        Faça upload de uma foto do ambiente e responda algumas perguntas
-                    </p>
+            {/* Hero Section */}
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#FF6600]/5 via-background to-[#FF6600]/5 border-b border-white/5 pt-16 pb-12 mb-10">
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#FF6600]/10 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#FF6600]/10 rounded-full blur-3xl"></div>
                 </div>
 
-                {/* Upload Step */}
-                {step === 'upload' && (
-                    <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
-                        <div className="text-center">
-                            <Camera className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
-                            <h3 className="text-xl font-semibold mb-2 text-foreground">
-                                Envie uma foto do ambiente
-                            </h3>
-                            <p className="text-muted-foreground mb-6">
-                                Tire ou selecione uma foto clara do ambiente a ser reformado
-                            </p>
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <button
+                            onClick={() => router.push('/')}
+                            className="inline-flex items-center gap-2 text-muted-foreground hover:text-[#FF6600] transition-colors mb-6 text-sm font-medium"
+                        >
+                            <ArrowLeft size={16} />
+                            Voltar para o Início
+                        </button>
+                        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                            Diagnóstico Visual com <span className="text-[#FF6600]">IA</span>
+                        </h1>
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                            Envie uma foto do ambiente e a IA analisará os problemas, sugerindo soluções técnicas e gerando um orçamento preliminar.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
-                            <label className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg cursor-pointer transition-colors font-medium">
-                                {loading ? (
-                                    <>
-                                        <Loader2 className="animate-spin" size={20} />
-                                        Processando...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Upload size={20} />
-                                        Selecionar Foto
-                                    </>
-                                )}
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    className="hidden"
-                                    disabled={loading}
-                                />
-                            </label>
+            <div className="max-w-4xl mx-auto px-4 pb-20">
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Left Column: Image Upload */}
+                    <div className="md:col-span-1 space-y-6">
+                        <div className="bg-card rounded-2xl shadow-xl p-6 border border-border sticky top-24">
+                            <h3 className="text-lg font-bold mb-4 text-foreground flex items-center gap-2">
+                                <Camera size={20} className="text-[#FF6600]" />
+                                Foto do Ambiente
+                            </h3>
+
+                            {image ? (
+                                <div className="space-y-4">
+                                    <div className="relative rounded-lg overflow-hidden aspect-[3/4] border border-white/10 shadow-inner">
+                                        <img src={image} alt="Preview" className="w-full h-full object-cover" />
+                                        <button
+                                            onClick={() => setImage(null)}
+                                            className="absolute top-2 right-2 bg-black/60 hover:bg-red-500 text-white p-2 rounded-full transition-colors backdrop-blur-sm"
+                                        >
+                                            <Upload size={16} className="rotate-45" />
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-center text-green-500 font-medium flex items-center justify-center gap-1">
+                                        <CheckCircle2 size={12} />
+                                        Imagem carregada
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-[#FF6600] dark:hover:border-[#FF6600] rounded-xl p-6 text-center transition-all group">
+                                    <div className="mb-4 p-3 bg-gray-50 dark:bg-white/5 rounded-full w-fit mx-auto group-hover:bg-[#FF6600]/10 transition-colors">
+                                        <Upload className="h-8 w-8 text-gray-400 group-hover:text-[#FF6600] transition-colors" />
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mb-4 font-medium">
+                                        Clique para enviar uma foto do local
+                                    </p>
+                                    <label className="block w-full py-2 bg-[#FF6600] hover:bg-[#FF6600]/90 text-white rounded-lg cursor-pointer transition-colors text-sm font-bold shadow-md">
+                                        {loading ? (
+                                            <Loader2 className="animate-spin mx-auto" size={18} />
+                                        ) : (
+                                            'Selecionar Foto'
+                                        )}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            className="hidden"
+                                            disabled={loading}
+                                        />
+                                    </label>
+                                </div>
+                            )}
                         </div>
                     </div>
-                )}
 
-                {/* Form Step */}
-                {step === 'form' && image && (
-                    <div className="space-y-6">
-                        {/* Image Preview */}
-                        <div className="bg-card rounded-2xl shadow-xl overflow-hidden border border-border">
-                            <img src={image} alt="Preview" className="w-full h-64 object-cover" />
-                        </div>
-
-                        {/* Form */}
+                    {/* Right Column: Form */}
+                    <div className="md:col-span-2">
                         <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
                             <h3 className="text-2xl font-bold mb-6 text-foreground font-heading">
                                 Conte-nos mais sobre o projeto
@@ -276,21 +295,33 @@ export default function NovoDiagnostico() {
 
                             <button
                                 onClick={handleSubmit}
-                                disabled={loading}
-                                className="w-full mt-8 px-6 py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-lg transition-colors flex items-center justify-center gap-2"
+                                disabled={loading || !image}
+                                className={`w-full mt-8 px-6 py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-2 shadow-lg
+                                    ${!image
+                                        ? 'bg-gray-300 dark:bg-gray-800 text-gray-500 cursor-not-allowed'
+                                        : 'bg-[#FF6600] hover:bg-[#E65C00] text-white hover:shadow-orange-500/20'
+                                    }`}
                             >
                                 {loading ? (
                                     <>
                                         <Loader2 className="animate-spin" />
                                         Analisando...
                                     </>
+                                ) : !image ? (
+                                    <>
+                                        <Camera size={20} />
+                                        Envie uma foto para continuar
+                                    </>
                                 ) : (
-                                    'Gerar Diagnóstico'
+                                    <>
+                                        <Sparkles size={20} />
+                                        Gerar Diagnóstico com IA
+                                    </>
                                 )}
                             </button>
                         </div>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );

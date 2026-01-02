@@ -1,4 +1,4 @@
-import { Play } from "lucide-react";
+import Image from "next/image";
 
 export function DemoSection() {
     return (
@@ -26,16 +26,16 @@ export function DemoSection() {
                         </ul>
                     </div>
 
-                    <div className="lg:w-1/2 relative">
-                        <div className="absolute -inset-4 bg-gradient-to-r from-primary to-blue-500 rounded-2xl blur-lg opacity-20 animate-pulse" />
-                        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden aspect-video group cursor-pointer">
-                            {/* Placeholder for video/image */}
-                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-700 transition-colors">
-                                <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                    <Play className="w-8 h-8 text-white ml-1" />
-                                </div>
-                            </div>
-                            {/* You can replace this div with an actual <img /> or <video /> tag */}
+                    <div className="lg:w-1/2 relative flex justify-center">
+                        <div className="absolute -inset-4 bg-gradient-to-r from-primary to-blue-500 rounded-full blur-3xl opacity-20 animate-pulse" />
+                        <div className="relative w-full max-w-sm">
+                            <Image
+                                src="/iphone-preview-v2.webp"
+                                alt="Demonstração do App"
+                                width={600}
+                                height={800}
+                                className="w-full h-auto drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                            />
                         </div>
                     </div>
                 </div>

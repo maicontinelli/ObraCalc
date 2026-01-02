@@ -274,7 +274,7 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
                             />
                             <div>
                                 <div className="text-xl font-semibold tracking-tight leading-none text-white">ObraPlana</div>
-                                <div className="text-[10px] text-gray-400 font-medium tracking-wide uppercase mt-0.5 leading-none">Inteligência Artificial</div>
+                                <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-green-300 font-bold tracking-wide uppercase mt-0.5 leading-none">Inteligência Artificial</div>
                             </div>
                         </div>
                         <div className="text-right">

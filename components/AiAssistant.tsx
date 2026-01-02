@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Sparkles, Send, Bot, Loader2, FilePlus, AlertTriangle, BrainCircuit, Map, Camera, ArrowRight, Plus } from 'lucide-react';
+import { Sparkles, Send, Bot, Loader2, FilePlus, AlertTriangle, BrainCircuit, Map, Camera, ArrowRight, Plus, ScanEye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { BOQ_TEMPLATES } from '@/lib/constants';
 import imageCompression from 'browser-image-compression';
@@ -35,7 +35,21 @@ export default function AiAssistant() {
     const [error, setError] = useState<string | null>(null);
     const [filteredItems, setFilteredItems] = useState<any[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [showToolsMenu, setShowToolsMenu] = useState(false);
     const responseRef = useRef<HTMLDivElement>(null);
+    const toolsRef = useRef<HTMLDivElement>(null);
+
+    // Close tools menu on click outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (toolsRef.current && !toolsRef.current.contains(event.target as Node)) {
+                setShowToolsMenu(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     // Local Search Effect
     useEffect(() => {
@@ -248,7 +262,7 @@ export default function AiAssistant() {
                             shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]
                             border border-white/50 dark:border-gray-700/50
                             hover:bg-white dark:hover:bg-black
-                            focus-within:ring-4 focus-within:ring-orange-500/20 focus-within:border-orange-500/50"
+                            focus-within:ring-4 focus-within:ring-[#FF6600]/20 focus-within:border-[#FF6600]"
                     >
                         <div className="pl-6 text-gray-400 dark:text-gray-500">
                             <Sparkles size={20} className="animate-pulse text-[#FF6600]" />
@@ -295,15 +309,69 @@ export default function AiAssistant() {
                             }}
                         />
 
-                        {/* Camera Button */}
-                        <button
-                            type="button"
-                            onClick={() => document.getElementById('vision-upload')?.click()}
-                            className="absolute right-14 top-1/2 -translate-y-1/2 p-3 text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600] rounded-full transition-all duration-300"
-                            title="Analisar Imagem"
-                        >
-                            <Camera size={20} />
-                        </button>
+                        {/* Tools Menu & Button */}
+                        <div ref={toolsRef}>
+                            <button
+                                type="button"
+                                onClick={() => setShowToolsMenu(!showToolsMenu)}
+                                className={`absolute right-14 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-300 ${showToolsMenu ? 'text-[#FF6600] bg-orange-50 dark:bg-orange-900/20' : 'text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600]'}`}
+                                title="Ferramentas Visuais"
+                            >
+                                <Camera size={20} />
+                            </button>
+
+                            {/* Expanded Tools Menu */}
+                            {showToolsMenu && (
+                                <div className="absolute top-14 right-0 w-64 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                                    <div className="p-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                router.push('/novo-diagnostico');
+                                                setShowToolsMenu(false);
+                                            }}
+                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors group text-left"
+                                        >
+                                            <div className="p-2 bg-[#FF6600]/10 text-[#FF6600] rounded-lg group-hover:scale-110 transition-transform">
+                                                <ScanEye size={18} />
+                                            </div>
+                                            <div>
+                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Diagnóstico Visual</span>
+                                                <span className="block text-[10px] text-gray-500 dark:text-gray-500">IA analisando fotos da obra</span>
+                                            </div>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => router.push('/relatorio-fotografico')}
+                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors group text-left"
+                                        >
+                                            <div className="p-2 bg-[#6366F1]/10 text-[#6366F1] rounded-lg group-hover:scale-110 transition-transform">
+                                                <Camera size={18} />
+                                            </div>
+                                            <div>
+                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Relatório Fotográfico</span>
+                                                <span className="block text-[10px] text-gray-500 dark:text-gray-500">Documentação de obra</span>
+                                            </div>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => router.push('/topografia')}
+                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors group text-left"
+                                        >
+                                            <div className="p-2 bg-[#C2410C]/10 text-[#C2410C] rounded-lg group-hover:scale-110 transition-transform">
+                                                <Map size={18} />
+                                            </div>
+                                            <div>
+                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Topografia</span>
+                                                <span className="block text-[10px] text-gray-500 dark:text-gray-500">Conversor de coordenadas</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {/* Search Button */}
                         <button

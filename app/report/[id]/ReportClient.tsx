@@ -14,7 +14,6 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
-    const [acceptLeads, setAcceptLeads] = useState(false);
 
     const supabase = createClient();
     const { profile, isLoading: isProfileLoading } = useProfile();
@@ -85,33 +84,12 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         return includeMaterials ? baseP : safeLabor;
     };
 
-    const handleLeadTrap = async () => {
-        if (acceptLeads) {
-            const providerName = user ? (profile?.full_name || profile?.company_name) : data.providerName;
-            const providerPhone = user ? profile?.phone : data.providerPhone;
-
-            const { error } = await supabase.from('anonymous_leads').insert({
-                provider_name: providerName,
-                provider_phone: providerPhone,
-                client_name: data.clientName,
-                client_phone: data.clientPhone,
-                project_type: data.projectType,
-                work_city: data.workCity,
-                work_state: data.workState,
-                origin: user ? 'report_consent_free' : 'report_consent_guest'
-            });
-            if (error) console.error('Lead Trap Error:', error);
-        }
-    };
-
-    const handlePrint = async () => {
-        await handleLeadTrap();
+    const handlePrint = () => {
         window.print();
     };
 
-    const handleExportHTML = async () => {
+    const handleExportHTML = () => {
         if (!data) return;
-        await handleLeadTrap();
 
         // Calculate values for export
         const includedItems = data.items?.filter((i: any) => i.included) || [];
@@ -458,7 +436,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 <img src="${window.location.origin}/logo-obraplana.png" alt="Logo" style="height: 32px; width: auto;">
                 <div style="display: flex; flex-direction: column;">
                     <span class="brand-logo">ObraPlana</span>
-                    <span class="brand-subtitle">Tecnologia Especialista em Construção Civil</span>
+                    <span class="brand-subtitle">Tecnologia especialista em construção civil</span>
                 </div>
             </div>
             <div class="invoice-title">
@@ -511,13 +489,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
 
         <div class="footer-wrapper">
              <div class="footer-left">
-                  <div class="footer-box">
-                       <div class="box-title">Legenda:</div>
-                       <div class="box-item"><span class="box-icon">🛠️</span> Composição (Serviço + Material)</div>
-                       <div class="box-item"><span class="box-icon">👷</span> Mão de Obra (Apenas Execução)</div>
-                       <div class="box-item"><span class="box-icon">🧱</span> Material (Insumo Isolado)</div>
-                  </div>
-                  </div>
+
                   ${(profile && (profile.pix_key || profile.bank_account)) ? `
                   <div class="footer-box">
                        <div class="box-title">Dados Bancários / Pagamento:</div>
@@ -728,27 +700,13 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 <div className="max-w-[1600px] mx-auto px-6 py-4 flex justify-between items-center gap-4">
                     <button
                         onClick={() => router.push(`/editor/${estimateId}`)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
                     >
-                        <ArrowLeft size={18} /> Voltar ao Editor
+                        <ArrowLeft size={14} /> Editor
                     </button>
 
                     <div className="flex items-center gap-4">
-                        {/* Lead Trap Checkbox (Anonymous & Free) */}
-                        {(!user || (profile?.tier === 'free')) && (
-                            <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 px-3 py-2 rounded-lg">
-                                <input
-                                    type="checkbox"
-                                    id="leadTraper"
-                                    checked={acceptLeads}
-                                    onChange={(e) => setAcceptLeads(e.target.checked)}
-                                    className="rounded border-orange-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
-                                />
-                                <label htmlFor="leadTraper" className="text-[10px] text-orange-800 font-medium cursor-pointer leading-tight max-w-[150px]">
-                                    Receber orçamentos de profissionais parceiros
-                                </label>
-                            </div>
-                        )}
+
 
                         <div className="flex gap-3">
                             {/* Guest Actions (Discreet) */}
@@ -756,31 +714,25 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                                 <>
                                     <button
                                         onClick={() => router.push('/login')}
-                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                                        className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
                                         title="Crie uma conta para salvar"
                                     >
-                                        <Cloud size={18} /> <span className="hidden sm:inline">Salvar na Nuvem</span>
-                                    </button>
-                                    <button
-                                        onClick={() => router.push('/planos')}
-                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
-                                    >
-                                        <Sparkles size={18} /> <span className="hidden sm:inline">Remover Marca d'Água</span>
+                                        <Cloud size={14} /> <span className="hidden sm:inline">Salvar</span>
                                     </button>
                                 </>
                             )}
 
                             <button
                                 onClick={handleExportHTML}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
+                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors shadow-sm"
                             >
-                                <FileText size={18} /> Exportar HTML
+                                <FileText size={14} /> Html
                             </button>
                             <button
                                 onClick={handlePrint}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors shadow-sm"
+                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors shadow-sm"
                             >
-                                <Printer size={18} /> Gerar PDF
+                                <Printer size={14} /> Pdf
                             </button>
                         </div>
                     </div>
@@ -801,7 +753,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                             />
                             <div>
                                 <div className="text-xl font-semibold tracking-tight leading-none text-white">ObraPlana</div>
-                                <div className="text-[10px] text-gray-400 font-medium tracking-wide uppercase mt-0.5 leading-none">Inteligência Artificial</div>
+                                <div className="text-[10px] text-gray-500 font-medium tracking-wide uppercase mt-0.5 leading-none">Tecnologia especialista em construção civil</div>
                             </div>
                         </div>
                         <div className="text-right">
@@ -959,24 +911,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                 <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-stretch gap-8 break-inside-avoid">
 
                     <div className="flex flex-col lg:flex-row gap-4">
-                        {/* Legend Island (Left) */}
-                        <div className="w-full md:w-72 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-center">
-                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Legenda:</h3>
-                            <div className="flex flex-col gap-2 text-[10px] text-gray-500 uppercase tracking-wide font-medium">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🛠️</span>
-                                    <span>Composição (Serviço + Material)</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🔨</span>
-                                    <span>Mão de Obra (Apenas Execução)</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">🧱</span>
-                                    <span>Material (Insumo Isolado)</span>
-                                </div>
-                            </div>
-                        </div>
+
 
                         {/* Branding/Watermark Island (Hidden for Paid Plans) */}
                         {/* Bank Info Island (If available) */}

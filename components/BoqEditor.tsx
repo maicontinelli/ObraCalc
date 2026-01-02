@@ -800,12 +800,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                 />
                                                                             </div>
                                                                             <div className="col-span-4 flex items-center gap-2">
-                                                                                <span
-                                                                                    title={currentType === 'service' ? 'Serviço/Mão de Obra' : currentType === 'material' ? 'Material' : 'Composição'}
-                                                                                    className="text-[10px] shrink-0 opacity-50 cursor-help select-none grayscale hover:grayscale-0 transition-all"
-                                                                                >
-                                                                                    {currentType === 'service' ? '👷' : currentType === 'material' ? '🧱' : '🛠️'}
-                                                                                </span>
+
                                                                                 <input
                                                                                     type="text"
                                                                                     value={item.name}
@@ -1002,12 +997,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                     />
                                                                                 </div>
                                                                                 <div className="col-span-4 flex items-center gap-2">
-                                                                                    <span
-                                                                                        title={currentType === 'service' ? 'Serviço/Mão de Obra' : currentType === 'material' ? 'Material' : 'Composição'}
-                                                                                        className="text-[10px] shrink-0 opacity-50 cursor-help select-none grayscale hover:grayscale-0 transition-all"
-                                                                                    >
-                                                                                        {currentType === 'service' ? '👷' : currentType === 'material' ? '🧱' : '🛠️'}
-                                                                                    </span>
+
                                                                                     <input
                                                                                         type="text"
                                                                                         value={item.name}
@@ -1190,7 +1180,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                             value={clientPhone}
                                             onChange={handlePhoneChange(setClientPhone)}
                                             className="w-full bg-black/5 dark:bg-[#222120] border border-black/10 dark:border-white/10 rounded px-3 py-2 text-xs text-foreground focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder-black/30 dark:placeholder-white/20 tabular-nums"
-                                            placeholder="WhatsApp: (00) 00000-0000"
+                                            placeholder="(00) 00000 - 0000"
                                             maxLength={15}
                                         />
                                     </div>
@@ -1237,6 +1227,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                     </div>
                                 </div>
                             </div>
+
+
 
                             {/* GENERATE REPORT BUTTON (Moved Here) */}
                             <button

@@ -52,22 +52,21 @@ export default function Home() {
               Junte-se a mais de 5.000 engenheiros e arquitetos que economizam 80% do tempo de orçamento.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 h-14 px-8 text-lg font-semibold shadow-lg transition-transform hover:scale-105"
+                data-testid="button-cta"
+                onClick={() => handleStart('obra_nova')}
+              >
+                Começar Agora
+              </Button>
               <Link href="/login">
-                <Button
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 h-14 px-8 text-lg font-semibold shadow-lg transition-transform hover:scale-105"
-                  data-testid="button-cta"
-                >
-                  Começar Agora
-                </Button>
-              </Link>
-              <Link href="/contato">
                 <Button
                   size="lg"
                   variant="outline"
                   className="border-input hover:bg-accent hover:text-accent-foreground h-14 px-8 text-lg font-semibold bg-transparent"
                 >
-                  Falar com Consultor
+                  Fazer Cadastro
                 </Button>
               </Link>
             </div>

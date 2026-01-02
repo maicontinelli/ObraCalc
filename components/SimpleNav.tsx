@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Gem, Info, Mail, Heart, LogIn, User, LogOut, LayoutDashboard, Map, Camera, MoreHorizontal, Sparkles, Sun, Moon } from 'lucide-react';
+import { Gem, Info, Mail, Heart, LogIn, User, LogOut, LayoutDashboard, MoreHorizontal, Sparkles, Sun, Moon } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
@@ -64,46 +64,24 @@ export default function SimpleNav() {
                         </Link>
                     </div>
 
+
                     <div className="flex items-center gap-2 md:gap-6">
-                        <Link
-                            href="/topografia"
-                            title="Topografia"
-                            className={`transition-all p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 ${pathname === '/topografia'
-                                ? 'text-[#C2410C] bg-gray-50 dark:bg-gray-800/50'
-                                : 'text-gray-500 dark:text-gray-400'
-                                } hover:text-[#C2410C] group`}
-                        >
-                            <Map
-                                size={20}
-                                className={`transition-all duration-300 group-hover:drop-shadow-[0_0_5px_rgba(194,65,12,0.6)] ${pathname === '/topografia' ? 'fill-[#C2410C]' : 'fill-transparent'
-                                    }`}
-                            />
-                            <span className="sr-only">Topografia</span>
-                        </Link>
-
-
-
-                        <Link
-                            href="/relatorio-fotografico"
-                            title="Relatório Fotográfico"
-                            className={`transition-all p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 ${pathname === '/relatorio-fotografico'
-                                ? 'text-[#6366F1] bg-gray-50 dark:bg-gray-800/50'
-                                : 'text-gray-500 dark:text-gray-400'
-                                } hover:text-[#6366F1] group`}
-                        >
-                            <Camera
-                                size={20}
-                                className={`transition-all duration-300 group-hover:drop-shadow-[0_0_5px_rgba(99,102,241,0.6)] ${pathname === '/relatorio-fotografico' ? 'fill-[#6366F1]' : 'fill-transparent'
-                                    }`}
-                            />
-                            <span className="sr-only">Relatório Fotográfico</span>
-                        </Link>
-
 
 
                         {/* Links remocao instruida pelo usuario */}
 
+
                         <div className="h-6 w-px mx-2 bg-gray-200 dark:bg-gray-700" />
+
+                        {mounted && (
+                            <button
+                                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                                className="p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                                aria-label="Alternar tema"
+                            >
+                                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                            </button>
+                        )}
 
                         <Link
                             href="/planos"
@@ -150,24 +128,14 @@ export default function SimpleNav() {
                         ) : (
                             <Link
                                 href="/login"
-                                className="flex items-center gap-2 bg-[#E89129] hover:bg-[#E89129]/90 text-white px-4 py-2 rounded-full font-medium text-sm transition-all shadow-sm hover:shadow-md"
+                                className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white px-4 py-2 rounded-full font-medium text-sm transition-all shadow-sm hover:shadow-md"
                             >
                                 <LogIn size={16} />
                                 <span>Entrar</span>
                             </Link>
                         )}
 
-                        <div className="h-6 w-px mx-0 bg-gray-200 dark:bg-gray-700" />
 
-                        {mounted && (
-                            <button
-                                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                                className="p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-                                aria-label="Alternar tema"
-                            >
-                                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                            </button>
-                        )}
                     </div>
                 </div>
             </div>

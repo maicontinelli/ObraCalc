@@ -24,14 +24,14 @@ export interface UserProfile {
 
 export const PLAN_LIMITS = {
     free: {
-        max_estimates: 3,
+        max_estimates: 5,
         max_items_per_estimate: 20,
         can_export_pdf: true,
         can_export_html: true,
         can_remove_watermark: false,
         can_view_leads: false,
-        can_edit_saved: false, // Strict rule
-        can_delete_saved: false // Strict rule
+        can_edit_saved: true,
+        can_delete_saved: true
     },
     pro: {
         max_estimates: Infinity,

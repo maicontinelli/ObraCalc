@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export function Hero() {
     return (
-        <section className="relative pt-12 pb-32 overflow-hidden bg-transparent">
+        <section className="relative pt-12 pb-64 overflow-hidden bg-transparent">
             {/* Background elements removed */}
 
             <div className="container mx-auto px-4 relative z-10">

@@ -1,6 +1,6 @@
 'use client';
 
-import { Calculator, FileText, Zap, Camera, Map } from "lucide-react";
+import { Calculator, FileText, Zap, Camera, Map, ScanEye } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -10,28 +10,32 @@ const features = [
         title: "Orçamentos Inteligentes",
         description: "Cálculos precisos baseados na tabela SINAPI atualizada e preços médios de mercado.",
         action: 'new',
-        linkText: "Novo Orçamento"
+        linkText: "Novo Orçamento",
+        borderColor: "#22c55e" // green-500
     },
     {
-        icon: <Zap className="h-6 w-6 text-yellow-500" />,
-        title: "IA Generativa",
-        description: "Envie uma foto e nossa IA diagnóstica analisa o ambiente e sugere melhorias automaticamente.",
+        icon: <ScanEye className="h-6 w-6 text-[#FF6600]" />,
+        title: "Diagnóstico Visual",
+        description: "IA analisa fotos do ambiente, identifica patologias e sugere soluções técnicas.",
         link: '/novo-diagnostico',
-        linkText: "Experimentar IA"
-    },
-    {
-        icon: <Map className="h-6 w-6 text-[#C2410C]" />,
-        title: "Memorial de Topografia",
-        description: "Gere memorial descritivo técnico + planilha Excel pronta para prefeitura e cartório.",
-        link: "/topografia",
-        linkText: "Acessar Topografia"
+        linkText: "Novo Diagnóstico",
+        borderColor: "#FF6600"
     },
     {
         icon: <Camera className="h-6 w-6 text-[#6366F1]" />,
         title: "Relatório Fotográfico",
         description: "IA analisa fotos da obra e gera relatório técnico profissional automaticamente.",
         link: "/relatorio-fotografico",
-        linkText: "Acessar Relatório"
+        linkText: "Acessar Relatório",
+        borderColor: "#6366F1"
+    },
+    {
+        icon: <Map className="h-6 w-6 text-[#C2410C]" />,
+        title: "Memorial de Topografia",
+        description: "Gere memorial descritivo técnico + planilha Excel pronta para prefeitura e cartório.",
+        link: "/topografia",
+        linkText: "Acessar Topografia",
+        borderColor: "#C2410C"
     }
 ];
 
@@ -78,7 +82,7 @@ export function Features() {
                                 </p>
 
                                 {(feature as any).linkText && (
-                                    <button className="w-full mt-auto py-3 px-4 bg-white dark:bg-gray-800 border-2 border-primary/10 hover:border-primary/30 dark:border-blue-500/20 dark:hover:border-blue-500/50 text-primary dark:text-blue-400 rounded-xl font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white dark:group-hover:bg-blue-600 dark:group-hover:text-white transition-all duration-300">
+                                    <button className="w-full mt-auto py-3 px-4 bg-white dark:bg-gray-800 border-2 border-primary/10 hover:border-primary/30 dark:border-blue-500/20 dark:hover:border-blue-500/50 text-primary dark:text-blue-400 rounded-xl font-bold text-xs whitespace-nowrap flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white dark:group-hover:bg-blue-600 dark:group-hover:text-white transition-all duration-300">
                                         {(feature as any).linkText}
                                         <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -88,11 +92,16 @@ export function Features() {
                             </>
                         );
 
-                        const className = "group p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-black/50 hover:shadow-2xl hover:shadow-primary/10 dark:hover:shadow-blue-900/10 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer relative overflow-hidden";
+                        // Using style for the hover border color to support arbitrary colors without safelisting
+                        const hoverStyle = {
+                            '--hover-color': (feature as any).borderColor
+                        } as React.CSSProperties;
+
+                        const className = "group p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-black/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer relative overflow-hidden hover:border-[var(--hover-color)]";
 
                         if ((feature as any).link) {
                             return (
-                                <Link key={index} href={(feature as any).link} className={className}>
+                                <Link key={index} href={(feature as any).link} className={className} style={hoverStyle}>
                                     {content}
                                 </Link>
                             );
@@ -100,14 +109,14 @@ export function Features() {
 
                         if ((feature as any).action) {
                             return (
-                                <div key={index} onClick={() => handleAction((feature as any).action)} className={className}>
+                                <div key={index} onClick={() => handleAction((feature as any).action)} className={className} style={hoverStyle}>
                                     {content}
                                 </div>
                             );
                         }
 
                         return (
-                            <div key={index} className={className}>
+                            <div key={index} className={className} style={hoverStyle}>
                                 {content}
                             </div>
                         );

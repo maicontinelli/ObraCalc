@@ -33,6 +33,7 @@ import { BudgetChart } from '@/components/BudgetChart';
 import { LeadsWall } from '@/components/LeadsWall';
 import { useProfile } from '@/hooks/useProfile';
 import { PLAN_LIMITS } from '@/lib/plan-limits';
+import { PlanStatus } from '@/components/PlanStatus';
 
 interface Budget {
     id: string;
@@ -354,7 +355,7 @@ export default function DashboardPage() {
                                 <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-lg w-fit mb-3">
                                     <FileText size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-white">{stats.totalBudgets}</p>
+                                <p className="text-2xl font-bold text-foreground">{stats.totalBudgets}</p>
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Orçamentos</span>
                             </div>
 
@@ -362,7 +363,7 @@ export default function DashboardPage() {
                                 <div className="p-2 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-lg w-fit mb-3">
                                     <DollarSign size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-white">
+                                <p className="text-2xl font-bold text-foreground">
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(stats.totalValue)}
                                 </p>
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total</span>
@@ -372,7 +373,7 @@ export default function DashboardPage() {
                                 <div className="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-lg w-fit mb-3">
                                     <TrendingUp size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-white">
+                                <p className="text-2xl font-bold text-foreground">
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(stats.avgTicket)}
                                 </p>
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Médio</span>
@@ -382,7 +383,7 @@ export default function DashboardPage() {
                                 <div className="p-2 bg-orange-50 dark:bg-orange-900/20 text-orange-600 rounded-lg w-fit mb-3">
                                     <Calendar size={18} />
                                 </div>
-                                <p className="text-2xl font-bold text-white">{stats.thisMonth}</p>
+                                <p className="text-2xl font-bold text-foreground">{stats.thisMonth}</p>
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Mês</span>
                             </div>
                         </div>
@@ -390,7 +391,7 @@ export default function DashboardPage() {
                         {/* Recent Budgets List */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between px-1">
-                                <h2 className="text-lg font-bold text-white">Orçamentos Recentes</h2>
+                                <h2 className="text-lg font-bold text-foreground">Orçamentos Recentes</h2>
                                 {/* Search bar placeholder - visual only for now */}
                                 <div className="relative hidden sm:block w-64">
                                     <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
@@ -408,7 +409,7 @@ export default function DashboardPage() {
                                         <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
                                             <FileText size={32} />
                                         </div>
-                                        <h3 className="text-lg font-medium text-white mb-2">Nenhum orçamento encontrado</h3>
+                                        <h3 className="text-lg font-medium text-foreground mb-2">Nenhum orçamento encontrado</h3>
                                         <p className="mb-6">Crie seu primeiro orçamento profissional agora mesmo.</p>
                                         <button
                                             onClick={handleNewBudget}
@@ -438,7 +439,7 @@ export default function DashboardPage() {
                                                     {/* Mobile: Top Row with Title & Value */}
                                                     <div className="flex justify-between items-start md:hidden mb-2">
                                                         <div>
-                                                            <h3 className="font-bold text-white text-sm">{budget.title || 'Sem título'}</h3>
+                                                            <h3 className="font-bold text-foreground text-sm">{budget.title || 'Sem título'}</h3>
                                                             <span className="text-xs text-gray-500">{new Date(budget.updated_at).toLocaleDateString('pt-BR')}</span>
                                                         </div>
                                                         <span className="font-bold text-green-600 text-sm">
@@ -453,7 +454,7 @@ export default function DashboardPage() {
                                                                 <FileText size={14} />
                                                             </div>
                                                             <div>
-                                                                <h3 className="font-bold text-white text-sm truncate">{budget.title || 'Sem título'}</h3>
+                                                                <h3 className="font-bold text-foreground text-sm truncate">{budget.title || 'Sem título'}</h3>
                                                                 <p className="text-[10px] text-gray-400 uppercase tracking-wide">
                                                                     {new Date(budget.updated_at).toLocaleDateString('pt-BR')} • {budget.content?.projectType || 'Projeto'}
                                                                 </p>
@@ -515,7 +516,13 @@ export default function DashboardPage() {
                     </div>
 
                     {/* RIGHT COLUMN: Profile Sidebar */}
-                    <div className="lg:col-span-1 lg:sticky lg:top-6">
+                    <div className="lg:col-span-1 lg:sticky lg:top-6 space-y-6">
+
+                        {/* Gamified Plan Status Island */}
+                        <div className="animate-in slide-in-from-right-4 duration-700 delay-100">
+                            <PlanStatus tier={profile?.tier || 'free'} usageCount={budgets.length} />
+                        </div>
+
                         <div className="bg-card rounded-2xl shadow-sm border border-white/5 overflow-hidden transition-all duration-300">
                             <div
                                 className="p-4 border-b border-border flex justify-between items-center cursor-pointer hover:bg-accent/50 transition-colors"

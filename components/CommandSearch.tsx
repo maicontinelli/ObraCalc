@@ -165,10 +165,10 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                             border border-white/50 dark:border-white/10
                             shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]
                             hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90 dark:hover:bg-card/80
-                            focus-within:ring-4 focus-within:ring-[#FF6600]/10 focus-within:border-[#FF6600]/50"
+                            focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500/50"
                     >
                         <div className="pl-6 text-gray-400 dark:text-gray-500">
-                            <Sparkles size={20} className="animate-pulse text-[#FF6600]" />
+                            <Sparkles size={20} className="animate-pulse text-blue-500" />
                         </div>
                         <input
                             type="text"
@@ -179,13 +179,13 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                             }}
                             onFocus={() => query && !aiResponse && setIsOpen(true)}
                             placeholder="Adicionar mais serviços ao orçamento..."
-                            className="w-full pl-4 pr-14 py-4 rounded-full border-none outline-none bg-transparent text-lg text-gray-800 dark:text-foreground placeholder-gray-400 dark:placeholder-[#B5B5B5] font-medium"
+                            className="w-full pl-4 pr-32 py-5 rounded-full border-none outline-none bg-transparent text-[13px] text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 font-medium"
                         />
 
                         <button
                             type="submit"
                             disabled={isAiLoading || !query.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-gray-100/50 dark:bg-[#333130]/50 text-gray-400 dark:text-muted-foreground hover:text-[#FF6600] dark:hover:text-[#FF6600] hover:bg-gray-100 dark:hover:bg-[#333130] rounded-full transition-all duration-300"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-gray-100/50 dark:bg-[#333130]/50 text-gray-400 dark:text-muted-foreground hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-[#333130] rounded-full transition-all duration-300"
                         >
                             {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={18} />}
                         </button>
@@ -250,7 +250,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
             {aiResponse && (
                 <div className="mt-2 bg-white dark:bg-card rounded border border-gray-200 dark:border-white/10 p-3 shadow-md animate-in fade-in duration-100 relative z-40">
                     <div className="flex gap-2">
-                        <div className="mt-0.5 bg-orange-100 dark:bg-orange-900/30 p-1 rounded h-fit text-orange-600 dark:text-orange-400 shrink-0">
+                        <div className="mt-0.5 bg-blue-100 dark:bg-blue-900/30 p-1 rounded h-fit text-blue-600 dark:text-blue-400 shrink-0">
                             <Bot size={12} />
                         </div>
                         <div className="space-y-3 w-full">
@@ -259,10 +259,10 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                             </div>
 
                             {aiResponse.suggestedBudget && (
-                                <div className="bg-orange-50/50 dark:bg-orange-900/10 rounded border border-orange-200 dark:border-orange-800/30 p-3">
+                                <div className="bg-blue-50/50 dark:bg-blue-900/10 rounded border border-blue-200 dark:border-blue-800/30 p-3">
                                     <div className="flex items-center justify-between mb-2">
-                                        <h4 className="font-semibold text-orange-900 dark:text-orange-300 text-[11px]">Sugestão de Itens</h4>
-                                        <span className="text-[9px] text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-1.5 py-0.5 rounded-full font-medium">
+                                        <h4 className="font-semibold text-blue-900 dark:text-blue-300 text-[11px]">Sugestão de Itens</h4>
+                                        <span className="text-[9px] text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-1.5 py-0.5 rounded-full font-medium">
                                             {aiResponse.suggestedBudget.items.length} itens
                                         </span>
                                     </div>
@@ -271,15 +271,12 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                                         {aiResponse.suggestedBudget.items
                                             .sort((a, b) => (a.type === 'service' ? -1 : 1))
                                             .map((item, idx) => (
-                                                <li key={idx} className={`text-[11px] flex justify-between items-center border-b border-orange-100 dark:border-white/5 last:border-0 pb-1 last:pb-0 ${item.included === false ? 'opacity-60 grayscale' : 'text-gray-700 dark:text-foreground'}`}>
+                                                <li key={idx} className={`text-[11px] flex justify-between items-center border-b border-blue-100 dark:border-white/5 last:border-0 pb-1 last:pb-0 ${item.included === false ? 'opacity-60 grayscale' : 'text-gray-700 dark:text-foreground'}`}>
                                                     <div className="flex items-center gap-2 flex-1 min-w-0">
                                                         {/* Show visual indicator if item is optional/unchecked */}
-                                                        <div className={`w-1.5 h-1.5 shrink-0 rounded-full ${item.included === false ? 'bg-gray-300 dark:bg-gray-600' : 'bg-orange-500'}`}></div>
+                                                        <div className={`w-1.5 h-1.5 shrink-0 rounded-full ${item.included === false ? 'bg-gray-300 dark:bg-gray-600' : 'bg-green-500'}`}></div>
 
-                                                        {/* Type Icon */}
-                                                        <span title={item.type === 'service' ? 'Serviço/Mão de Obra' : item.type === 'material' ? 'Material' : 'Composição'} className="text-[10px] shrink-0 opacity-70 cursor-help">
-                                                            {item.type === 'service' ? '👷' : item.type === 'material' ? '🧱' : '🛠️'}
-                                                        </span>
+
 
                                                         <div className="min-w-0">
                                                             <span className="font-medium">{item.name}</span>
@@ -296,7 +293,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
 
                                     <button
                                         onClick={handleAddSuggestedItems}
-                                        className="w-full py-1.5 bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-600 text-white rounded text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5"
+                                        className="w-full py-1.5 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white rounded text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5"
                                     >
                                         <FilePlus size={12} />
                                         Adicionar Itens ao Orçamento
