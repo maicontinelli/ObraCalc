@@ -19,7 +19,7 @@ export function Footer() {
                     <div className="col-span-2 md:col-span-1">
                         <Link href="/" className="mb-4 block">
                             <Image
-                                src="/logo-obraplana.png"
+                                src="/logo-test.webp"
                                 alt="ObraPlana Logo"
                                 width={120}
                                 height={40}

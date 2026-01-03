@@ -11,7 +11,8 @@ const features = [
         description: "Cálculos precisos baseados na tabela SINAPI atualizada e preços médios de mercado.",
         action: 'new',
         linkText: "Novo Orçamento",
-        borderColor: "#22c55e" // green-500
+        borderColor: "#22c55e", // green-500
+        badge: "Novo"
     },
     {
         icon: <ScanEye className="h-6 w-6 text-[#FF6600]" />,
@@ -19,7 +20,8 @@ const features = [
         description: "IA analisa fotos do ambiente, identifica patologias e sugere soluções técnicas.",
         link: '/novo-diagnostico',
         linkText: "Novo Diagnóstico",
-        borderColor: "#FF6600"
+        borderColor: "#FF6600",
+        badge: "Beta"
     },
     {
         icon: <Camera className="h-6 w-6 text-[#6366F1]" />,
@@ -27,7 +29,8 @@ const features = [
         description: "IA analisa fotos da obra e gera relatório técnico profissional automaticamente.",
         link: "/relatorio-fotografico",
         linkText: "Acessar Relatório",
-        borderColor: "#6366F1"
+        borderColor: "#6366F1",
+        badge: "Novo"
     },
     {
         icon: <Map className="h-6 w-6 text-[#C2410C]" />,
@@ -35,7 +38,8 @@ const features = [
         description: "Gere memorial descritivo técnico + planilha Excel pronta para prefeitura e cartório.",
         link: "/topografia",
         linkText: "Acessar Topografia",
-        borderColor: "#C2410C"
+        borderColor: "#C2410C",
+        badge: "Novo"
     }
 ];
 
@@ -69,8 +73,11 @@ export function Features() {
                                     <div className="w-12 h-12 bg-gray-50 dark:bg-gray-700/50 rounded-2xl flex items-center justify-center shadow-inner">
                                         {feature.icon}
                                     </div>
-                                    <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
-                                        Novo
+                                    <div className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${feature.badge === 'Beta'
+                                            ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
+                                            : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                                        }`}>
+                                        {feature.badge}
                                     </div>
                                 </div>
 

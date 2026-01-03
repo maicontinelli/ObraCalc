@@ -54,7 +54,7 @@ export default function SimpleNav() {
                     <div className="flex items-center">
                         <Link href="/" className="flex-shrink-0 flex items-center gap-2">
                             <Image
-                                src="/logo-obraplana.png"
+                                src="/logo-test.webp"
                                 alt="ObraPlana Logo"
                                 width={32}
                                 height={32}
@@ -128,7 +128,7 @@ export default function SimpleNav() {
                         ) : (
                             <Link
                                 href="/login"
-                                className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white px-4 py-2 rounded-full font-medium text-sm transition-all shadow-sm hover:shadow-md"
+                                className="flex items-center gap-2 bg-[#E9813C] hover:bg-[#d67332] text-white px-4 py-2 rounded-full font-medium text-sm transition-all shadow-lg shadow-[#E9813C]/20"
                             >
                                 <LogIn size={16} />
                                 <span>Entrar</span>

@@ -433,7 +433,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
         <!-- Invoice Header -->
         <div class="invoice-header">
             <div class="brand">
-                <img src="${window.location.origin}/logo-obraplana.png" alt="Logo" style="height: 32px; width: auto;">
+                <img src="${window.location.origin}/logo-test.webp" alt="Logo" style="height: 32px; width: auto;">
                 <div style="display: flex; flex-direction: column;">
                     <span class="brand-logo">ObraPlana</span>
                     <span class="brand-subtitle">Tecnologia especialista em construção civil</span>
@@ -747,7 +747,7 @@ export default function ReportClient({ estimateId }: { estimateId: string }) {
                     <div className="bg-[#374151] text-white px-6 py-4 flex justify-between items-center print:bg-[#374151] print:text-white">
                         <div className="flex items-center gap-3">
                             <img
-                                src="/logo-obraplana.png"
+                                src="/logo-test.webp"
                                 alt="Logo ObraPlana"
                                 className="h-8 w-auto"
                             />

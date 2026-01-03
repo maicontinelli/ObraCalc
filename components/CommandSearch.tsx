@@ -293,7 +293,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
 
                                     <button
                                         onClick={handleAddSuggestedItems}
-                                        className="w-full py-1.5 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white rounded text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5"
+                                        className="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20"
                                     >
                                         <FilePlus size={12} />
                                         Adicionar Itens ao Orçamento

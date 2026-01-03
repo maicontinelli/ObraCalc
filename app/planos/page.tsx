@@ -27,7 +27,7 @@ export default function PlansPage() {
                 window.location.href = data.url;
             } else {
                 console.error('Erro ao criar sessão de checkout:', data.error);
-                alert('Ocorreu um erro ao iniciar o pagamento. Tente novamente.');
+                alert(`Erro ao iniciar pagamento: ${data.error}`);
             }
         } catch (error) {
             console.error('Erro:', error);
@@ -78,8 +78,8 @@ export default function PlansPage() {
                 'Sem contato com Leads (apenas visualização)',
             ],
             cta: 'Assinar Profissional',
-            href: 'https://buy.stripe.com/test_eVaeV02222', // Placeholder
-            priceId: 'price_pro',
+            href: null, // Modified to use Stripe Checkout
+            priceId: 'price_1Sl8fkGZfnvqYwvYTdmFAUM4', // Actual Stripe Price ID
             popular: true,
         },
         {
@@ -90,14 +90,14 @@ export default function PlansPage() {
             features: [
                 'Tudo do plano Profissional',
                 'Acesso total aos Leads da região',
-                ' Destaque para clientes',
+                'Destaque para clientes',
                 'Conta verificada',
                 'Gestão de Múltiplos Usuários',
             ],
             limitations: [],
             cta: 'Assinar Empresarial',
-            href: null, // Use handleSubscribe
-            priceId: 'price_business_placeholder',
+            href: null, // Modified to use Stripe Checkout
+            priceId: 'price_1Sl8gZGZfnvqYwvYSqt716Vm', // Actual Stripe Price ID
             popular: false,
         },
     ];

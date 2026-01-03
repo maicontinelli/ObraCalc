@@ -50,9 +50,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
             const { getCatalogItems } = await import('@/lib/catalog-service');
             const catalog = await getCatalogItems();
 
+            // Helper to normalize strings for comparison (remove extra spaces, casing)
+            const normalizeCategory = (cat: string) => cat.toUpperCase().trim().replace(/\s+/g, ' ');
+
             const formattedItems = catalog.map(item => ({
                 id: item.id,
-                category: item.category.toUpperCase(),
+                category: normalizeCategory(item.category),
                 name: item.name,
                 unit: item.unit,
                 quantity: 0,
@@ -613,17 +616,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                         )}
                                     </button>
 
-                                    <button
-                                        onClick={async () => {
-                                            await supabase.auth.signOut();
-                                            setUser(null);
-                                            window.location.reload();
-                                        }}
-                                        className="text-[10px] text-red-500 hover:text-red-400 underline"
-                                        title="Sair da conta (Debug)"
-                                    >
-                                        Sair
-                                    </button>
+
                                 </div>
                             )}
                         </div>
@@ -633,7 +626,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             <CommandSearch
                                 items={items}
                                 onSelect={(item) => {
-                                    const isStandardCategory = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === item.category);
+                                    const normalizeCategory = (cat: string) => cat.toUpperCase().trim().replace(/\s+/g, ' ');
+                                    const standardCats = BOQ_TEMPLATES.obra_nova.map(c => normalizeCategory(c.name));
+                                    const isStandardCategory = standardCats.includes(normalizeCategory(item.category));
+
                                     if (isStandardCategory) {
                                         setIsManualCatalogExpanded(true);
                                     }
@@ -687,9 +683,10 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             {/* AI / Custom Items Loop (Always Visible at Top) */}
                             <div className="space-y-2 mb-6">
                                 {categories.filter(cat => {
-                                    const isStandard = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === cat);
-                                    return !isStandard && cat !== 'ITENS ADICIONAIS' && cat !== 'MANUAL';
-                                }).concat(categories.filter(c => c === 'ITENS ADICIONAIS')).map((category) => {
+                                    const normalizeCategory = (c: string) => c.toUpperCase().trim().replace(/\s+/g, ' ');
+                                    const standardCats = BOQ_TEMPLATES.obra_nova.map(c => normalizeCategory(c.name));
+                                    return !standardCats.includes(normalizeCategory(cat));
+                                }).map((category) => {
                                     const categoryItems = groupedItems[category];
                                     if (!categoryItems) return null;
                                     const categoryIncluded = categoryItems.filter(i => i.included).length;
@@ -721,6 +718,11 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                         <span className="text-[10px] text-muted-foreground font-normal">
                                                             ({categoryItems.length})
                                                         </span>
+                                                        {bdi > 0 && category === 'ITENS ADICIONAIS' && (
+                                                            <span className="ml-2 text-[9px] text-orange-400 bg-orange-400/10 px-1.5 py-0.5 rounded border border-orange-400/20">
+                                                                SUGESTÃO IA
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
 
@@ -799,8 +801,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                     className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                                                                 />
                                                                             </div>
-                                                                            <div className="col-span-4 flex items-center gap-2">
-
+                                                                            <div className="col-span-4 pl-0 py-1">
                                                                                 <input
                                                                                     type="text"
                                                                                     value={item.name}
@@ -884,8 +885,9 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                             {isManualCatalogExpanded && (
                                 <div className="space-y-2 opacity-80 hover:opacity-100 transition-opacity">
                                     {categories.filter(cat => {
-                                        const isStandard = BOQ_TEMPLATES.obra_nova.some(c => c.name.toUpperCase() === cat);
-                                        return isStandard; // Show ONLY standard categories here
+                                        const normalizeCategory = (c: string) => c.toUpperCase().trim().replace(/\s+/g, ' ');
+                                        const standardCats = BOQ_TEMPLATES.obra_nova.map(c => normalizeCategory(c.name));
+                                        return standardCats.includes(normalizeCategory(cat));
                                     }).map((category) => {
                                         const categoryItems = groupedItems[category];
                                         if (!categoryItems) return null;

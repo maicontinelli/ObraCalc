@@ -268,7 +268,7 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
                     <div className="bg-[#374151] text-white px-6 py-4 flex justify-between items-center print:bg-[#374151] print:text-white">
                         <div className="flex items-center gap-3">
                             <img
-                                src="/logo-obraplana.png"
+                                src="/logo-test.webp"
                                 alt="Logo"
                                 className="h-8 w-auto"
                             />

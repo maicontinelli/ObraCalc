@@ -34,8 +34,8 @@ export default function Home() {
       <main className="flex-grow">
         <Hero />
         <TrustBar />
-        <Features />
         <DemoSection />
+        <Features />
 
         {/* CTA Section */}
         <section className="py-24 bg-card border-t border-border text-foreground text-center relative overflow-hidden">

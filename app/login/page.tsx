@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, ArrowRight, Sparkles, Mail, Lock, User, Chrome } from 'lucide-react';
 
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
     const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+    const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -37,222 +38,258 @@ function LoginForm() {
         }
     };
 
-    const handleEmailLogin = async (e: React.FormEvent) => {
+    const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setMessage(null);
 
-        const { error } = await supabase.auth.signInWithOtp({
-            email,
-            options: {
-                emailRedirectTo: redirectUrl,
-            },
-        });
-
-        if (error) {
-            setMessage({ type: 'error', text: error.message });
-        } else {
-            setMessage({
-                type: 'success',
-                text: 'Enviamos um link mágico para seu email! Verifique sua caixa de entrada.'
-            });
-        }
-        setLoading(false);
-    };
-
-    const handlePasswordAuth = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setMessage(null);
-
-        if (authMode === 'signup') {
-            const { error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: {
-                        full_name: fullName,
+        try {
+            if (authMode === 'signup') {
+                // SIGN UP FLOW
+                const { error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: { full_name: fullName },
+                        emailRedirectTo: redirectUrl,
                     },
-                    emailRedirectTo: redirectUrl,
-                },
-            });
-
-            if (error) {
-                setMessage({ type: 'error', text: error.message });
-            } else {
-                setMessage({
-                    type: 'success',
-                    text: 'Cadastro realizado! Verifique seu email para confirmar a conta.'
                 });
-            }
-        } else {
-            const { error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
-
-            if (error) {
-                setMessage({ type: 'error', text: 'Email ou senha inválidos.' });
+                if (error) throw error;
+                setMessage({ type: 'success', text: 'Cadastro realizado! Verifique seu email para confirmar a conta.' });
             } else {
-                router.push(next ? decodeURIComponent(next) : '/dashboard');
-                router.refresh();
+                // LOGIN FLOW
+                if (loginMethod === 'magic') {
+                    const { error } = await supabase.auth.signInWithOtp({
+                        email,
+                        options: { emailRedirectTo: redirectUrl },
+                    });
+                    if (error) throw error;
+                    setMessage({ type: 'success', text: 'Link mágico enviado! Verifique sua caixa de entrada.' });
+                } else {
+                    const { error } = await supabase.auth.signInWithPassword({
+                        email,
+                        password,
+                    });
+                    if (error) throw error;
+                    router.push(next ? decodeURIComponent(next) : '/dashboard');
+                    router.refresh();
+                }
             }
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error.message || 'Ocorreu um erro durante a autenticação.' });
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-background flex flex-col justify-center items-center p-4 py-12">
+        <div className="flex min-h-[calc(100vh-64px)] w-full bg-white dark:bg-[#1a1a1a] relative overflow-hidden">
 
-            {/* Ilha 1: Acesso Rápido (Google + Magic Link) */}
-            <div className="w-full max-w-md bg-card rounded-2xl shadow-xl border border-border p-8 mb-6 relative z-10">
-                <div className="text-center mb-6">
-                    <h1 className="text-2xl font-bold text-foreground mb-2">Acesso Rápido</h1>
-                    <p className="text-muted-foreground text-sm">
-                        Entre sem senha usando Google ou link mágico.
+            {/* BACKGROUND IMAGE - Positioned absolutely to cover left side but blend naturally */}
+            {/* BACKGROUND IMAGE - Positioned absolutely to cover left side but blend naturally */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+                <Image
+                    src="/login-bg-v3.png"
+                    alt="Construction Site background"
+                    fill
+                    className="object-contain object-left-bottom opacity-60"
+                    priority
+                />
+            </div>
+
+            {/* LEFT SIDE - Content Only */}
+            <div className="hidden lg:flex w-1/2 relative items-end justify-center z-10 p-12">
+                <div className="relative max-w-lg text-[#222120] dark:text-white space-y-6 mb-20">
+                    <h1 className="text-5xl font-bold leading-tight tracking-tight">
+                        Construa o futuro com inteligência.
+                    </h1>
+                    <p className="text-lg text-[#4B4B4B] dark:text-white/90 leading-relaxed max-w-md">
+                        Junte-se a milhares de engenheiros e arquitetos que utilizam o ObraPlana para criar orçamentos precisos em segundos.
                     </p>
-                </div>
 
-                <div className="space-y-4">
+                    <div className="flex items-center gap-4 pt-4">
+                        <div className="flex -space-x-3">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-white/50 bg-[#222120]/5 dark:bg-white/20 backdrop-blur-sm" />
+                            ))}
+                        </div>
+                        <div className="text-sm font-medium text-[#222120] dark:text-white">
+                            <span className="font-bold">4.9/5</span> de aprovação
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* RIGHT SIDE - Form Island */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:p-12 relative z-10">
+                {/* Background Pattern for Right Side */}
+                {/* Background Pattern REMOVED for clean look */}
+
+                <div className="w-full max-w-[420px] bg-white dark:bg-[#222120] rounded-[2rem] shadow-2xl shadow-black/5 dark:shadow-black/20 p-8 lg:p-10 relative z-10 border border-[#fff] dark:border-[#333]">
+
+                    {/* Header */}
+                    <div className="text-center mb-10">
+                        <h2 className="text-2xl font-bold text-[#222120] dark:text-white mb-2">
+                            {authMode === 'login' ? 'Bem-vindo de volta!' : 'Criar nova conta'}
+                        </h2>
+                        <p className="text-[#919599] text-sm">
+                            {authMode === 'login'
+                                ? 'Acesse seus orçamentos e relatórios'
+                                : 'Comece a usar o ObraPlana gratuitamente'}
+                        </p>
+                    </div>
+
+                    {/* Google Button - Top Placement */}
                     <button
                         onClick={handleGoogleLogin}
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 bg-card text-foreground border border-input hover:bg-accent hover:text-accent-foreground p-3 rounded-xl transition-all shadow-sm font-medium h-12"
+                        className="w-full flex items-center justify-center gap-3 bg-white dark:bg-[#333130] text-[#5f6368] dark:text-[#D3D4D6] border border-[#B6B8BC] dark:border-[#444] hover:bg-[#F8F9FA] dark:hover:bg-[#403e3d] p-3 rounded-xl transition-all duration-200 font-medium text-sm h-12 mb-6 group"
                     >
                         {loading ? (
-                            <Loader2 className="animate-spin" />
+                            <Loader2 className="animate-spin w-5 h-5" />
                         ) : (
                             <>
-                                <Image src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={20} height={20} />
-                                Continuar com Google
+                                <Image src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={20} height={20} className="group-hover:scale-110 transition-transform" />
+                                <span>Continuar com Google</span>
                             </>
                         )}
                     </button>
 
-                    <div className="relative">
+                    <div className="relative mb-8">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-border" />
+                            <span className="w-full border-t border-[#D3D4D6] dark:border-[#444]" />
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-card px-2 text-[#8a8886]">ou link mágico</span>
+                        <div className="relative flex justify-center text-xs uppercase tracking-widest">
+                            <span className="bg-white dark:bg-[#222120] px-4 text-[#919599]">ou email</span>
                         </div>
                     </div>
 
-                    <form onSubmit={handleEmailLogin} className="space-y-4">
-                        <div>
-                            <label htmlFor="email_magic" className="sr-only">Email</label>
-                            <input
-                                id="email_magic"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="seu@email.com"
-                                className="w-full px-4 py-3 rounded-xl border border-input bg-background/50 text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                            />
+                    {/* Main Form */}
+                    <form onSubmit={handleEmailAuth} className="space-y-5">
+
+                        {/* Auth Mode Tabs included in form flow logic somewhat, but functionally separated above */}
+                        {authMode === 'signup' && (
+                            <div className="space-y-1.5 animate-in slide-in-from-top-2 fade-in">
+                                <label className="text-xs font-bold text-[#919599] uppercase ml-1">Nome Completo</label>
+                                <div className="relative">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#B6B8BC]" />
+                                    <input
+                                        type="text"
+                                        required
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        placeholder="Ex: Ana Silva"
+                                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[#D3D4D6] dark:border-[#444] bg-[#F8F9FA] dark:bg-[#1a1a1a] text-[#222120] dark:text-white placeholder-[#B6B8BC] focus:ring-2 focus:ring-[#F6A24A]/20 focus:border-[#F6A24A] transition-all outline-none text-sm font-medium"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-[#919599] uppercase ml-1">Email Profissional</label>
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#B6B8BC]" />
+                                <input
+                                    type="email"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="seu@email.com"
+                                    className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[#D3D4D6] dark:border-[#444] bg-[#F8F9FA] dark:bg-[#1a1a1a] text-[#222120] dark:text-white placeholder-[#B6B8BC] focus:ring-2 focus:ring-[#F6A24A]/20 focus:border-[#F6A24A] transition-all outline-none text-sm font-medium"
+                                />
+                            </div>
                         </div>
+
+                        {/* Password or Magic Info */}
+                        {loginMethod === 'password' ? (
+                            <div className="space-y-1.5 animate-in slide-in-from-top-1 fade-in">
+                                <label className="text-xs font-bold text-[#919599] uppercase ml-1 flex justify-between">
+                                    Senha
+                                    {authMode === 'login' && (
+                                        <button type="button" className="text-[#F6A24A] hover:text-[#D85B2F] normal-case font-medium transition-colors">
+                                            Esqueceu?
+                                        </button>
+                                    )}
+                                </label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#B6B8BC]" />
+                                    <input
+                                        type="password"
+                                        required
+                                        minLength={6}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="******"
+                                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[#D3D4D6] dark:border-[#444] bg-[#F8F9FA] dark:bg-[#1a1a1a] text-[#222120] dark:text-white placeholder-[#B6B8BC] focus:ring-2 focus:ring-[#F6A24A]/20 focus:border-[#F6A24A] transition-all outline-none text-sm font-medium"
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30 text-xs text-blue-600 dark:text-blue-300 flex items-start gap-2 animate-in fade-in">
+                                <Sparkles className="w-4 h-4 shrink-0 mt-0.5" />
+                                <p>Enviaremos um link seguro para o seu email. Você poderá entrar sem precisar de senha.</p>
+                            </div>
+                        )}
+
+                        {/* Primary Action Button */}
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-semibold p-3 rounded-xl transition-all shadow-lg hover:shadow-blue-500/20 h-12 flex items-center justify-center"
+                            className="w-full bg-[#D85B2F] hover:bg-[#bf4d26] text-white font-bold p-3.5 rounded-xl transition-all shadow-lg shadow-[#D85B2F]/20 hover:shadow-[#D85B2F]/40 active:scale-[0.98] h-12 flex items-center justify-center gap-2 mt-2"
                         >
-                            {loading ? <Loader2 className="animate-spin" /> : 'Entrar com Link Mágico'}
+                            {loading ? <Loader2 className="animate-spin" /> : (
+                                <>
+                                    <span>{authMode === 'login' ? (loginMethod === 'magic' ? 'Enviar Link de Acesso' : 'Entrar na Conta') : 'Criar Conta Grátis'}</span>
+                                    <ArrowRight size={18} className="opacity-80" />
+                                </>
+                            )}
                         </button>
                     </form>
-                </div>
-            </div>
 
-            {/* Separator */}
-            <div className="flex items-center gap-4 text-xs text-muted-foreground uppercase tracking-widest my-2">
-                <span className="w-12 h-px bg-border"></span>
-                <span>ou use sua senha</span>
-                <span className="w-12 h-px bg-border"></span>
-            </div>
+                    {/* Toggles */}
+                    <div className="mt-8 space-y-4 text-center">
+                        {authMode === 'login' && (
+                            <button
+                                type="button"
+                                onClick={() => setLoginMethod(loginMethod === 'password' ? 'magic' : 'password')}
+                                className="text-sm font-medium text-[#919599] hover:text-[#222120] dark:hover:text-white transition-colors"
+                            >
+                                {loginMethod === 'password'
+                                    ? <span className="flex items-center justify-center gap-2"><Sparkles size={14} className="text-[#F6A24A]" /> Prefiro entrar com Link Mágico</span>
+                                    : <span className="flex items-center justify-center gap-2"><Lock size={14} className="text-[#F6A24A]" /> Prefiro usar minha senha</span>
+                                }
+                            </button>
+                        )}
 
-            {/* Ilha 2: Cadastro / Login com Senha */}
-            <div className="w-full max-w-md bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg border border-border p-8 mt-6">
+                        <div className="pt-6 border-t border-[#D3D4D6] dark:border-[#333]">
+                            <div className="text-sm text-[#919599]">
+                                {authMode === 'login' ? 'Não tem uma conta?' : 'Já tem uma conta?'}
+                                <button
+                                    onClick={() => {
+                                        setAuthMode(authMode === 'login' ? 'signup' : 'login');
+                                        setLoginMethod('password'); // Reset to password for signup/login switch
+                                        setMessage(null);
+                                    }}
+                                    className="ml-2 font-bold text-[#D85B2F] hover:text-[#F6A24A] transition-colors"
+                                >
+                                    {authMode === 'login' ? 'Cadastre-se' : 'Fazer Login'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                {/* Tabs */}
-                <div className="flex bg-muted/50 p-1 rounded-xl mb-6">
-                    <button
-                        onClick={() => setAuthMode('login')}
-                        className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${authMode === 'login' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                    >
-                        Entrar
-                    </button>
-                    <button
-                        onClick={() => setAuthMode('signup')}
-                        className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${authMode === 'signup' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                    >
-                        Criar Conta
-                    </button>
-                </div>
-
-                <form onSubmit={handlePasswordAuth} className="space-y-4">
-                    {authMode === 'signup' && (
-                        <div className="animate-in slide-in-from-top-2 fade-in duration-200">
-                            <label className="text-xs font-semibold text-muted-foreground uppercase ml-1 mb-1 block">Nome Completo</label>
-                            <input
-                                type="text"
-                                required
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                placeholder="Seu nome"
-                                className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                            />
+                    {/* Messages */}
+                    {message && (
+                        <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] p-3 rounded-lg flex items-center gap-2 text-xs font-medium shadow-lg animate-in slide-in-from-bottom-2 ${message.type === 'success'
+                            ? 'bg-green-100 text-green-700 border border-green-200'
+                            : 'bg-red-50 text-red-600 border border-red-200'
+                            }`}>
+                            {message.type === 'success' ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+                            <p>{message.text}</p>
                         </div>
                     )}
-
-                    <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase ml-1 mb-1 block">Email</label>
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="seu@email.com"
-                            className="w-full px-4 py-3 rounded-xl border border-input bg-background/50 text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase ml-1 mb-1 block">Senha</label>
-                        <input
-                            type="password"
-                            required
-                            minLength={6}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="******"
-                            className="w-full px-4 py-3 rounded-xl border border-input bg-background/50 text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold p-3 rounded-xl transition-all h-12 flex items-center justify-center mt-2"
-                    >
-                        {loading ? <Loader2 className="animate-spin" /> : (authMode === 'login' ? 'Entrar' : 'Cadastrar')}
-                    </button>
-                </form>
-
-            </div>
-
-            {message && (
-                <div className={`mt-6 p-4 rounded-lg flex items-start gap-3 text-sm max-w-md w-full ${message.type === 'success'
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                    {message.type === 'success' ? <CheckCircle2 className="shrink-0 mt-0.5" size={16} /> : <XCircle className="shrink-0 mt-0.5" size={16} />}
-                    <p>{message.text}</p>
                 </div>
-            )}
-
-            <p className="mt-8 text-center text-xs text-[#6b6967] max-w-xs mx-auto">
-                Ao continuar, você concorda com nossos <Link href="#" className="underline hover:text-foreground">Termos de Serviço</Link> e <Link href="#" className="underline hover:text-foreground">Política de Privacidade</Link>.
-            </p>
+            </div>
         </div>
     );
 }
@@ -260,8 +297,8 @@ function LoginForm() {
 export default function LoginPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-[calc(100vh-64px)] bg-background flex flex-col justify-center items-center p-4">
-                <Loader2 className="animate-spin text-white w-8 h-8" />
+            <div className="min-h-[calc(100vh-64px)] w-full flex items-center justify-center bg-white dark:bg-[#1a1a1a]">
+                <Loader2 className="animate-spin text-[#D85B2F] w-8 h-8" />
             </div>
         }>
             <LoginForm />
