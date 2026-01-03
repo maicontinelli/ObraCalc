@@ -260,7 +260,7 @@ export default function AiAssistant() {
                     <div className="relative flex items-center w-full rounded-[1.5rem] transition-all duration-300
                             bg-[#F8F9FA]/90 dark:bg-[#1A1A1A]/90 
                             shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]
-                            border border-white/50 dark:border-gray-700/50
+                            border-2 border-[#FF6600]/20
                             hover:bg-white dark:hover:bg-black
                             focus-within:ring-4 focus-within:ring-[#FF6600]/20 focus-within:border-[#FF6600]"
                     >
@@ -274,7 +274,7 @@ export default function AiAssistant() {
                             onFocus={() => setShowSuggestions(true)}
                             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                             placeholder={isDeleting ? "" : placeholder}
-                            className="w-full pl-4 pr-32 py-5 rounded-full border-none outline-none bg-transparent text-[13px] text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 font-medium"
+                            className="w-full pl-4 pr-32 py-6 rounded-full border-none outline-none bg-transparent text-[13px] text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 font-medium"
                         />
 
                         {/* Hidden File Input */}
@@ -314,7 +314,7 @@ export default function AiAssistant() {
                             <button
                                 type="button"
                                 onClick={() => setShowToolsMenu(!showToolsMenu)}
-                                className={`absolute right-14 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-300 ${showToolsMenu ? 'text-[#FF6600] bg-orange-50 dark:bg-orange-900/20' : 'text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600]'}`}
+                                className={`absolute right-16 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-300 ${showToolsMenu ? 'text-[#FF6600] bg-orange-50 dark:bg-orange-900/20' : 'text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600]'}`}
                                 title="Ferramentas Visuais"
                             >
                                 <Camera size={20} />
@@ -377,9 +377,9 @@ export default function AiAssistant() {
                         <button
                             type="submit"
                             disabled={isLoading || !query.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-gray-100/50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-100 hover:text-[#FF6600] dark:hover:text-[#FF6600] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-300"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-[#FF6600] hover:bg-[#e65c00] text-white rounded-full transition-all duration-300 shadow-lg shadow-orange-500/30 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                         >
-                            {isLoading ? <Loader2 size={20} className="animate-spin" /> : <ArrowRight size={20} />}
+                            {isLoading ? <Loader2 size={24} className="animate-spin" /> : <ArrowRight size={24} />}
                         </button>
                     </div>
                 </form>
