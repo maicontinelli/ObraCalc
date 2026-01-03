@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export function Hero() {
     return (
-        <section className="relative pt-12 pb-64 overflow-hidden bg-transparent">
+        <section className="relative pt-20 pb-40 overflow-hidden bg-transparent">
             {/* Background elements removed */}
 
             <div className="container mx-auto px-4 relative z-10">
@@ -24,12 +24,21 @@ export function Hero() {
                 </div>
 
                 <h2 className="text-base md:text-lg text-muted-foreground font-medium text-center mb-6 max-w-2xl mx-auto leading-relaxed">
-                    Orçamentos de obra em segundos com o poder da IA
+                    A forma mais simples de calcular custos de construção e reforma — orçamento em minutos
                 </h2>
 
                 {/* AI Assistant Container (Search Bar) */}
                 <div className="max-w-3xl mx-auto relative z-20 mb-8 mt-28">
                     <AiAssistant />
+                </div>
+
+                {/* Footer Features */}
+                <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium -mt-4">
+                    <span>Sem cadastro</span>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <span>Resultado em minutos</span>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <span>Linguagem simples</span>
                 </div>
             </div>
         </section>
