@@ -86,11 +86,11 @@ function LoginForm() {
         <div className="flex min-h-[calc(100vh-64px)] w-full bg-white dark:bg-[#1a1a1a] relative overflow-hidden">
 
             {/* BACKGROUND IMAGE - Positioned absolutely to cover left side but blend naturally */}
-            {/* BACKGROUND IMAGE - Positioned absolutely to cover left side but blend naturally */}
+            {/* BACKGROUND IMAGE */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
                 <Image
-                    src="/login-bg-v3.png"
-                    alt="Construction Site background"
+                    src="/login-bg-v5.webp"
+                    alt="Background"
                     fill
                     className="object-contain object-left-bottom opacity-60"
                     priority
@@ -98,8 +98,8 @@ function LoginForm() {
             </div>
 
             {/* LEFT SIDE - Content Only */}
-            <div className="hidden lg:flex w-1/2 relative items-end justify-center z-10 p-12">
-                <div className="relative max-w-lg text-[#222120] dark:text-white space-y-6 mb-20">
+            <div className="hidden lg:flex w-1/2 relative items-start justify-center z-10 p-12 pt-8">
+                <div className="relative max-w-lg text-[#222120] dark:text-white space-y-6">
                     <h1 className="text-5xl font-bold leading-tight tracking-tight">
                         Construa o futuro com inteligência.
                     </h1>
@@ -122,17 +122,15 @@ function LoginForm() {
 
             {/* RIGHT SIDE - Form Island */}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:p-12 relative z-10">
-                {/* Background Pattern for Right Side */}
-                {/* Background Pattern REMOVED for clean look */}
 
-                <div className="w-full max-w-[420px] bg-white dark:bg-[#222120] rounded-[2rem] shadow-2xl shadow-black/5 dark:shadow-black/20 p-8 lg:p-10 relative z-10 border border-[#fff] dark:border-[#333]">
+                <div className="w-full max-w-[420px] bg-transparent p-8 lg:p-10 relative z-10">
 
                     {/* Header */}
                     <div className="text-center mb-10">
-                        <h2 className="text-2xl font-bold text-[#222120] dark:text-white mb-2">
+                        <h2 className="text-2xl font-bold text-[#222120] dark:text-white mb-2 drop-shadow-md">
                             {authMode === 'login' ? 'Bem-vindo de volta!' : 'Criar nova conta'}
                         </h2>
-                        <p className="text-[#919599] text-sm">
+                        <p className="text-[#555] dark:text-gray-300 text-sm font-medium">
                             {authMode === 'login'
                                 ? 'Acesse seus orçamentos e relatórios'
                                 : 'Comece a usar o ObraPlana gratuitamente'}
