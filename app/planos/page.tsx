@@ -56,8 +56,8 @@ export default function PlansPage() {
             period: '/mês',
             description: 'Perfeito para testar e para pequenas reformas.',
             features: [
-                'Até 5 orçamentos salvos',
-                'Exportação PDF e HTML',
+                'Apenas 5 orçamentos salvos',
+                'Exportação PDF e HTML limitada',
                 'Painel de Controle (Dashboard)',
                 'Acesso à IA de Orçamentos',
             ],
