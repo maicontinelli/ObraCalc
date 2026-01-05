@@ -3,17 +3,26 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2024-12-18.acacia' as any,
-});
+// Helper to initialize Stripe lazily to avoid build-time errors if env vars are missing
+const getStripe = () => {
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
+        throw new Error('STRIPE_SECRET_KEY is not defined');
+    }
+    return new Stripe(secretKey, {
+        apiVersion: '2024-12-18.acacia' as any,
+    });
+};
 
-// Initialize Supabase Admin Client (needed to write to protected tables/fields)
-// We need SERVICE_ROLE_KEY to bypass RLS and update user tiers securely
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Helper for Supabase Admin
+const getSupabaseAdmin = () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) {
+        throw new Error('Supabase URL or Service Role Key not defined');
+    }
+    return createClient(url, key);
+};
 
 export async function POST(req: Request) {
     const body = await req.text();
@@ -25,6 +34,8 @@ export async function POST(req: Request) {
         if (!process.env.STRIPE_WEBHOOK_SECRET) {
             throw new Error('STRIPE_WEBHOOK_SECRET is not set');
         }
+
+        const stripe = getStripe();
         event = stripe.webhooks.constructEvent(
             body,
             signature,
@@ -42,6 +53,7 @@ export async function POST(req: Request) {
         const userId = session.metadata?.userId || session.client_reference_id;
 
         // Retrieve subscription details to verify which product was bought
+        const stripe = getStripe();
         const subscriptionId = session.subscription as string;
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const priceId = subscription.items.data[0].price.id;
@@ -58,6 +70,7 @@ export async function POST(req: Request) {
             console.log(`✅ Payment received for user ${userId}. Updating tier to ${newTier}...`);
 
             // Update User Profile in Supabase
+            const supabaseAdmin = getSupabaseAdmin();
             const { error } = await supabaseAdmin
                 .from('profiles')
                 .update({
