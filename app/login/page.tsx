@@ -11,7 +11,8 @@ function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
-    const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+    // Changed initial state to 'signup' so "Criar" is default
+    const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
     const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -83,13 +84,12 @@ function LoginForm() {
     };
 
     return (
-        <div className="flex min-h-[calc(100vh-64px)] w-full bg-white dark:bg-[#1a1a1a] relative overflow-hidden">
+        <div className="flex min-h-[calc(100vh-64px)] w-full bg-background relative overflow-hidden">
 
-            {/* BACKGROUND IMAGE - Positioned absolutely to cover left side but blend naturally */}
-            {/* BACKGROUND IMAGE */}
+            {/* FULL PAGE BACKGROUND IMAGE */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
                 <Image
-                    src="/login-bg-v5.webp"
+                    src="/login-bg-full.webp"
                     alt="Background"
                     fill
                     className="object-contain object-left-bottom opacity-60"
@@ -98,23 +98,29 @@ function LoginForm() {
             </div>
 
             {/* LEFT SIDE - Content Only */}
-            <div className="hidden lg:flex w-1/2 relative items-start justify-center z-10 p-12 pt-8">
-                <div className="relative max-w-lg text-[#222120] dark:text-white space-y-6">
-                    <h1 className="text-5xl font-bold leading-tight tracking-tight">
+            <div className="hidden lg:flex w-1/2 flex-col justify-start items-start p-12 z-10 h-full pt-0 pb-4">
+
+                {/* Top: Title */}
+                <div className="max-w-lg text-[#1a1a1a] dark:text-white mt-10">
+                    <h1 className="text-5xl font-bold leading-tight tracking-tight drop-shadow-sm">
                         Construa o futuro com inteligência.
                     </h1>
-                    <p className="text-lg text-[#4B4B4B] dark:text-white/90 leading-relaxed max-w-md">
+                </div>
+
+                {/* Bottom: Subtitle & Approvals - Spaced by ~5cm + 6cm (approx 400px or mt-96) */}
+                <div className="max-w-lg space-y-6 mt-96">
+                    <p className="text-lg text-[#333333] dark:text-gray-100 font-medium leading-relaxed drop-shadow-sm">
                         Junte-se a milhares de engenheiros e arquitetos que utilizam o ObraPlana para criar orçamentos precisos em segundos.
                     </p>
 
                     <div className="flex items-center gap-4 pt-4">
                         <div className="flex -space-x-3">
                             {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-white/50 bg-[#222120]/5 dark:bg-white/20 backdrop-blur-sm" />
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-white/20 bg-gray-200 dark:bg-white/10 backdrop-blur-sm" />
                             ))}
                         </div>
-                        <div className="text-sm font-medium text-[#222120] dark:text-white">
-                            <span className="font-bold">4.9/5</span> de aprovação
+                        <div className="text-sm font-bold text-[#1a1a1a] dark:text-white drop-shadow-md">
+                            4.9/5 <span className="font-medium opacity-90">de aprovação</span>
                         </div>
                     </div>
                 </div>
@@ -123,19 +129,7 @@ function LoginForm() {
             {/* RIGHT SIDE - Form Island */}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:p-12 relative z-10">
 
-                <div className="w-full max-w-[420px] bg-transparent p-8 lg:p-10 relative z-10">
-
-                    {/* Header */}
-                    <div className="text-center mb-10">
-                        <h2 className="text-2xl font-bold text-[#222120] dark:text-white mb-2 drop-shadow-md">
-                            {authMode === 'login' ? 'Bem-vindo de volta!' : 'Criar nova conta'}
-                        </h2>
-                        <p className="text-[#555] dark:text-gray-300 text-sm font-medium">
-                            {authMode === 'login'
-                                ? 'Acesse seus orçamentos e relatórios'
-                                : 'Comece a usar o ObraPlana gratuitamente'}
-                        </p>
-                    </div>
+                <div className="w-full max-w-[420px] bg-white dark:bg-[#333130] p-8 lg:p-10 relative z-10 rounded-2xl shadow-sm border border-border">
 
                     {/* Google Button - Top Placement */}
                     <button
@@ -153,13 +147,61 @@ function LoginForm() {
                         )}
                     </button>
 
-                    <div className="relative mb-8">
+                    <div className="relative mb-6">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-[#D3D4D6] dark:border-[#444]" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                            <span className="bg-white dark:bg-[#222120] px-4 text-[#919599]">ou email</span>
+                            <span className="bg-white dark:bg-[#333130] px-4 text-[#919599] font-medium">ou {loginMethod === 'magic' ? 'link' : 'email'}</span>
                         </div>
+                    </div>
+
+                    {/* Tab Switcher - Moved Here */}
+                    <div className="grid grid-cols-3 gap-1 mb-8 bg-gray-100 dark:bg-black/20 p-1 rounded-xl">
+                        {/* 1. Criar */}
+                        <button
+                            type="button"
+                            onClick={() => { setAuthMode('signup'); setLoginMethod('password'); setMessage(null); }}
+                            className={`text-xs font-semibold py-2.5 rounded-lg transition-all ${authMode === 'signup'
+                                ? 'bg-white dark:bg-[#444] text-[#222120] dark:text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                                }`}
+                        >
+                            <span className="flex items-center justify-center gap-1.5">
+                                <User size={12} className="mb-0.5" />
+                                Criar
+                            </span>
+                        </button>
+
+                        {/* 2. Entrar */}
+                        <button
+                            type="button"
+                            onClick={() => { setAuthMode('login'); setLoginMethod('password'); setMessage(null); }}
+                            className={`text-xs font-semibold py-2.5 rounded-lg transition-all ${authMode === 'login' && loginMethod === 'password'
+                                ? 'bg-white dark:bg-[#444] text-[#222120] dark:text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                                }`}
+                        >
+                            <span className="flex items-center justify-center gap-1.5">
+                                <Lock size={12} className="mb-0.5" />
+                                Entrar
+                            </span>
+                        </button>
+
+                        {/* 3. Mágico */}
+                        <button
+                            type="button"
+                            onClick={() => { setAuthMode('login'); setLoginMethod('magic'); setMessage(null); }}
+                            className={`text-xs font-semibold py-2.5 rounded-lg transition-all ${authMode === 'login' && loginMethod === 'magic'
+                                ? 'bg-white dark:bg-[#444] text-[#222120] dark:text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                                }`}
+                        >
+                            <span className="flex items-center justify-center gap-1.5">
+                                <Sparkles size={12} className="mb-0.5" />
+                                Mágico
+                            </span>
+                        </button>
                     </div>
 
                     {/* Main Form */}
@@ -244,36 +286,11 @@ function LoginForm() {
                         </button>
                     </form>
 
-                    {/* Toggles */}
-                    <div className="mt-8 space-y-4 text-center">
-                        {authMode === 'login' && (
-                            <button
-                                type="button"
-                                onClick={() => setLoginMethod(loginMethod === 'password' ? 'magic' : 'password')}
-                                className="text-sm font-medium text-[#919599] hover:text-[#222120] dark:hover:text-white transition-colors"
-                            >
-                                {loginMethod === 'password'
-                                    ? <span className="flex items-center justify-center gap-2"><Sparkles size={14} className="text-[#F6A24A]" /> Prefiro entrar com Link Mágico</span>
-                                    : <span className="flex items-center justify-center gap-2"><Lock size={14} className="text-[#F6A24A]" /> Prefiro usar minha senha</span>
-                                }
-                            </button>
-                        )}
-
-                        <div className="pt-6 border-t border-[#D3D4D6] dark:border-[#333]">
-                            <div className="text-sm text-[#919599]">
-                                {authMode === 'login' ? 'Não tem uma conta?' : 'Já tem uma conta?'}
-                                <button
-                                    onClick={() => {
-                                        setAuthMode(authMode === 'login' ? 'signup' : 'login');
-                                        setLoginMethod('password'); // Reset to password for signup/login switch
-                                        setMessage(null);
-                                    }}
-                                    className="ml-2 font-bold text-[#D85B2F] hover:text-[#F6A24A] transition-colors"
-                                >
-                                    {authMode === 'login' ? 'Cadastre-se' : 'Fazer Login'}
-                                </button>
-                            </div>
-                        </div>
+                    {/* Footer Links (Termos, etc if needed, but removing old toggles) */}
+                    <div className="mt-8 text-center">
+                        <p className="text-xs text-gray-400">
+                            Ao continuar, você concorda com nossos <br /> <a href="#" className="underline hover:text-gray-500">Termos</a> e <a href="#" className="underline hover:text-gray-500">Privacidade</a>.
+                        </p>
                     </div>
 
                     {/* Messages */}

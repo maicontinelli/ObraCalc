@@ -4,10 +4,10 @@ import Image from 'next/image';
 
 export function Hero() {
     return (
-        <section className="relative pt-20 pb-40 overflow-hidden bg-transparent">
+        <section className="relative pt-20 pb-40 bg-transparent">
             {/* Background elements removed */}
 
-            <div className="container mx-auto px-4 relative z-10">
+            <div className="container mx-auto px-4 relative z-30">
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-2">
                     <Image
                         src="/logo-test.webp"
@@ -36,9 +36,9 @@ export function Hero() {
                 <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium -mt-4">
                     <span>Sem cadastro</span>
                     <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                    <span>Resultado em minutos</span>
-                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                     <span>Linguagem simples</span>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <span>IA avançada</span>
                 </div>
             </div>
         </section>
