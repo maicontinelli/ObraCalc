@@ -34,6 +34,20 @@ import { LeadsWall } from '@/components/LeadsWall';
 import { useProfile } from '@/hooks/useProfile';
 import { PLAN_LIMITS } from '@/lib/plan-limits';
 import { PlanStatus } from '@/components/PlanStatus';
+import Script from 'next/script';
+
+// Add TypeScript support for the custom element
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            'stripe-buy-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+                'buy-button-id': string;
+                'publishable-key': string;
+                'client-reference-id'?: string;
+            };
+        }
+    }
+}
 
 interface Budget {
     id: string;
@@ -670,13 +684,33 @@ export default function DashboardPage() {
                             </p>
                         </div>
 
-                        {/* Leads Wall (Opportunity Feed) */}
+                        {/* Leads Wall / Upsell Island */}
                         <div className="mt-6">
-                            <LeadsWall tier={profile?.tier || 'free'} />
+                            {profile?.tier === 'free' ? (
+                                <div className="rounded-2xl bg-card border border-[#FF6600]/30 shadow-sm overflow-hidden p-6 relative group">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-[#FF6600]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                                    <h3 className="text-lg font-bold text-foreground mb-2 relative z-10">Desbloqueie o Pro</h3>
+                                    <p className="text-sm text-muted-foreground mb-6 relative z-10">
+                                        Assine agora para criar orçamentos ilimitados e remover a marca d'água.
+                                    </p>
+
+                                    <div className="relative z-10 w-full min-h-[50px]">
+                                        <stripe-buy-button
+                                            buy-button-id="buy_btn_1SmI1UGZfnvqYwvYe4CkkPeR"
+                                            publishable-key="pk_live_51SjhneGZfnvqYwvYOVvYwYQUTYIN0moIbzXVaI5OABheROlSEXyVYillwArRFcYvqyxrHoJZqyJIJZ6lgTcyA41q00xIrcoteu"
+                                            client-reference-id={user?.id}
+                                        >
+                                        </stripe-buy-button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <LeadsWall tier={profile?.tier || 'free'} />
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+            <Script async src="https://js.stripe.com/v3/buy-button.js" strategy="lazyOnload" />
         </div>
     );
 }

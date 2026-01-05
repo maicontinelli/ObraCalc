@@ -1,37 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { Button } from '@/components/Button';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import Script from 'next/script';
-
-// Add TypeScript support for the custom element
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            'stripe-buy-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-                'buy-button-id': string;
-                'publishable-key': string;
-                'client-reference-id'?: string;
-            };
-        }
-    }
-}
 
 export default function PlansPage() {
     const [loading, setLoading] = useState<string | null>(null);
-    const [user, setUser] = useState<any>(null);
     const supabase = createClient();
-
-    useEffect(() => {
-        const getUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            setUser(user);
-        };
-        getUser();
-    }, [supabase]);
 
     const handleSubscribe = async (priceId: string) => {
         setLoading(priceId);
@@ -39,7 +16,6 @@ export default function PlansPage() {
             const { data: { user } } = await supabase.auth.getUser();
 
             if (!user) {
-                // Save current path to redirect back after login
                 if (typeof window !== 'undefined') {
                     window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
                 }
@@ -114,7 +90,6 @@ export default function PlansPage() {
             cta: 'Assinar Profissional',
             href: null,
             priceId: 'price_1Sl8fkGZfnvqYwvYTdmFAUM4',
-            buyButtonId: 'buy_btn_1SmI1UGZfnvqYwvYe4CkkPeR', // New Stripe Buy Button ID
             popular: true,
         },
         {
@@ -139,8 +114,6 @@ export default function PlansPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background">
-            <Script async src="https://js.stripe.com/v3/buy-button.js" strategy="lazyOnload" />
-
             <main className="flex-grow pb-24">
                 <section className="relative overflow-hidden bg-gradient-to-br from-[#FF6600]/5 via-background to-[#FF6600]/5 py-20 border-b border-white/5 mb-16">
                     <div className="absolute inset-0 overflow-hidden">
@@ -215,9 +188,7 @@ export default function PlansPage() {
                                     </ul>
                                 </div>
 
-                                {/* Action Buttons */}
                                 {plan.href ? (
-                                    // Case 1: External Link or Login Link (Free Plan)
                                     <Link
                                         href={plan.href}
                                         className="w-full"
@@ -234,34 +205,17 @@ export default function PlansPage() {
                                         </Button>
                                     </Link>
                                 ) : (
-                                    // Case 2: Checkout Action
-                                    <>
-                                        {/* If Plan has a Buy Button AND User is Logged In -> Show Stripe Widget */}
-                                        {/* Note: We only show this if we successfully fetched the user to pass the client-reference-id */}
-                                        {(plan.buyButtonId && user) ? (
-                                            <div className="w-full h-12">
-                                                <stripe-buy-button
-                                                    buy-button-id={plan.buyButtonId}
-                                                    publishable-key="pk_live_51SjhneGZfnvqYwvYOVvYwYQUTYIN0moIbzXVaI5OABheROlSEXyVYillwArRFcYvqyxrHoJZqyJIJZ6lgTcyA41q00xIrcoteu"
-                                                    client-reference-id={user.id}
-                                                >
-                                                </stripe-buy-button>
-                                            </div>
-                                        ) : (
-                                            // Fallback: Standard Button (Triggers Login or Standard Checkout if widget not available)
-                                            <Button
-                                                className={`w-full h-12 text-lg font-medium ${plan.popular
-                                                    ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
-                                                    : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
-                                                    }`}
-                                                variant={plan.popular ? 'default' : 'outline'}
-                                                onClick={() => handleSubscribe(plan.priceId!)}
-                                                disabled={loading === plan.priceId}
-                                            >
-                                                {loading === plan.priceId ? 'Processando...' : plan.cta}
-                                            </Button>
-                                        )}
-                                    </>
+                                    <Button
+                                        className={`w-full h-12 text-lg font-medium ${plan.popular
+                                            ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
+                                            : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
+                                            }`}
+                                        variant={plan.popular ? 'default' : 'outline'}
+                                        onClick={() => plan.priceId && handleSubscribe(plan.priceId)}
+                                        disabled={loading === plan.priceId}
+                                    >
+                                        {loading === plan.priceId ? 'Processando...' : plan.cta}
+                                    </Button>
                                 )}
                             </div>
                         ))}
