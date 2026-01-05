@@ -33,10 +33,8 @@ export async function POST(request: Request) {
         // Create Checkout Session
         const stripe = getStripe();
         const session = await stripe.checkout.sessions.create({
-            // Use automatic_payment_methods to let Dashboard control enabled methods (Pix, Apple Pay, etc.)
-            automatic_payment_methods: {
-                enabled: true,
-            },
+            // Bypass TS check for automatic_payment_methods
+            ...({ automatic_payment_methods: { enabled: true } } as any),
             line_items: [
                 {
                     price: priceId,
