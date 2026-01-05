@@ -178,7 +178,7 @@ export default function PlansPage() {
                                         ))}
                                         {plan.limitations.map((limitation) => (
                                             <li key={limitation} className="flex items-start gap-3">
-                                                <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                                                <X className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                                                 <span className="text-muted-foreground text-sm">
                                                     {limitation}
                                                 </span>
