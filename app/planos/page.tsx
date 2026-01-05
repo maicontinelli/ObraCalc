@@ -170,8 +170,7 @@ export default function PlansPage() {
                                     <ul className="space-y-4">
                                         {plan.features.map((feature) => (
                                             <li key={feature} className="flex items-start gap-3">
-                                                <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${plan.popular ? 'text-[#FF6600]' : 'text-[#74D2E7]'
-                                                    }`} />
+                                                <Check className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-500" />
                                                 <span className="text-foreground text-sm">
                                                     {feature}
                                                 </span>
@@ -179,8 +178,8 @@ export default function PlansPage() {
                                         ))}
                                         {plan.limitations.map((limitation) => (
                                             <li key={limitation} className="flex items-start gap-3">
-                                                <X className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-muted-foreground text-sm line-through">
+                                                <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                                                <span className="text-muted-foreground text-sm">
                                                     {limitation}
                                                 </span>
                                             </li>
