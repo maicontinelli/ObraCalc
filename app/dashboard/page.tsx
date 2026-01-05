@@ -694,7 +694,7 @@ export default function DashboardPage() {
                                         Assine agora para criar orçamentos ilimitados e remover a marca d'água.
                                     </p>
 
-                                    <div className="relative z-10 w-full min-h-[50px]">
+                                    <div className="relative z-10 w-full min-h-[50px] flex flex-col items-center justify-center">
                                         <stripe-buy-button
                                             buy-button-id="buy_btn_1SmI1UGZfnvqYwvYe4CkkPeR"
                                             publishable-key="pk_live_51SjhneGZfnvqYwvYOVvYwYQUTYIN0moIbzXVaI5OABheROlSEXyVYillwArRFcYvqyxrHoJZqyJIJZ6lgTcyA41q00xIrcoteu"
