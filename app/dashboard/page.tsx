@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -696,12 +696,11 @@ export default function DashboardPage() {
 
                                     <div className="relative z-10 w-full min-h-[50px] flex flex-col items-center justify-center">
                                         {/* @ts-ignore */}
-                                        <stripe-buy-button
-                                            buy-button-id="buy_btn_1SmI1UGZfnvqYwvYe4CkkPeR"
-                                            publishable-key="pk_live_51SjhneGZfnvqYwvYOVvYwYQUTYIN0moIbzXVaI5OABheROlSEXyVYillwArRFcYvqyxrHoJZqyJIJZ6lgTcyA41q00xIrcoteu"
-                                            client-reference-id={user?.id}
-                                        >
-                                        </stripe-buy-button>
+                                        {React.createElement('stripe-buy-button', {
+                                            'buy-button-id': "buy_btn_1SmI1UGZfnvqYwvYe4CkkPeR",
+                                            'publishable-key': "pk_live_51SjhneGZfnvqYwvYOVvYwYQUTYIN0moIbzXVaI5OABheROlSEXyVYillwArRFcYvqyxrHoJZqyJIJZ6lgTcyA41q00xIrcoteu",
+                                            'client-reference-id': user?.id
+                                        })}
                                     </div>
                                 </div>
                             ) : (
