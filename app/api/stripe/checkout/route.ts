@@ -33,9 +33,10 @@ export async function POST(request: Request) {
         // Create Checkout Session
         const stripe = getStripe();
         const session = await stripe.checkout.sessions.create({
-            // 'card' is standard. 'boleto' creates an invoice. 
-            // We use options that support recurring payments in Brazil.
-            payment_method_types: ['card', 'boleto'],
+            // Use automatic_payment_methods to let Dashboard control enabled methods (Pix, Apple Pay, etc.)
+            automatic_payment_methods: {
+                enabled: true,
+            },
             line_items: [
                 {
                     price: priceId,
