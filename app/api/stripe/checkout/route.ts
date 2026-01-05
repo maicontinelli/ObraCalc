@@ -14,7 +14,7 @@ const getStripe = () => {
 
 export async function POST(request: Request) {
     try {
-        const { priceId } = await request.json();
+        const { priceId, userId } = await request.json();
 
         if (!priceId) {
             return NextResponse.json(
@@ -23,10 +23,19 @@ export async function POST(request: Request) {
             );
         }
 
+        if (!userId) {
+            return NextResponse.json(
+                { error: 'User ID is required' },
+                { status: 400 }
+            );
+        }
+
         // Create Checkout Session
         const stripe = getStripe();
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card', 'boleto'], // Pix will be available if enabled in dashboard
+            // 'card' is standard. 'boleto' creates an invoice. 
+            // We use options that support recurring payments in Brazil.
+            payment_method_types: ['card', 'boleto'],
             line_items: [
                 {
                     price: priceId,
@@ -38,8 +47,16 @@ export async function POST(request: Request) {
             billing_address_collection: 'required',
             success_url: `${request.headers.get('origin')}/dashboard?success=true`,
             cancel_url: `${request.headers.get('origin')}/planos?canceled=true`,
-            // Optional: Layout customization
+            client_reference_id: userId,
+            metadata: {
+                userId: userId,
+            },
+            // Force Brazilian Portuguese
             locale: 'pt-BR',
+            // Enable tax ID collection (CPF/CNPJ) - Important for Boleto/Pix compliance in Brazil
+            tax_id_collection: {
+                enabled: true,
+            },
         });
 
         return NextResponse.json({ url: session.url });
