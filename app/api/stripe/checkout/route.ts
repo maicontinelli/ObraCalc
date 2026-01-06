@@ -8,7 +8,7 @@ const getStripe = () => {
         throw new Error('STRIPE_SECRET_KEY is not defined');
     }
     return new Stripe(secretKey, {
-        apiVersion: '2024-12-18.acacia' as any,
+        apiVersion: '2023-10-16',
     });
 };
 
@@ -33,8 +33,7 @@ export async function POST(request: Request) {
         // Create Checkout Session
         const stripe = getStripe();
         const session = await stripe.checkout.sessions.create({
-            // Bypass TS check for automatic_payment_methods
-            ...({ automatic_payment_methods: { enabled: true } } as any),
+            payment_method_types: ['card'],
             line_items: [
                 {
                     price: priceId,
