@@ -8,7 +8,14 @@ export async function POST(req: Request) {
 
         if (!apiKey) {
             return NextResponse.json(
-                { error: 'API do Gemini não configurada' },
+                {
+                    error: 'API do Gemini não configurada',
+                    debug: {
+                        GEMINI_API_KEY_SET: !!process.env.GEMINI_API_KEY,
+                        GOOGLE_API_KEY_SET: !!process.env.GOOGLE_API_KEY,
+                        NODE_ENV: process.env.NODE_ENV
+                    }
+                },
                 { status: 500 }
             );
         }
