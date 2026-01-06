@@ -337,7 +337,10 @@ export default function AiAssistant() {
                                                 <ScanEye size={18} />
                                             </div>
                                             <div>
-                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Diagnóstico Visual</span>
+                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                                    Diagnóstico Visual
+                                                    <span className="ml-2 text-[10px] bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Beta</span>
+                                                </span>
                                                 <span className="block text-[10px] text-gray-500 dark:text-gray-500">IA analisando fotos da obra</span>
                                             </div>
                                         </button>
