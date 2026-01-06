@@ -296,7 +296,7 @@ export default function NovoDiagnostico() {
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading || !image}
-                                className={`w-full mt-8 px-6 py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-2 shadow-lg
+                                className={`w-full mt-8 px-6 py-4 rounded-lg font-semibold text-base transition-all flex items-center justify-center gap-2 shadow-lg
                                     ${!image
                                         ? 'bg-gray-300 dark:bg-gray-800 text-gray-500 cursor-not-allowed'
                                         : 'bg-[#FF6600] hover:bg-[#E65C00] text-white hover:shadow-orange-500/20'
@@ -315,7 +315,7 @@ export default function NovoDiagnostico() {
                                 ) : (
                                     <>
                                         <Sparkles size={20} />
-                                        Gerar Diagnóstico com IA
+                                        <span className="text-sm font-bold uppercase tracking-wide">Gerar Diagnóstico com IA</span>
                                     </>
                                 )}
                             </button>

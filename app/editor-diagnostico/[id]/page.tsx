@@ -141,9 +141,13 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
                         margin: 7mm;
                         size: A4;
                     }
+                    :root {
+                        color-scheme: light;
+                    }
                     body { 
                         margin: 0; 
-                        background: white !important; 
+                        background-color: white !important;
+                        color: black !important;
                         -webkit-print-color-adjust: exact;
                         print-color-adjust: exact;
                     }
@@ -152,79 +156,66 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
                     }
                     .print-content { 
                         box-shadow: none !important; 
-                        background: white !important;
+                        background-color: white !important;
+                        color: black !important;
                         max-width: 100% !important;
                         width: 100% !important;
                         padding: 0 !important;
                     }
-                    
-                    /* Balanced colors for print */
-                    div, span, p, h2, h3, h4, h5, h6 {
-                        color: #374151 !important; /* Dark Grey base */
-                    }
-                    
-                    /* Highlights - Black */
-                    .font-bold, .font-semibold, h2, .item-total, .total-value {
-                        color: #000000 !important;
+
+                    /* Force all backgrounds to white/light for print */
+                    .bg-gray-50, .bg-gray-100, .bg-gray-800, .bg-gray-900, .dark\\:bg-gray-800, .dark\\:bg-gray-900 {
+                        background-color: white !important;
+                        border-color: #e5e7eb !important; /* gray-200 */
                     }
 
-                    /* Header Override - Force White on Dark BG */
-                    .bg-\[\#374151\] *, .invoice-header *, .brand-logo, .invoice-title h1 {
+                    /* Header Specifics - Force Dark BG for Header, White Text */
+                    .bg-\\[\\#374151\\], .dark\\:bg-\\[\\#374151\\] {
+                        background-color: #374151 !important;
+                        color: white !important;
+                    }
+                    .bg-\\[\\#374151\\] *, .invoice-header * {
                         color: white !important;
                     }
 
-                    /* Secondary - Discreet Grey */
-                    .text-gray-400, .text-gray-500, .uppercase.text-xs {
-                        color: #4b5563 !important;
+                    /* Force all other text to black/dark gray */
+                    div:not(.bg-\\[\\#374151\\] *), 
+                    span:not(.bg-\\[\\#374151\\] *), 
+                    p, h2, h3, h4, h5, h6,
+                    .text-gray-900, .dark\\:text-white, .dark\\:text-gray-200, .dark\\:text-gray-300 {
+                        color: #111827 !important; /* gray-900 */
                     }
 
-                    /* Keep Total Green */
-                    .text-green-600, .text-green-600 * {
-                        color: #16a34a !important;
+                    /* Keep subtle texts subtle but visible */
+                    .text-gray-400, .text-gray-500, .dark\\:text-gray-400, .dark\\:text-gray-500 {
+                        color: #6b7280 !important; /* gray-500 */
                     }
 
-                    /* Remove any potential footer elements that are explicit footers */
-                    *[class*="footer"], 
-                    *[class*="Footer"],
-                    *[id*="footer"],
-                    *[id*="Footer"] {
-                        display: none !important;
-                    }
+                    /* Exceptions (Green total, Blue suggestion) */
+                    .text-green-600 { color: #16a34a !important; }
+                    .text-blue-600 { color: #2563eb !important; }
+                    .text-orange-500, .text-orange-600 { color: #ea580c !important; }
 
-                    /* Ensure totals section uses condensed font sizes */
-                    .space-y-3 > div {
-                        font-size: 12px !important;
-                    }
-                    .space-y-3 span[class*="text-xs"],
-                    .space-y-3 span[class*="text-sm"] {
-                        font-size: 12px !important;
-                    }
-                    .space-y-3 span[class*="text-[10px]"] {
-                        font-size: 10px !important;
-                    }
-                    .space-y-3 span[class*="text-base"] {
-                        font-size: 16px !important;
+                    /* Borders */
+                    .border, .border-b, .border-t, .border-l, .border-r {
+                        border-color: #e5e7eb !important;
                     }
 
                     /* Watermark */
-                    .watermark {
-                        text-align: center;
-                        color: #9ca3af;
-                        font-size: 10px;
-                        margin-top: 40px;
-                        margin-bottom: 20px;
-                        text-transform: uppercase;
-                        letter-spacing: 1px;
-                    }
                     .watermark {
                         display: block !important;
                         position: fixed;
                         bottom: 10px;
                         left: 0;
                         width: 100%;
+                        text-align: center;
+                        color: #9ca3af;
+                        font-size: 10px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
                     }
                     
-                    /* Ocultar botões */
+                    /* Hide buttons */
                     button { display: none !important; }
                 }
             `}</style>
@@ -495,6 +486,6 @@ export default function EditorDiagnostico({ params }: { params: Promise<{ id: st
 
             </div>
             <div className="watermark hidden">Gerado pela IA ObraPlana</div>
-        </div>
+        </div >
     );
 }

@@ -133,7 +133,7 @@ export default function PlansPage() {
                             <h1 className="text-2xl md:text-4xl font-heading font-bold tracking-tight text-foreground max-w-6xl mx-auto leading-tight mb-24">
                                 Comece gratuitamente ou evolua para transformar <br /> orçamentos em ganhos reais
                             </h1>
-                            <p className="text-lg md:text-xl font-manrope font-semibold text-foreground mb-0">
+                            <p className="text-sm md:text-base font-manrope font-semibold text-foreground mb-0">
                                 Use no seu ritmo. Evolua quando fizer sentido
                             </p>
                         </div>
@@ -207,7 +207,7 @@ export default function PlansPage() {
                                             <Button
                                                 className={`w-full h-12 text-base font-bold ${plan.popular
                                                     ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
-                                                    : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
+                                                    : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground dark:border-white/30 dark:hover:bg-white/10 dark:hover:border-white/50'
                                                     }`}
                                                 variant={plan.popular ? 'default' : 'outline'}
                                             >
