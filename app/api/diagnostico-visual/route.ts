@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 export async function POST(req: Request) {
     try {
         const { image, formData } = await req.json();
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
         if (!apiKey) {
             return NextResponse.json(
@@ -147,7 +147,12 @@ IMPORTANTE:
 
         let prices = [];
         try {
-            const priceResponse = await fetch('http://localhost:3000/api/batch-price', {
+            // Fix: Dynamic URL for production
+            const protocol = req.headers.get('x-forwarded-proto') || 'http';
+            const host = req.headers.get('host');
+            const baseUrl = `${protocol}://${host}`;
+
+            const priceResponse = await fetch(`${baseUrl}/api/batch-price`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ items: itemsParaPrecificar })
