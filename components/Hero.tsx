@@ -9,8 +9,8 @@ export function Hero() {
 
             <div className="container mx-auto px-4 relative z-30 max-w-5xl">
                 <div className="flex flex-col items-center justify-center gap-6 mb-8 text-center">
-                    <h1 className="text-2xl md:text-4xl font-heading font-bold tracking-tight leading-tight text-[#3D3A36] dark:text-foreground">
-                        Calcule custos de obra em minutos
+                    <h1 className="text-2xl md:text-4xl font-heading font-medium tracking-tight leading-tight text-[#3D3A36] dark:text-foreground">
+                        Calcule custos de obra <br className="block md:hidden" /> em minutos
                     </h1>
                 </div>
 
