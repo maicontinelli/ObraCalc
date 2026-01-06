@@ -17,6 +17,7 @@ export default function PlansPage() {
 
             if (!user) {
                 if (typeof window !== 'undefined') {
+                    alert('Para assinar este plano, você precisa criar uma conta ou fazer login primeiro.');
                     window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
                 }
                 return;
@@ -54,19 +55,21 @@ export default function PlansPage() {
             name: 'Grátis',
             price: 'R$ 0',
             period: '/mês',
-            description: 'Perfeito para testar e para pequenas reformas.',
+            description: 'Crie orçamentos completos gratuitamente e explore o poder do ObraPlana.',
             features: [
-                'Apenas 5 orçamentos salvos',
-                'Exportação PDF e HTML limitada',
-                'Painel de Controle (Dashboard)',
-                'Acesso à IA de Orçamentos',
+                'Crie até 5 orçamentos completos',
+                'Exporte orçamentos em PDF e HTML',
+                'Acesse liberado ao Painel de Controle',
+                'Utilize a IA de Orçamentos do ObraPlana',
+                'Experimente o sistema em obras reais',
             ],
             limitations: [
-                'Máximo de 20 itens por obra',
-                'Marca d\'água nos relatórios',
-                'Sem acesso a Leads de clientes',
+                'Limite de 20 itens por orçamento',
+                'Relatórios com marca d’água ObraPlana',
+                'Sem acesso a leads de clientes',
             ],
-            cta: 'Criar Conta Grátis',
+            cta: 'Começar agora',
+            ctaCaption: 'Para criar orçamentos',
             href: '/login',
             priceId: null,
             popular: false,
@@ -75,19 +78,20 @@ export default function PlansPage() {
             name: 'Profissional',
             price: 'R$ 29,90',
             period: '/mês',
-            description: 'Para engenheiros e arquitetos que querem liberdade total.',
+            description: 'Ideal para quem quer ganhar comissões em orçamentos reais.',
             features: [
-                'Orçamentos e itens ilimitados',
-                'Sem marca d\'água',
-                'Personalize com sua logo',
-                'Histórico completo de obras',
-                'Visualização de Leads (Clientes)',
+                'Acesso exclusivo a indicação',
+                'Faça orçamentos ilimitados, sem restrição',
+                'Personalize os relatórios com sua marca',
+                'Tenha histórico completo de obras e clientes',
+                'Ganhe comissões ao conectar clientes',
                 'Suporte prioritário via WhatsApp',
             ],
             limitations: [
                 'Sem contato direto com Leads',
             ],
-            cta: 'Assinar Profissional',
+            cta: 'Evoluir para Profissional',
+            ctaCaption: 'Para ganhar com indicações',
             href: null,
             priceId: 'price_1Sl8fkGZfnvqYwvYTdmFAUM4',
             popular: true,
@@ -96,16 +100,19 @@ export default function PlansPage() {
             name: 'Empresarial',
             price: 'R$ 149,90',
             period: '/mês',
-            description: 'Para construtoras que precisam de escala e novos clientes.',
+            description: 'Receba clientes prontos para contratar e feche projetos, obras e serviços.',
             features: [
-                'Tudo do plano Profissional',
-                'Contato liberado com Leads',
-                'Destaque no buscador de profissionais',
-                'Badge de Conta Verificada',
-                'Até 5 usuários (Equipe)',
+                'Todos os benefícios do Plano Profissional',
+                'Ideal para fechar projetos, obras e serviços de execução',
+                'Receba leads prontos para proposta comercial',
+                'Tenha contato direto com clientes reais',
+                'Destaque máximo no buscador de profissionais',
+                'Receba demandas criadas por usuários de toda a plataforma',
+                'Conta verificada com selo de autoridade',
             ],
             limitations: [],
-            cta: 'Assinar Empresarial',
+            cta: 'Quero receber clientes',
+            ctaCaption: 'Para fechar negócios',
             href: null,
             priceId: 'price_1Sl8gZGZfnvqYwvYSqt716Vm',
             popular: false,
@@ -115,19 +122,19 @@ export default function PlansPage() {
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <main className="flex-grow pb-24">
-                <section className="relative overflow-hidden bg-gradient-to-br from-[#FF6600]/5 via-background to-[#FF6600]/5 py-20 border-b border-white/5 mb-16">
+                <section className="relative overflow-hidden bg-gradient-to-br from-[#74D2E7]/5 via-background to-[#74D2E7]/5 pt-20 pb-6 border-b border-white/5 mb-8">
                     <div className="absolute inset-0 overflow-hidden">
-                        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#FF6600]/10 rounded-full blur-3xl"></div>
-                        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#FF6600]/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#74D2E7]/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#74D2E7]/10 rounded-full blur-3xl"></div>
                     </div>
 
                     <div className="container mx-auto px-4 relative z-10">
-                        <div className="text-center max-w-3xl mx-auto">
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
-                                Escolha o plano ideal para começar
+                        <div className="text-center max-w-7xl mx-auto">
+                            <h1 className="text-2xl md:text-4xl font-heading font-bold tracking-tight text-foreground max-w-6xl mx-auto leading-tight mb-24">
+                                Comece gratuitamente ou evolua para transformar <br /> orçamentos em ganhos reais
                             </h1>
-                            <p className="text-xl text-muted-foreground">
-                                Comece gratuitamente e evolua conforme suas necessidades de gerenciamento e equipe.
+                            <p className="text-lg md:text-xl font-manrope font-semibold text-foreground mb-0">
+                                Use no seu ritmo. Evolua quando fizer sentido
                             </p>
                         </div>
                     </div>
@@ -140,7 +147,7 @@ export default function PlansPage() {
                                 key={plan.name}
                                 className={`relative flex flex-col p-8 rounded-2xl border bg-card transition-shadow hover:shadow-xl ${plan.popular
                                     ? 'border-[#FF6600] shadow-lg ring-1 ring-[#FF6600]'
-                                    : 'border-border'
+                                    : 'border-border dark:border-white/15'
                                     }`}
                             >
                                 {plan.popular && (
@@ -170,8 +177,11 @@ export default function PlansPage() {
                                     <ul className="space-y-4">
                                         {plan.features.map((feature) => (
                                             <li key={feature} className="flex items-start gap-3">
-                                                <Check className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-500" />
-                                                <span className="text-foreground text-sm">
+                                                <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature === 'Acesso exclusivo a indicação'
+                                                    ? 'text-[#74D2E7] stroke-[3]'
+                                                    : 'text-blue-500'
+                                                    }`} />
+                                                <span className={`text-foreground text-sm ${feature === 'Acesso exclusivo a indicação' ? 'font-bold' : ''}`}>
                                                     {feature}
                                                 </span>
                                             </li>
@@ -188,36 +198,51 @@ export default function PlansPage() {
                                 </div>
 
                                 {plan.href ? (
-                                    <Link
-                                        href={plan.href}
-                                        className="w-full"
-                                        target={plan.href.startsWith('http') ? '_blank' : '_self'}
-                                    >
+                                    <div className="w-full">
+                                        <Link
+                                            href={plan.href}
+                                            className="w-full"
+                                            target={plan.href.startsWith('http') ? '_blank' : '_self'}
+                                        >
+                                            <Button
+                                                className={`w-full h-12 text-base font-bold ${plan.popular
+                                                    ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
+                                                    : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
+                                                    }`}
+                                                variant={plan.popular ? 'default' : 'outline'}
+                                            >
+                                                {plan.cta}
+                                            </Button>
+                                        </Link>
+                                        <p className="mt-2 text-xs text-center text-muted-foreground font-medium">
+                                            {plan.ctaCaption}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="w-full">
                                         <Button
-                                            className={`w-full h-12 text-lg font-medium ${plan.popular
+                                            className={`w-full h-12 text-base font-bold ${plan.popular
                                                 ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
                                                 : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
                                                 }`}
                                             variant={plan.popular ? 'default' : 'outline'}
+                                            onClick={() => plan.priceId && handleSubscribe(plan.priceId)}
+                                            disabled={loading === plan.priceId}
                                         >
-                                            {plan.cta}
+                                            {loading === plan.priceId ? 'Processando...' : plan.cta}
                                         </Button>
-                                    </Link>
-                                ) : (
-                                    <Button
-                                        className={`w-full h-12 text-lg font-medium ${plan.popular
-                                            ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
-                                            : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
-                                            }`}
-                                        variant={plan.popular ? 'default' : 'outline'}
-                                        onClick={() => plan.priceId && handleSubscribe(plan.priceId)}
-                                        disabled={loading === plan.priceId}
-                                    >
-                                        {loading === plan.priceId ? 'Processando...' : plan.cta}
-                                    </Button>
+                                        <p className="mt-2 text-xs text-center text-muted-foreground font-medium">
+                                            {plan.ctaCaption}
+                                        </p>
+                                    </div>
                                 )}
                             </div>
                         ))}
+                    </div>
+                    <div className="mt-12 text-center">
+                        <p className="text-sm font-manrope text-muted-foreground">
+                            Cancele quando quiser. Sem contratos ou fidelidade.
+                        </p>
                     </div>
                 </div>
             </main>

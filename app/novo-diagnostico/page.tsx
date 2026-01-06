@@ -132,10 +132,10 @@ export default function NovoDiagnostico() {
                             <ArrowLeft size={16} />
                             Voltar para o Início
                         </button>
-                        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                        <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-6">
                             Diagnóstico Visual com <span className="text-[#FF6600]">IA</span>
                         </h1>
-                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        <p className="text-xl font-manrope text-muted-foreground max-w-2xl mx-auto">
                             Envie uma foto do ambiente e a IA analisará os problemas, sugerindo soluções técnicas e gerando um orçamento preliminar.
                         </p>
                     </div>
@@ -148,7 +148,7 @@ export default function NovoDiagnostico() {
                     {/* Left Column: Image Upload */}
                     <div className="md:col-span-1 space-y-6">
                         <div className="bg-card rounded-2xl shadow-xl p-6 border border-border sticky top-24">
-                            <h3 className="text-lg font-bold mb-4 text-foreground flex items-center gap-2">
+                            <h3 className="text-lg font-heading font-bold mb-4 text-foreground flex items-center gap-2">
                                 <Camera size={20} className="text-[#FF6600]" />
                                 Foto do Ambiente
                             </h3>

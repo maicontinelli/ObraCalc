@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, CheckCircle, Camera, RefreshCw, AlertCircle, Home, Building2, Hammer, Flag, TrendingUp, CheckCircle2, User, FileText } from 'lucide-react';
+import { Upload, CheckCircle, Camera, RefreshCw, AlertCircle, Home, Building2, Hammer, Flag, TrendingUp, CheckCircle2, User, FileText, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import imageCompression from 'browser-image-compression';
 import { SelectionList } from '@/components/SelectionList';
@@ -243,10 +243,17 @@ export default function RelatorioFotograficoPage() {
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                        <button
+                            onClick={() => router.push('/')}
+                            className="inline-flex items-center gap-2 text-muted-foreground hover:text-[#6366F1] transition-colors mb-6 text-sm font-medium"
+                        >
+                            <ArrowLeft size={16} />
+                            Voltar para o Início
+                        </button>
+                        <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-6">
                             Relatório Fotográfico de Obra com <span className="text-[#6366F1]">IA</span>
                         </h1>
-                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        <p className="text-xl font-manrope text-muted-foreground max-w-2xl mx-auto">
                             Envie fotos da obra e a IA gera automaticamente um relatório fotográfico técnico profissional, pronto para entrega ao cliente.
                         </p>
                     </div>
@@ -473,7 +480,7 @@ export default function RelatorioFotograficoPage() {
                                 onChange={(e) => setUserObservations(e.target.value)}
                                 placeholder="Adicione observações técnicas relevantes sobre a obra..."
                                 rows={3}
-                                className="w-full rounded-md border-white/10 bg-[#1A1918] text-foreground shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-[#8a8886]"
+                                className="w-full rounded-xl border-input bg-background text-foreground shadow-sm focus:border-[#6366F1] focus:ring-[#6366F1] placeholder-muted-foreground p-3"
                             />
                         </div>
                     </div>

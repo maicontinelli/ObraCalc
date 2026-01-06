@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, FileText, Download, CheckCircle, Map as MapIcon, RefreshCw, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Upload, FileText, Download, CheckCircle, Map as MapIcon, RefreshCw, AlertCircle, ArrowLeft } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { parseKMZ, processMemorialData, MemorialData, ddToDms } from '@/lib/memorial-utils';
 import { SelectionList } from '@/components/SelectionList';
 import { RefreshCcw, RotateCw } from 'lucide-react';
 
 export default function MemorialPage() {
+    const router = useRouter();
     const [file, setFile] = useState<File | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -133,10 +135,17 @@ export default function MemorialPage() {
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                        <button
+                            onClick={() => router.push('/')}
+                            className="inline-flex items-center gap-2 text-muted-foreground hover:text-[#C2410C] transition-colors mb-6 text-sm font-medium"
+                        >
+                            <ArrowLeft size={16} />
+                            Voltar para o Início
+                        </button>
+                        <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-6">
                             Memorial Descritivo de <span className="text-[#C2410C]">Topografia</span>
                         </h1>
-                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        <p className="text-xl font-manrope text-muted-foreground max-w-2xl mx-auto">
                             Envie o arquivo KMZ do Google Earth e a IA cria automaticamente o memorial descritivo técnico + planilha em Excel pronta para prefeitura e cartório.
                         </p>
                     </div>
@@ -276,7 +285,7 @@ export default function MemorialPage() {
                         {/* Memorial Text */}
                         <div className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                <h2 className="text-xl font-heading font-bold text-gray-900 flex items-center gap-2">
                                     <FileText className="h-6 w-6 text-[#C2410C]" />
                                     Memorial Descritivo
                                 </h2>
@@ -296,7 +305,7 @@ export default function MemorialPage() {
                         {/* Technical Table */}
                         <div className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                <h2 className="text-xl font-heading font-bold text-gray-900 flex items-center gap-2">
                                     <Download className="h-6 w-6 text-[#C2410C]" />
                                     Tabela Técnica
                                 </h2>

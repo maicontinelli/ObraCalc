@@ -53,7 +53,8 @@ module.exports = {
             },
             fontFamily: {
                 sans: ['var(--font-inter)', 'sans-serif'],
-                heading: ['var(--font-space)', 'sans-serif'],
+                heading: ['var(--font-manrope)', 'sans-serif'],
+                manrope: ['var(--font-manrope)', 'sans-serif'],
             },
             animation: {
                 blob: "blob 7s infinite",

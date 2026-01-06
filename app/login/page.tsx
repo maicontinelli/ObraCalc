@@ -102,14 +102,14 @@ function LoginForm() {
 
                 {/* Top: Title */}
                 <div className="max-w-lg text-[#1a1a1a] dark:text-white mt-10">
-                    <h1 className="text-5xl font-bold leading-tight tracking-tight drop-shadow-sm">
+                    <h1 className="text-5xl font-heading font-bold leading-tight tracking-tight drop-shadow-sm">
                         Construa o futuro com inteligência.
                     </h1>
                 </div>
 
                 {/* Bottom: Subtitle & Approvals - Spaced by ~5cm + 6cm (approx 400px or mt-96) */}
                 <div className="max-w-lg space-y-6 mt-96">
-                    <p className="text-lg text-[#333333] dark:text-gray-100 font-medium leading-relaxed drop-shadow-sm">
+                    <p className="text-lg text-[#333333] dark:text-gray-100 font-manrope font-medium leading-relaxed drop-shadow-sm">
                         Junte-se a milhares de engenheiros e arquitetos que utilizam o ObraPlana para criar orçamentos precisos em segundos.
                     </p>
 

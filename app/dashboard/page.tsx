@@ -295,7 +295,7 @@ export default function DashboardPage() {
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div className="flex-1 max-w-lg">
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-4xl font-extrabold text-foreground tracking-tight">
+                                <h1 className="text-4xl font-heading font-extrabold text-foreground tracking-tight">
                                     Olá, {profileData.full_name?.split(' ')[0] || 'Parceiro'}!
                                 </h1>
                                 <span className="text-3xl animate-wave origin-bottom-right inline-block">👋</span>
@@ -405,7 +405,7 @@ export default function DashboardPage() {
                         {/* Recent Budgets List */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between px-1">
-                                <h2 className="text-lg font-bold text-foreground">Orçamentos Recentes</h2>
+                                <h2 className="text-lg font-heading font-bold text-foreground">Orçamentos Recentes</h2>
                                 {/* Search bar placeholder - visual only for now */}
                                 <div className="relative hidden sm:block w-64">
                                     <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
@@ -546,7 +546,7 @@ export default function DashboardPage() {
                                     <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center text-orange-600">
                                         <UserIcon size={16} />
                                     </div>
-                                    <h3 className="font-bold text-foreground text-sm">Seus Dados</h3>
+                                    <h3 className="font-heading font-bold text-foreground text-sm">Seus Dados</h3>
                                 </div>
                                 {isProfileExpanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
                             </div>
@@ -689,7 +689,7 @@ export default function DashboardPage() {
                             {profile?.tier === 'free' ? (
                                 <div className="rounded-2xl bg-card border border-[#FF6600]/30 shadow-sm overflow-hidden p-6 relative group">
                                     <div className="absolute inset-0 bg-gradient-to-br from-[#FF6600]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                                    <h3 className="text-lg font-bold text-foreground mb-2 relative z-10">Desbloqueie o Pro</h3>
+                                    <h3 className="text-lg font-heading font-bold text-foreground mb-2 relative z-10">Desbloqueie o Pro</h3>
                                     <p className="text-sm text-muted-foreground mb-6 relative z-10">
                                         Assine agora para criar orçamentos ilimitados e remover a marca d'água.
                                     </p>

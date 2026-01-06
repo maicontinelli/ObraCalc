@@ -47,7 +47,7 @@ export default function Home() {
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Pronto para otimizar seus orçamentos?</h2>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 tracking-tight">Pronto para otimizar seus orçamentos?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
               Junte-se a mais de 5.000 engenheiros e arquitetos que economizam 80% do tempo de orçamento.
             </p>

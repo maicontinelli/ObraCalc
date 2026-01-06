@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Manrope } from "next/font/google";
 import "./globals.css";
 import SimpleNav from "@/components/SimpleNav";
 import { Footer } from "@/components/Footer";
@@ -17,6 +17,12 @@ const spaceGrotesk = Space_Grotesk({
     display: "swap",
 });
 
+const manrope = Manrope({
+    subsets: ["latin"],
+    variable: "--font-manrope",
+    display: "swap",
+});
+
 export const metadata: Metadata = {
     title: "ObraPlana - Orçamentos de Construção",
     description: "Sistema simples e gratuito para criar orçamentos de construção com IA",
@@ -29,7 +35,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="pt-BR" suppressHydrationWarning>
-            <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased font-sans bg-background text-foreground`}>
+            <body className={`${inter.variable} ${spaceGrotesk.variable} ${manrope.variable} antialiased font-sans bg-background text-foreground`}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
