@@ -4,31 +4,18 @@ import Image from 'next/image';
 
 export function Hero() {
     return (
-        <section className="relative pt-20 pb-40 bg-transparent">
+        <section className="relative pt-28 pb-40 bg-transparent">
             {/* Background elements removed */}
 
-            <div className="container mx-auto px-4 relative z-30">
-                <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-2">
-                    <Image
-                        src="/logo-test.webp"
-                        alt="ObraCalc Logo"
-                        width={100}
-                        height={100}
-                        className="drop-shadow-xl"
-                    />
-                    <h1 className="text-5xl md:text-7xl font-heading font-bold tracking-tight leading-tight">
-                        <span className="text-[#3D3A36] dark:text-foreground">
-                            Obra Plana
-                        </span>
+            <div className="container mx-auto px-4 relative z-30 max-w-5xl">
+                <div className="flex flex-col items-center justify-center gap-6 mb-8 text-center">
+                    <h1 className="text-2xl md:text-4xl font-heading font-bold tracking-tight leading-tight text-[#3D3A36] dark:text-foreground">
+                        Calcule custos de obra em minutos
                     </h1>
                 </div>
 
-                <h2 className="text-base md:text-lg text-muted-foreground font-medium text-center mb-6 max-w-2xl mx-auto leading-relaxed">
-                    A forma mais simples de calcular custos de construção e reforma — orçamento em minutos
-                </h2>
-
                 {/* AI Assistant Container (Search Bar) */}
-                <div className="max-w-3xl mx-auto relative z-20 mb-8 mt-28">
+                <div className="max-w-3xl mx-auto relative z-20 mb-8 mt-6">
                     <AiAssistant />
                 </div>
 

@@ -222,6 +222,7 @@ export default function AiAssistant() {
     const [typingSpeed, setTypingSpeed] = useState(150);
 
     const phrases = [
+        "Descreva o que você quer orçar",
         "Muro de 45m²: reboco e pintura",
         "Reformar banheiro de 3m²",
         "Casa popular de 70m²",

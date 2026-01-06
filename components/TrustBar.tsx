@@ -2,7 +2,7 @@ import { Building2, Home, Landmark, Warehouse } from "lucide-react";
 
 export function TrustBar() {
     return (
-        <section className="pt-0 pb-10 bg-transparent relative z-20">
+        <section className="pt-48 pb-10 bg-transparent relative z-20">
             <div className="container mx-auto px-4">
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400 font-normal tracking-wide mb-2">
                     Integração direta com as bases de referência nacional

@@ -61,6 +61,7 @@ export default function SimpleNav() {
                                 className="h-8 w-auto"
                                 priority
                             />
+                            <span className="font-manrope font-bold text-xl text-foreground">Obra Plana</span>
                         </Link>
                     </div>
 
