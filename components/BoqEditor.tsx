@@ -1137,7 +1137,7 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
 
                             {/* Info */}
                             <div className="mt-4 text-[10px] text-center text-muted-foreground opacity-50">
-                                <p>Os valores são estimados com base no SINAPI/SBC.</p>
+                                <p>Os valores são estimados com base no SINAPI/ORSE.</p>
                                 <p>Revisão de preços recomendada antes do fechamento.</p>
                             </div>
                         </div>
