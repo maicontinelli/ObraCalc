@@ -389,7 +389,7 @@ export default function AiAssistant() {
                 </form>
 
                 {/* Local Suggestions Dropdown */}
-                {showSuggestions && filteredItems.length > 0 && !response && (
+                {showSuggestions && filteredItems.length > 0 && !response && !isLoading && (
                     <div className="absolute top-full left-0 right-0 w-full mt-2 bg-white/80 dark:bg-[#1A1A1A]/90 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/30 rounded-xl shadow-2xl overflow-hidden z-20 max-h-[300px] overflow-y-auto custom-scrollbar">
                         <div className="px-4 py-2 bg-gray-50/50 dark:bg-black/40 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-white/5 backdrop-blur-sm sticky top-0 z-10">
                             ENCONTRADOS
@@ -472,7 +472,6 @@ export default function AiAssistant() {
 
                                         <ul className="space-y-2 mb-4">
                                             {response.suggestedBudget.items
-                                                .sort((a, b) => (a.type === 'service' ? -1 : 1))
                                                 .map((item, idx) => (
                                                     <li key={idx} className="text-xs text-gray-700 dark:text-gray-300 flex justify-between items-center bg-white/50 dark:bg-black/20 px-2 py-1.5 rounded">
                                                         <div className="flex items-center gap-2 overflow-hidden">
