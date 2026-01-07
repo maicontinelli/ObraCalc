@@ -68,10 +68,10 @@ IMPORTANTE:
    - Exemplo de grupo:
      "Pintura de Quarto", "Construção Casa Popular 60m²", "Reforma de Banheiro".
 
-2. NÃO REUTILIZE ITENS DO CATÁLOGO EXISTENTE
-   - NÃO copie nomes, IDs ou estruturas do banco manual.
-   - Crie serviços novos, contextualizados ao pedido do usuário.
-   - Pense como um engenheiro montando um orçamento específico, não uma tabela padrão.
+2. PADRONIZAÇÃO DE NOMES
+   - Use nomes claros, padronizados e reconhecíveis no mercado.
+   - Evite nomes excessivamente criativos ou ambíguos.
+   - Pense como um engenheiro montando um orçamento específico.
 
 3. ASSUMA SEMPRE UM SERVIÇO COMPLETO
    - O usuário não quer listar etapas.
@@ -126,10 +126,15 @@ IMPORTANTE:
   - Liste os serviços em ORDEM CRONOLÓGICA DE EXECUÇÃO.
 
 ════════════════════════════════════
-🗂️ CATEGORIAS (USO OBRIGATÓRIO)
+🗂️ CATEGORIAS (USO RECOMENDADO)
 ════════════════════════════════════
 
-Use ESTRITAMENTE uma das categorias abaixo:
+- Utilize as categorias abaixo sempre que aplicável.
+- Não force um serviço em uma categoria inadequada.
+- Em caso de dúvida, utilize:
+  "18. SERVIÇOS FINAIS / DIVERSOS" ou
+  "22. ITENS ADICIONAIS".
+- A clareza do serviço é mais importante que a precisão da categoria.
 
 1. SERVIÇOS PRELIMINARES E GERAIS
 2. DEMOLIÇÕES E RETIRADAS
