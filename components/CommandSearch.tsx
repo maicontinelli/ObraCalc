@@ -49,6 +49,17 @@ interface CommandSearchProps {
     ) => void;
 }
 
+// ... imports
+// Add these at the top level or inside the component if you prefer, but outside is better for constants
+const PROMPT_PLACEHOLDERS = [
+    "Descreva itens que faltaram aqui...",
+    "Adicionar pintura interna",
+    "Adicionar instalação elétrica",
+    "Adicionar hidráulica do banheiro",
+    "Adicionar assentamento de piso",
+    "Adicionar reboco e acabamento"
+];
+
 export default function CommandSearch({ items, onSelect, onAddCustom }: CommandSearchProps) {
     const [query, setQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -57,7 +68,46 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
     const [aiResponse, setAiResponse] = useState<AiResponse | null>(null);
     const [aiError, setAiError] = useState<string | null>(null);
 
+    // Typewriter Effect State
+    const [placeholder, setPlaceholder] = useState("");
+    const [loopNum, setLoopNum] = useState(0);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [typingSpeed, setTypingSpeed] = useState(150);
+
     const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleType = () => {
+            const i = loopNum % PROMPT_PLACEHOLDERS.length;
+            const fullText = PROMPT_PLACEHOLDERS[i];
+
+            setPlaceholder(isDeleting
+                ? fullText.substring(0, placeholder.length - 1)
+                : fullText.substring(0, placeholder.length + 1)
+            );
+
+            // Typing Speed Logic
+            let typeSpeed = 100;
+
+            if (isDeleting) {
+                typeSpeed /= 2; // Delete faster
+            }
+
+            if (!isDeleting && placeholder === fullText) {
+                typeSpeed = 2000; // Pause at end
+                setIsDeleting(true);
+            } else if (isDeleting && placeholder === '') {
+                setIsDeleting(false);
+                setLoopNum(loopNum + 1);
+                typeSpeed = 500; // Pause before new typoe
+            }
+
+            setTypingSpeed(typeSpeed);
+        };
+
+        const timer = setTimeout(handleType, typingSpeed);
+        return () => clearTimeout(timer);
+    }, [placeholder, isDeleting, loopNum, typingSpeed]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -160,11 +210,10 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                 <form onSubmit={handleAiSearch} className="relative">
                     {/* Glassmorphism Search Bar - Neon Orange Style */}
                     <div className="relative flex items-center w-full rounded-full transition-all duration-300
-                            bg-white/70 dark:bg-card/60 
-                            backdrop-blur-xl 
-                            border border-white/50 dark:border-white/10
-                            shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]
-                            hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90 dark:hover:bg-card/80
+                            bg-white dark:bg-[#1A1A1A] 
+                            shadow-[0_4px_20px_rgba(0,0,0,0.08)]
+                            border border-blue-500/30
+                            hover:shadow-[0_6px_24px_rgba(0,0,0,0.12)]
                             focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500/50"
                     >
                         <div className="pl-6 text-gray-400 dark:text-gray-500">
@@ -178,7 +227,7 @@ export default function CommandSearch({ items, onSelect, onAddCustom }: CommandS
                                 if (aiResponse) setAiResponse(null);
                             }}
                             onFocus={() => query && !aiResponse && setIsOpen(true)}
-                            placeholder="Adicionar mais serviços ao orçamento..."
+                            placeholder={placeholder}
                             className="w-full pl-4 pr-32 py-5 rounded-full border-none outline-none bg-transparent text-[13px] text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 font-medium"
                         />
 

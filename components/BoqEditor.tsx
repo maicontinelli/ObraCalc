@@ -352,6 +352,12 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
         setItems(items.filter(item => item.id !== id));
     };
 
+    const handleDeleteCategory = (categoryName: string) => {
+        if (confirm(`Tem certeza que deseja excluir todos os itens de "${categoryName}"?`)) {
+            setItems(prev => prev.filter(item => item.category !== categoryName));
+        }
+    };
+
     const handleAddCustomItem = (category: string) => {
         const newItem: BoqItem = {
             id: crypto.randomUUID(),
@@ -663,7 +669,8 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                         id: crypto.randomUUID(),
                                         included: true,
                                         category: targetCategory,
-                                        aiRequestId: requestId
+                                        aiRequestId: requestId,
+                                        isCustom: true
                                     }));
                                     setItems(prev => [...itemsWithIds, ...prev]);
                                     if (request) {
@@ -738,6 +745,13 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                             }`}
                                                     >
                                                         {categoryIncluded > 0 && <span className="text-[8px] font-bold">✓</span>}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteCategory(category)}
+                                                        className="w-4 h-4 rounded transition-colors flex items-center justify-center text-red-500 hover:bg-red-500/10 ml-1"
+                                                        title="Excluir Grupo"
+                                                    >
+                                                        <Trash2 size={12} />
                                                     </button>
                                                 </div>
                                             </div>
@@ -845,15 +859,13 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                         displayValue * item.quantity
                                                                                     )}
                                                                                 </span>
-                                                                                {item.isCustom && (
-                                                                                    <button
-                                                                                        onClick={() => handleDelete(item.id)}
-                                                                                        className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-600 p-1 absolute -right-6 md:static transition-all"
-                                                                                        title="Excluir"
-                                                                                    >
-                                                                                        <Trash2 size={14} />
-                                                                                    </button>
-                                                                                )}
+                                                                                <button
+                                                                                    onClick={() => handleDelete(item.id)}
+                                                                                    className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-600 p-1 absolute -right-6 md:static transition-all"
+                                                                                    title="Excluir"
+                                                                                >
+                                                                                    <Trash2 size={14} />
+                                                                                </button>
                                                                             </div>
                                                                         </div>
                                                                     </React.Fragment>
@@ -1043,15 +1055,13 @@ export default function BoqEditor({ estimateId }: { estimateId: string }) {
                                                                                             displayValue * item.quantity
                                                                                         )}
                                                                                     </span>
-                                                                                    {item.isCustom && (
-                                                                                        <button
-                                                                                            onClick={() => handleDelete(item.id)}
-                                                                                            className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-600 p-1 absolute -right-6 md:static transition-all"
-                                                                                            title="Excluir"
-                                                                                        >
-                                                                                            <Trash2 size={14} />
-                                                                                        </button>
-                                                                                    )}
+                                                                                    <button
+                                                                                        onClick={() => handleDelete(item.id)}
+                                                                                        className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-600 p-1 absolute -right-6 md:static transition-all"
+                                                                                        title="Excluir"
+                                                                                    >
+                                                                                        <Trash2 size={14} />
+                                                                                    </button>
                                                                                 </div>
                                                                             </div>
                                                                         </React.Fragment>

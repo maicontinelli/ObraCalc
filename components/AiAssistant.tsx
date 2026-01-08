@@ -24,6 +24,7 @@ type SuggestedBudget = {
 type AiResponse = {
     text: string;
     suggestedBudget?: SuggestedBudget | null;
+    clarificationRequest?: string;
     error?: string;
 };
 
@@ -36,6 +37,12 @@ export default function AiAssistant() {
     const [filteredItems, setFilteredItems] = useState<any[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [showToolsMenu, setShowToolsMenu] = useState(false);
+
+    // Clarification State
+    const [isClarifying, setIsClarifying] = useState(false);
+    const [previousQuery, setPreviousQuery] = useState('');
+    const [clarificationQuestion, setClarificationQuestion] = useState<string | null>(null);
+
     const responseRef = useRef<HTMLDivElement>(null);
     const toolsRef = useRef<HTMLDivElement>(null);
 
@@ -138,11 +145,17 @@ export default function AiAssistant() {
         setResponse(null);
         setError(null);
 
+        // Calculate message to send (Context + Answer if clarifying)
+        let messageToSend = query;
+        if (isClarifying) {
+            messageToSend = `CONTEXTO ANTERIOR: ${previousQuery} | RESPOSTA DO USUÁRIO: ${query}`;
+        }
+
         try {
             const res = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: query }),
+                body: JSON.stringify({ message: messageToSend }),
             });
 
             const data = await res.json();
@@ -151,7 +164,31 @@ export default function AiAssistant() {
                 throw new Error(data.error || 'Erro ao comunicar com a IA');
             }
 
-            setResponse(data);
+            // Check if AI is asking for clarification
+            if (data.clarificationRequest) {
+                setClarificationQuestion(data.clarificationRequest);
+                setIsClarifying(true);
+
+                // Save context if this is the first clarification step
+                if (!isClarifying) {
+                    setPreviousQuery(query);
+                }
+
+                setQuery(''); // Clear input for user to answer
+
+                // Focus input again
+                setTimeout(() => {
+                    const textarea = document.getElementById('search-textarea');
+                    if (textarea) textarea.focus();
+                }, 100);
+            } else {
+                // Success - Budget generated
+                setResponse(data);
+                setIsClarifying(false);
+                setClarificationQuestion(null);
+                setPreviousQuery('');
+            }
+
         } catch (err: any) {
             console.error(err);
             setError(err.message || 'Ocorreu um erro inesperado.');
@@ -222,11 +259,15 @@ export default function AiAssistant() {
     const [typingSpeed, setTypingSpeed] = useState(150);
 
     const phrases = [
-        "Descreva o que você quer orçar",
-        "Muro de 45m²: reboco e pintura",
+        "Descreva o que deseja orçar",
+        "Quero pintar meu apê de 50m²",
+        "Construir muro de 45m²",
         "Reformar banheiro de 3m²",
-        "Casa popular de 70m²",
-        "Pintar apê de 50m²"
+        "Trocar o piso da cozinha",
+        "Custo para fazer uma laje de 10m²?",
+        "Quanto custa murar um terreno médio?",
+        "Quanto sai a fundação de uma casa térrea?",
+        "Quanto custa construir uma casa de 70m² hoje?"
     ];
 
     useEffect(() => {
@@ -258,24 +299,50 @@ export default function AiAssistant() {
         <div className="w-full max-w-2xl mx-auto mt-0 mb-8">
             <div className="relative z-50">
                 <form onSubmit={handleSearch} className="relative z-10 w-full">
-                    <div className="relative flex items-center w-full rounded-[1.5rem] transition-all duration-300
-                            bg-[#F8F9FA]/90 dark:bg-[#1A1A1A]/90 
-                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]
-                            border-2 border-[#FF6600]/20
-                            hover:bg-white dark:hover:bg-black
-                            focus-within:ring-4 focus-within:ring-[#FF6600]/20 focus-within:border-[#FF6600]"
+                    <div
+                        className="relative flex flex-col w-full rounded-3xl transition-all duration-300
+                            bg-white dark:bg-[#1A1A1A]/90
+                            shadow-[0_4px_20px_rgba(0,0,0,0.08)]
+                            border border-[#FF6600]/50
+                            hover:shadow-[0_6px_24px_rgba(0,0,0,0.12)]
+                            focus-within:ring-2 focus-within:ring-[#FF6600]/20 focus-within:border-[#FF6600]
+                            cursor-text"
+                        style={{ minHeight: '120px' }}
+                        onClick={() => {
+                            // Focus the textarea when clicking anywhere on the container
+                            const textarea = document.getElementById('search-textarea');
+                            if (textarea) textarea.focus();
+                        }}
                     >
-                        <div className="pl-6 text-gray-400 dark:text-gray-500">
-                            <Sparkles size={20} className="animate-pulse text-[#FF6600]" />
-                        </div>
-                        <input
-                            type="text"
+                        {isClarifying && clarificationQuestion && (
+                            <div className="mx-6 mt-6 mb-2 flex gap-3 items-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                <div className="p-2 bg-[#FF6600]/10 text-[#FF6600] rounded-full shrink-0">
+                                    <Sparkles size={20} />
+                                </div>
+                                <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-2xl rounded-tl-sm text-sm text-gray-800 dark:text-gray-200 shadow-sm border border-gray-200 dark:border-gray-700">
+                                    <p className="font-semibold text-xs text-[#FF6600] mb-1">Preciso de um detalhe:</p>
+                                    {clarificationQuestion}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Input Area - Top Aligned */}
+                        <textarea
+                            id="search-textarea"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSearch(e);
+                                }
+                            }}
                             onFocus={() => setShowSuggestions(true)}
                             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                            placeholder={isDeleting ? "" : placeholder}
-                            className="w-full pl-4 pr-32 py-6 rounded-full border-none outline-none bg-transparent text-[13px] text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 font-medium"
+                            placeholder={isClarifying ? "Digite sua resposta..." : (isDeleting ? "" : placeholder)}
+                            className="w-full px-6 pt-6 pb-16 rounded-3xl border-none outline-none bg-transparent text-lg text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium resize-none overflow-hidden"
+                            rows={1}
+                            style={{ minHeight: '80px' }}
                         />
 
                         {/* Hidden File Input */}
@@ -310,81 +377,90 @@ export default function AiAssistant() {
                             }}
                         />
 
-                        {/* Tools Menu & Button */}
-                        <div ref={toolsRef}>
-                            <button
-                                type="button"
-                                onClick={() => setShowToolsMenu(!showToolsMenu)}
-                                className={`absolute right-16 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-300 ${showToolsMenu ? 'text-[#FF6600] bg-orange-50 dark:bg-orange-900/20' : 'text-gray-400 dark:text-gray-500 hover:text-[#FF6600] dark:hover:text-[#FF6600]'}`}
-                                title="Ferramentas Visuais"
-                            >
-                                <Camera size={20} />
-                            </button>
+                        {/* Bottom Action Bar */}
+                        <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end" onClick={(e) => e.stopPropagation()}>
+                            {/* Left Tools (Camera/Plus) */}
+                            <div className="flex gap-2" ref={toolsRef}>
+                                <div className="relative">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowToolsMenu(!showToolsMenu)}
+                                        className={`p-2.5 rounded-xl transition-all duration-300 ${showToolsMenu ? 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                                        title="Ferramentas Visuais"
+                                    >
+                                        <Plus size={20} />
+                                    </button>
 
-                            {/* Expanded Tools Menu */}
-                            {showToolsMenu && (
-                                <div className="absolute top-14 right-0 w-64 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                                    <div className="p-1">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                router.push('/novo-diagnostico');
-                                                setShowToolsMenu(false);
-                                            }}
-                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors group text-left"
-                                        >
-                                            <div className="p-2 bg-[#FF6600]/10 text-[#FF6600] rounded-lg group-hover:scale-110 transition-transform">
-                                                <ScanEye size={18} />
-                                            </div>
-                                            <div>
-                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">
-                                                    Diagnóstico Visual
-                                                    <span className="ml-2 text-[10px] bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Beta</span>
-                                                </span>
-                                                <span className="block text-[10px] text-gray-500 dark:text-gray-500">IA analisando fotos da obra</span>
-                                            </div>
-                                        </button>
+                                    {/* Expanded Tools Menu - Repositioned for bottom left anchor */}
+                                    {showToolsMenu && (
+                                        <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+                                            <div className="p-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        router.push('/novo-diagnostico');
+                                                        setShowToolsMenu(false);
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors group text-left"
+                                                >
+                                                    <div className="p-2 bg-[#FF6600]/10 text-[#FF6600] rounded-lg group-hover:scale-110 transition-transform">
+                                                        <ScanEye size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                                            Diagnóstico Visual
+                                                            <span className="ml-2 text-[10px] bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Beta</span>
+                                                        </span>
+                                                        <span className="block text-[10px] text-gray-500 dark:text-gray-500">IA analisando fotos da obra</span>
+                                                    </div>
+                                                </button>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => router.push('/relatorio-fotografico')}
-                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors group text-left"
-                                        >
-                                            <div className="p-2 bg-[#6366F1]/10 text-[#6366F1] rounded-lg group-hover:scale-110 transition-transform">
-                                                <Camera size={18} />
-                                            </div>
-                                            <div>
-                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Relatório Fotográfico</span>
-                                                <span className="block text-[10px] text-gray-500 dark:text-gray-500">Documentação de obra</span>
-                                            </div>
-                                        </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => router.push('/relatorio-fotografico')}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors group text-left"
+                                                >
+                                                    <div className="p-2 bg-[#6366F1]/10 text-[#6366F1] rounded-lg group-hover:scale-110 transition-transform">
+                                                        <Camera size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Relatório Fotográfico</span>
+                                                        <span className="block text-[10px] text-gray-500 dark:text-gray-500">Documentação de obra</span>
+                                                    </div>
+                                                </button>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => router.push('/topografia')}
-                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors group text-left"
-                                        >
-                                            <div className="p-2 bg-[#C2410C]/10 text-[#C2410C] rounded-lg group-hover:scale-110 transition-transform">
-                                                <Map size={18} />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => router.push('/topografia')}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors group text-left"
+                                                >
+                                                    <div className="p-2 bg-[#C2410C]/10 text-[#C2410C] rounded-lg group-hover:scale-110 transition-transform">
+                                                        <Map size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Topografia</span>
+                                                        <span className="block text-[10px] text-gray-500 dark:text-gray-500">Conversor de coordenadas</span>
+                                                    </div>
+                                                </button>
                                             </div>
-                                            <div>
-                                                <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Topografia</span>
-                                                <span className="block text-[10px] text-gray-500 dark:text-gray-500">Conversor de coordenadas</span>
-                                            </div>
-                                        </button>
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
+                            </div>
 
-                        {/* Search Button */}
-                        <button
-                            type="submit"
-                            disabled={isLoading || !query.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-[#FF6600] hover:bg-[#e65c00] text-white rounded-full transition-all duration-300 shadow-lg shadow-orange-500/30 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
-                        >
-                            {isLoading ? <Loader2 size={24} className="animate-spin" /> : <ArrowRight size={24} />}
-                        </button>
+                            {/* Right Action (Search Button) */}
+                            <button
+                                type="submit"
+                                disabled={isLoading || !query.trim()}
+                                className={`p-2.5 rounded-xl transition-all duration-300 flex items-center justify-center ${query.trim() ? 'bg-[#FF6600] text-white shadow-md hover:bg-[#e65c00]' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}
+                            >
+                                {isLoading ? (
+                                    <Loader2 size={20} className="animate-spin" />
+                                ) : (
+                                    <ArrowRight size={20} className={query.trim() ? "animate-pulse" : ""} />
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </form>
 

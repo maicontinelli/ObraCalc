@@ -58,15 +58,15 @@ export default function PlansPage() {
             description: 'Crie orçamentos completos gratuitamente e explore o poder do ObraPlana.',
             features: [
                 'Crie até 5 orçamentos completos',
-                'Exporte orçamentos em PDF e HTML',
-                'Acesse liberado ao Painel de Controle',
-                'Utilize a IA de Orçamentos do ObraPlana',
-                'Experimente o sistema em obras reais',
+                'Exporte em PDF e HTML',
+                'Acesso liberado ao Painel de Controle',
+                'Processamento de itens e custos por IA',
             ],
             limitations: [
-                'Limite de 20 itens por orçamento',
-                'Relatórios com marca d’água ObraPlana',
+                'Limite de itens por orçamento',
+                'Marca d’água do ObraPlana',
                 'Sem acesso a leads de clientes',
+                'Sem a função de comissões',
             ],
             cta: 'Começar agora',
             ctaCaption: 'Para criar orçamentos',
@@ -78,9 +78,9 @@ export default function PlansPage() {
             name: 'Profissional',
             price: 'R$ 29,90',
             period: '/mês',
-            description: 'Ideal para quem quer ganhar comissões em orçamentos reais.',
+            description: 'Crie relatórios técnicos e ainda ganhe comissões ao indicar orçamentos reais',
             features: [
-                'Acesso exclusivo a indicação',
+                'Acesso exclusivo ao sistema de indicação',
                 'Faça orçamentos ilimitados, sem restrição',
                 'Personalize os relatórios com sua marca',
                 'Tenha histórico completo de obras e clientes',
@@ -104,7 +104,7 @@ export default function PlansPage() {
             features: [
                 'Todos os benefícios do Plano Profissional',
                 'Ideal para fechar projetos, obras e serviços de execução',
-                'Receba leads prontos para proposta comercial',
+                'Receba leads prontos para fechar proposta comercial',
                 'Tenha contato direto com clientes reais',
                 'Destaque máximo no buscador de profissionais',
                 'Receba demandas criadas por usuários de toda a plataforma',
@@ -130,8 +130,8 @@ export default function PlansPage() {
 
                     <div className="container mx-auto px-4 relative z-10">
                         <div className="text-center max-w-7xl mx-auto">
-                            <h1 className="text-2xl md:text-4xl font-heading font-bold tracking-tight text-foreground max-w-6xl mx-auto leading-tight mb-24">
-                                Comece gratuitamente ou evolua para transformar <br /> orçamentos em ganhos reais
+                            <h1 className="text-xl md:text-3xl font-heading font-bold tracking-tight text-foreground max-w-6xl mx-auto leading-tight mb-24">
+                                Comece grátis e evolua para converter <br /> orçamentos em ganhos reais
                             </h1>
                             <p className="text-sm md:text-base font-manrope font-semibold text-foreground mb-0">
                                 Use no seu ritmo. Evolua quando fizer sentido
@@ -151,8 +151,11 @@ export default function PlansPage() {
                                     }`}
                             >
                                 {plan.popular && (
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#FF6600] text-white text-sm font-medium rounded-full">
-                                        Mais Popular
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                                        <span className="absolute top-[10%] left-[10%] inline-flex h-[80%] w-[80%] rounded-full bg-[#FF6600] opacity-75 animate-ping"></span>
+                                        <div className="relative px-4 py-1 bg-[#FF6600] text-white text-sm font-medium rounded-full">
+                                            Mais Popular
+                                        </div>
                                     </div>
                                 )}
 
@@ -177,11 +180,11 @@ export default function PlansPage() {
                                     <ul className="space-y-4">
                                         {plan.features.map((feature) => (
                                             <li key={feature} className="flex items-start gap-3">
-                                                <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature === 'Acesso exclusivo a indicação'
+                                                <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature === 'Acesso exclusivo ao sistema de indicação'
                                                     ? 'text-[#74D2E7] stroke-[3]'
                                                     : 'text-blue-500'
                                                     }`} />
-                                                <span className={`text-foreground text-sm ${feature === 'Acesso exclusivo a indicação' ? 'font-bold' : ''}`}>
+                                                <span className={`text-foreground text-sm ${feature === 'Acesso exclusivo ao sistema de indicação' ? 'font-bold' : ''}`}>
                                                     {feature}
                                                 </span>
                                             </li>
@@ -205,9 +208,9 @@ export default function PlansPage() {
                                             target={plan.href.startsWith('http') ? '_blank' : '_self'}
                                         >
                                             <Button
-                                                className={`w-full h-12 text-base font-bold ${plan.popular
-                                                    ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
-                                                    : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground dark:border-white/30 dark:hover:bg-white/10 dark:hover:border-white/50'
+                                                className={`w-full h-12 text-base font-bold transition-all duration-300 ${plan.popular
+                                                    ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white border-none'
+                                                    : 'bg-transparent border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-gray-900 dark:hover:border-white hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
                                                     }`}
                                                 variant={plan.popular ? 'default' : 'outline'}
                                             >
@@ -221,9 +224,9 @@ export default function PlansPage() {
                                 ) : (
                                     <div className="w-full">
                                         <Button
-                                            className={`w-full h-12 text-base font-bold ${plan.popular
-                                                ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white'
-                                                : 'bg-card border border-input text-foreground hover:bg-accent hover:text-accent-foreground'
+                                            className={`w-full h-12 text-base font-bold transition-all duration-300 ${plan.popular
+                                                ? 'bg-[#FF6600] hover:bg-[#FF6600]/90 text-white border-none'
+                                                : 'bg-transparent border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-gray-900 dark:hover:border-white hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
                                                 }`}
                                             variant={plan.popular ? 'default' : 'outline'}
                                             onClick={() => plan.priceId && handleSubscribe(plan.priceId)}

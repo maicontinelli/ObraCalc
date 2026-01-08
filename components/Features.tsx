@@ -57,7 +57,7 @@ export function Features() {
         <section className="py-24 bg-gray-50 dark:bg-[#191919]">
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                    <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                         Fluxo Completo de Documentação com IA
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">
@@ -74,8 +74,8 @@ export function Features() {
                                         {feature.icon}
                                     </div>
                                     <div className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${feature.badge === 'Beta'
-                                            ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
-                                            : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                                        ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
+                                        : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                                         }`}>
                                         {feature.badge}
                                     </div>

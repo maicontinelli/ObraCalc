@@ -76,7 +76,7 @@ export function Footer() {
                         © 2024 ObraPlana. Todos os direitos reservados.
                     </p>
                     <div className="flex gap-6 text-xs text-gray-500 dark:text-[#6b6967]">
-                        <span>Feito com ❤️ para engenheiros</span>
+                        {/* Feito com ❤️ para engenheiros - Removed as per request */}
                     </div>
                 </div>
             </div>
